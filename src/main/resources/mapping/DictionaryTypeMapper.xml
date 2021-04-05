@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.contract.mapper.DictionaryTypeMapper">
+  <resultMap id="BaseResultMap" type="com.contract.domain.DictionaryType">
+    <id column="type_id" jdbcType="VARCHAR" property="typeId" />
+    <result column="type_name" jdbcType="VARCHAR" property="typeName" />
+    <result column="type_edit" jdbcType="BIT" property="typeEdit" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    type_id, type_name, type_edit
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dictionary_type
+    where type_id = #{typeId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from dictionary_type
+    where type_id = #{typeId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.contract.domain.DictionaryType">
+    insert into dictionary_type (type_id, type_name, type_edit
+      )
+    values (#{typeId,jdbcType=VARCHAR}, #{typeName,jdbcType=VARCHAR}, #{typeEdit,jdbcType=BIT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.contract.domain.DictionaryType">
+    insert into dictionary_type
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="typeId != null">
+        type_id,
+      </if>
+      <if test="typeName != null">
+        type_name,
+      </if>
+      <if test="typeEdit != null">
+        type_edit,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="typeId != null">
+        #{typeId,jdbcType=VARCHAR},
+      </if>
+      <if test="typeName != null">
+        #{typeName,jdbcType=VARCHAR},
+      </if>
+      <if test="typeEdit != null">
+        #{typeEdit,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.contract.domain.DictionaryType">
+    update dictionary_type
+    <set>
+      <if test="typeName != null">
+        type_name = #{typeName,jdbcType=VARCHAR},
+      </if>
+      <if test="typeEdit != null">
+        type_edit = #{typeEdit,jdbcType=BIT},
+      </if>
+    </set>
+    where type_id = #{typeId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.contract.domain.DictionaryType">
+    update dictionary_type
+    set type_name = #{typeName,jdbcType=VARCHAR},
+      type_edit = #{typeEdit,jdbcType=BIT}
+    where type_id = #{typeId,jdbcType=VARCHAR}
+  </update>
+</mapper>

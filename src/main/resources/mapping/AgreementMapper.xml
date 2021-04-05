@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.contract.mapper.AgreementMapper">
+  <resultMap id="BaseResultMap" type="com.contract.domain.Agreement">
+    <id column="agreement_id" jdbcType="VARCHAR" property="agreementId" />
+    <result column="agreement_name" jdbcType="VARCHAR" property="agreementName" />
+    <result column="agreement_type" jdbcType="VARCHAR" property="agreementType" />
+    <result column="agreement_innovation" jdbcType="BIT" property="agreementInnovation" />
+    <result column="agreement_client" jdbcType="VARCHAR" property="agreementClient" />
+    <result column="agreement_amount" jdbcType="VARCHAR" property="agreementAmount" />
+    <result column="agreement_sign_date" jdbcType="TIMESTAMP" property="agreementSignDate" />
+    <result column="agreement_provider" jdbcType="VARCHAR" property="agreementProvider" />
+    <result column="agreement_upload_type" jdbcType="VARCHAR" property="agreementUploadType" />
+    <result column="agreement_upload_admin" jdbcType="VARCHAR" property="agreementUploadAdmin" />
+    <result column="agreement_upload_date" jdbcType="TIMESTAMP" property="agreementUploadDate" />
+    <result column="agreement_delete" jdbcType="BIT" property="agreementDelete" />
+    <result column="agreement_extend" jdbcType="VARCHAR" property="agreementExtend" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.contract.domain.Agreement">
+    <result column="agreement_text" jdbcType="LONGVARCHAR" property="agreementText" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    agreement_id, agreement_name, agreement_type, agreement_innovation, agreement_client, 
+    agreement_amount, agreement_sign_date, agreement_provider, agreement_upload_type, 
+    agreement_upload_admin, agreement_upload_date, agreement_delete, agreement_extend
+  </sql>
+  <sql id="Blob_Column_List">
+    agreement_text
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from agreement
+    where agreement_id = #{agreementId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from agreement
+    where agreement_id = #{agreementId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.contract.domain.Agreement">
+    insert into agreement (agreement_id, agreement_name, agreement_type, 
+      agreement_innovation, agreement_client, agreement_amount, 
+      agreement_sign_date, agreement_provider, 
+      agreement_upload_type, agreement_upload_admin, 
+      agreement_upload_date, agreement_delete, agreement_extend, 
+      agreement_text)
+    values (#{agreementId,jdbcType=VARCHAR}, #{agreementName,jdbcType=VARCHAR}, #{agreementType,jdbcType=VARCHAR}, 
+      #{agreementInnovation,jdbcType=BIT}, #{agreementClient,jdbcType=VARCHAR}, #{agreementAmount,jdbcType=VARCHAR}, 
+      #{agreementSignDate,jdbcType=TIMESTAMP}, #{agreementProvider,jdbcType=VARCHAR}, 
+      #{agreementUploadType,jdbcType=VARCHAR}, #{agreementUploadAdmin,jdbcType=VARCHAR}, 
+      #{agreementUploadDate,jdbcType=TIMESTAMP}, #{agreementDelete,jdbcType=BIT}, #{agreementExtend,jdbcType=VARCHAR}, 
+      #{agreementText,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.contract.domain.Agreement">
+    insert into agreement
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="agreementId != null">
+        agreement_id,
+      </if>
+      <if test="agreementName != null">
+        agreement_name,
+      </if>
+      <if test="agreementType != null">
+        agreement_type,
+      </if>
+      <if test="agreementInnovation != null">
+        agreement_innovation,
+      </if>
+      <if test="agreementClient != null">
+        agreement_client,
+      </if>
+      <if test="agreementAmount != null">
+        agreement_amount,
+      </if>
+      <if test="agreementSignDate != null">
+        agreement_sign_date,
+      </if>
+      <if test="agreementProvider != null">
+        agreement_provider,
+      </if>
+      <if test="agreementUploadType != null">
+        agreement_upload_type,
+      </if>
+      <if test="agreementUploadAdmin != null">
+        agreement_upload_admin,
+      </if>
+      <if test="agreementUploadDate != null">
+        agreement_upload_date,
+      </if>
+      <if test="agreementDelete != null">
+        agreement_delete,
+      </if>
+      <if test="agreementExtend != null">
+        agreement_extend,
+      </if>
+      <if test="agreementText != null">
+        agreement_text,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="agreementId != null">
+        #{agreementId,jdbcType=VARCHAR},
+      </if>
+      <if test="agreementName != null">
+        #{agreementName,jdbcType=VARCHAR},
+      </if>
+      <if test="agreementType != null">
+        #{agreementType,jdbcType=VARCHAR},
+      </if>
+      <if test="agreementInnovation != null">
+        #{agreementInnovation,jdbcType=BIT},
+      </if>
+      <if test="agreementClient != null">
+        #{agreementClient,jdbcType=VARCHAR},
+      </if>
+      <if test="agreementAmount != null">
+        #{agreementAmount,jdbcType=VARCHAR},
+      </if>
+      <if test="agreementSignDate != null">
+        #{agreementSignDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="agreementProvider != null">
+        #{agreementProvider,jdbcType=VARCHAR},
+      </if>
+      <if test="agreementUploadType != null">
+        #{agreementUploadType,jdbcType=VARCHAR},
+      </if>
+      <if test="agreementUploadAdmin != null">
+        #{agreementUploadAdmin,jdbcType=VARCHAR},
+      </if>
+      <if test="agreementUploadDate != null">
+        #{agreementUploadDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="agreementDelete != null">
+        #{agreementDelete,jdbcType=BIT},
+      </if>
+      <if test="agreementExtend != null">
+        #{agreementExtend,jdbcType=VARCHAR},
+      </if>
+      <if test="agreementText != null">
+        #{agreementText,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.contract.domain.Agreement">
+    update agreement
+    <set>
+      <if test="agreementName != null">
+        agreement_name = #{agreementName,jdbcType=VARCHAR},
+      </if>
+      <if test="agreementType != null">
+        agreement_type = #{agreementType,jdbcType=VARCHAR},
+      </if>
+      <if test="agreementInnovation != null">
+        agreement_innovation = #{agreementInnovation,jdbcType=BIT},
+      </if>
+      <if test="agreementClient != null">
+        agreement_client = #{agreementClient,jdbcType=VARCHAR},
+      </if>
+      <if test="agreementAmount != null">
+        agreement_amount = #{agreementAmount,jdbcType=VARCHAR},
+      </if>
+      <if test="agreementSignDate != null">
+        agreement_sign_date = #{agreementSignDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="agreementProvider != null">
+        agreement_provider = #{agreementProvider,jdbcType=VARCHAR},
+      </if>
+      <if test="agreementUploadType != null">
+        agreement_upload_type = #{agreementUploadType,jdbcType=VARCHAR},
+      </if>
+      <if test="agreementUploadAdmin != null">
+        agreement_upload_admin = #{agreementUploadAdmin,jdbcType=VARCHAR},
+      </if>
+      <if test="agreementUploadDate != null">
+        agreement_upload_date = #{agreementUploadDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="agreementDelete != null">
+        agreement_delete = #{agreementDelete,jdbcType=BIT},
+      </if>
+      <if test="agreementExtend != null">
+        agreement_extend = #{agreementExtend,jdbcType=VARCHAR},
+      </if>
+      <if test="agreementText != null">
+        agreement_text = #{agreementText,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where agreement_id = #{agreementId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.contract.domain.Agreement">
+    update agreement
+    set agreement_name = #{agreementName,jdbcType=VARCHAR},
+      agreement_type = #{agreementType,jdbcType=VARCHAR},
+      agreement_innovation = #{agreementInnovation,jdbcType=BIT},
+      agreement_client = #{agreementClient,jdbcType=VARCHAR},
+      agreement_amount = #{agreementAmount,jdbcType=VARCHAR},
+      agreement_sign_date = #{agreementSignDate,jdbcType=TIMESTAMP},
+      agreement_provider = #{agreementProvider,jdbcType=VARCHAR},
+      agreement_upload_type = #{agreementUploadType,jdbcType=VARCHAR},
+      agreement_upload_admin = #{agreementUploadAdmin,jdbcType=VARCHAR},
+      agreement_upload_date = #{agreementUploadDate,jdbcType=TIMESTAMP},
+      agreement_delete = #{agreementDelete,jdbcType=BIT},
+      agreement_extend = #{agreementExtend,jdbcType=VARCHAR},
+      agreement_text = #{agreementText,jdbcType=LONGVARCHAR}
+    where agreement_id = #{agreementId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.contract.domain.Agreement">
+    update agreement
+    set agreement_name = #{agreementName,jdbcType=VARCHAR},
+      agreement_type = #{agreementType,jdbcType=VARCHAR},
+      agreement_innovation = #{agreementInnovation,jdbcType=BIT},
+      agreement_client = #{agreementClient,jdbcType=VARCHAR},
+      agreement_amount = #{agreementAmount,jdbcType=VARCHAR},
+      agreement_sign_date = #{agreementSignDate,jdbcType=TIMESTAMP},
+      agreement_provider = #{agreementProvider,jdbcType=VARCHAR},
+      agreement_upload_type = #{agreementUploadType,jdbcType=VARCHAR},
+      agreement_upload_admin = #{agreementUploadAdmin,jdbcType=VARCHAR},
+      agreement_upload_date = #{agreementUploadDate,jdbcType=TIMESTAMP},
+      agreement_delete = #{agreementDelete,jdbcType=BIT},
+      agreement_extend = #{agreementExtend,jdbcType=VARCHAR}
+    where agreement_id = #{agreementId,jdbcType=VARCHAR}
+  </update>
+</mapper>

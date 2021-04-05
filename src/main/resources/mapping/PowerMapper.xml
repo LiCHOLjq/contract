@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.contract.mapper.PowerMapper">
+  <resultMap id="BaseResultMap" type="com.contract.domain.Power">
+    <id column="power_id" jdbcType="VARCHAR" property="powerId" />
+    <result column="power_name" jdbcType="VARCHAR" property="powerName" />
+    <result column="power_router" jdbcType="VARCHAR" property="powerRouter" />
+    <result column="power_level" jdbcType="INTEGER" property="powerLevel" />
+    <result column="power_father" jdbcType="VARCHAR" property="powerFather" />
+    <result column="power_icon" jdbcType="VARCHAR" property="powerIcon" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    power_id, power_name, power_router, power_level, power_father, power_icon
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from power
+    where power_id = #{powerId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from power
+    where power_id = #{powerId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.contract.domain.Power">
+    insert into power (power_id, power_name, power_router, 
+      power_level, power_father, power_icon
+      )
+    values (#{powerId,jdbcType=VARCHAR}, #{powerName,jdbcType=VARCHAR}, #{powerRouter,jdbcType=VARCHAR}, 
+      #{powerLevel,jdbcType=INTEGER}, #{powerFather,jdbcType=VARCHAR}, #{powerIcon,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.contract.domain.Power">
+    insert into power
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="powerId != null">
+        power_id,
+      </if>
+      <if test="powerName != null">
+        power_name,
+      </if>
+      <if test="powerRouter != null">
+        power_router,
+      </if>
+      <if test="powerLevel != null">
+        power_level,
+      </if>
+      <if test="powerFather != null">
+        power_father,
+      </if>
+      <if test="powerIcon != null">
+        power_icon,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="powerId != null">
+        #{powerId,jdbcType=VARCHAR},
+      </if>
+      <if test="powerName != null">
+        #{powerName,jdbcType=VARCHAR},
+      </if>
+      <if test="powerRouter != null">
+        #{powerRouter,jdbcType=VARCHAR},
+      </if>
+      <if test="powerLevel != null">
+        #{powerLevel,jdbcType=INTEGER},
+      </if>
+      <if test="powerFather != null">
+        #{powerFather,jdbcType=VARCHAR},
+      </if>
+      <if test="powerIcon != null">
+        #{powerIcon,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.contract.domain.Power">
+    update power
+    <set>
+      <if test="powerName != null">
+        power_name = #{powerName,jdbcType=VARCHAR},
+      </if>
+      <if test="powerRouter != null">
+        power_router = #{powerRouter,jdbcType=VARCHAR},
+      </if>
+      <if test="powerLevel != null">
+        power_level = #{powerLevel,jdbcType=INTEGER},
+      </if>
+      <if test="powerFather != null">
+        power_father = #{powerFather,jdbcType=VARCHAR},
+      </if>
+      <if test="powerIcon != null">
+        power_icon = #{powerIcon,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where power_id = #{powerId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.contract.domain.Power">
+    update power
+    set power_name = #{powerName,jdbcType=VARCHAR},
+      power_router = #{powerRouter,jdbcType=VARCHAR},
+      power_level = #{powerLevel,jdbcType=INTEGER},
+      power_father = #{powerFather,jdbcType=VARCHAR},
+      power_icon = #{powerIcon,jdbcType=VARCHAR}
+    where power_id = #{powerId,jdbcType=VARCHAR}
+  </update>
+</mapper>

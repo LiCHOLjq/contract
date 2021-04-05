@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.contract.mapper.LogMapper">
+  <resultMap id="BaseResultMap" type="com.contract.domain.Log">
+    <id column="log_id" jdbcType="VARCHAR" property="logId" />
+    <result column="log_date" jdbcType="TIMESTAMP" property="logDate" />
+    <result column="log_admin" jdbcType="VARCHAR" property="logAdmin" />
+    <result column="log_admin_name" jdbcType="VARCHAR" property="logAdminName" />
+    <result column="log_type" jdbcType="VARCHAR" property="logType" />
+    <result column="log_remote_ip" jdbcType="VARCHAR" property="logRemoteIp" />
+    <result column="log_message1" jdbcType="VARCHAR" property="logMessage1" />
+    <result column="log_message2" jdbcType="VARCHAR" property="logMessage2" />
+    <result column="log_message3" jdbcType="VARCHAR" property="logMessage3" />
+    <result column="log_user_agent" jdbcType="VARCHAR" property="logUserAgent" />
+    <result column="log_x_requested_width" jdbcType="VARCHAR" property="logXRequestedWidth" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.contract.domain.Log">
+    <result column="log_long_message" jdbcType="LONGVARCHAR" property="logLongMessage" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    log_id, log_date, log_admin, log_admin_name, log_type, log_remote_ip, log_message1, 
+    log_message2, log_message3, log_user_agent, log_x_requested_width
+  </sql>
+  <sql id="Blob_Column_List">
+    log_long_message
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from log
+    where log_id = #{logId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from log
+    where log_id = #{logId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.contract.domain.Log">
+    insert into log (log_id, log_date, log_admin, 
+      log_admin_name, log_type, log_remote_ip, 
+      log_message1, log_message2, log_message3, 
+      log_user_agent, log_x_requested_width, log_long_message
+      )
+    values (#{logId,jdbcType=VARCHAR}, #{logDate,jdbcType=TIMESTAMP}, #{logAdmin,jdbcType=VARCHAR}, 
+      #{logAdminName,jdbcType=VARCHAR}, #{logType,jdbcType=VARCHAR}, #{logRemoteIp,jdbcType=VARCHAR}, 
+      #{logMessage1,jdbcType=VARCHAR}, #{logMessage2,jdbcType=VARCHAR}, #{logMessage3,jdbcType=VARCHAR}, 
+      #{logUserAgent,jdbcType=VARCHAR}, #{logXRequestedWidth,jdbcType=VARCHAR}, #{logLongMessage,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.contract.domain.Log">
+    insert into log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="logId != null">
+        log_id,
+      </if>
+      <if test="logDate != null">
+        log_date,
+      </if>
+      <if test="logAdmin != null">
+        log_admin,
+      </if>
+      <if test="logAdminName != null">
+        log_admin_name,
+      </if>
+      <if test="logType != null">
+        log_type,
+      </if>
+      <if test="logRemoteIp != null">
+        log_remote_ip,
+      </if>
+      <if test="logMessage1 != null">
+        log_message1,
+      </if>
+      <if test="logMessage2 != null">
+        log_message2,
+      </if>
+      <if test="logMessage3 != null">
+        log_message3,
+      </if>
+      <if test="logUserAgent != null">
+        log_user_agent,
+      </if>
+      <if test="logXRequestedWidth != null">
+        log_x_requested_width,
+      </if>
+      <if test="logLongMessage != null">
+        log_long_message,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="logId != null">
+        #{logId,jdbcType=VARCHAR},
+      </if>
+      <if test="logDate != null">
+        #{logDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="logAdmin != null">
+        #{logAdmin,jdbcType=VARCHAR},
+      </if>
+      <if test="logAdminName != null">
+        #{logAdminName,jdbcType=VARCHAR},
+      </if>
+      <if test="logType != null">
+        #{logType,jdbcType=VARCHAR},
+      </if>
+      <if test="logRemoteIp != null">
+        #{logRemoteIp,jdbcType=VARCHAR},
+      </if>
+      <if test="logMessage1 != null">
+        #{logMessage1,jdbcType=VARCHAR},
+      </if>
+      <if test="logMessage2 != null">
+        #{logMessage2,jdbcType=VARCHAR},
+      </if>
+      <if test="logMessage3 != null">
+        #{logMessage3,jdbcType=VARCHAR},
+      </if>
+      <if test="logUserAgent != null">
+        #{logUserAgent,jdbcType=VARCHAR},
+      </if>
+      <if test="logXRequestedWidth != null">
+        #{logXRequestedWidth,jdbcType=VARCHAR},
+      </if>
+      <if test="logLongMessage != null">
+        #{logLongMessage,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.contract.domain.Log">
+    update log
+    <set>
+      <if test="logDate != null">
+        log_date = #{logDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="logAdmin != null">
+        log_admin = #{logAdmin,jdbcType=VARCHAR},
+      </if>
+      <if test="logAdminName != null">
+        log_admin_name = #{logAdminName,jdbcType=VARCHAR},
+      </if>
+      <if test="logType != null">
+        log_type = #{logType,jdbcType=VARCHAR},
+      </if>
+      <if test="logRemoteIp != null">
+        log_remote_ip = #{logRemoteIp,jdbcType=VARCHAR},
+      </if>
+      <if test="logMessage1 != null">
+        log_message1 = #{logMessage1,jdbcType=VARCHAR},
+      </if>
+      <if test="logMessage2 != null">
+        log_message2 = #{logMessage2,jdbcType=VARCHAR},
+      </if>
+      <if test="logMessage3 != null">
+        log_message3 = #{logMessage3,jdbcType=VARCHAR},
+      </if>
+      <if test="logUserAgent != null">
+        log_user_agent = #{logUserAgent,jdbcType=VARCHAR},
+      </if>
+      <if test="logXRequestedWidth != null">
+        log_x_requested_width = #{logXRequestedWidth,jdbcType=VARCHAR},
+      </if>
+      <if test="logLongMessage != null">
+        log_long_message = #{logLongMessage,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where log_id = #{logId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.contract.domain.Log">
+    update log
+    set log_date = #{logDate,jdbcType=TIMESTAMP},
+      log_admin = #{logAdmin,jdbcType=VARCHAR},
+      log_admin_name = #{logAdminName,jdbcType=VARCHAR},
+      log_type = #{logType,jdbcType=VARCHAR},
+      log_remote_ip = #{logRemoteIp,jdbcType=VARCHAR},
+      log_message1 = #{logMessage1,jdbcType=VARCHAR},
+      log_message2 = #{logMessage2,jdbcType=VARCHAR},
+      log_message3 = #{logMessage3,jdbcType=VARCHAR},
+      log_user_agent = #{logUserAgent,jdbcType=VARCHAR},
+      log_x_requested_width = #{logXRequestedWidth,jdbcType=VARCHAR},
+      log_long_message = #{logLongMessage,jdbcType=LONGVARCHAR}
+    where log_id = #{logId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.contract.domain.Log">
+    update log
+    set log_date = #{logDate,jdbcType=TIMESTAMP},
+      log_admin = #{logAdmin,jdbcType=VARCHAR},
+      log_admin_name = #{logAdminName,jdbcType=VARCHAR},
+      log_type = #{logType,jdbcType=VARCHAR},
+      log_remote_ip = #{logRemoteIp,jdbcType=VARCHAR},
+      log_message1 = #{logMessage1,jdbcType=VARCHAR},
+      log_message2 = #{logMessage2,jdbcType=VARCHAR},
+      log_message3 = #{logMessage3,jdbcType=VARCHAR},
+      log_user_agent = #{logUserAgent,jdbcType=VARCHAR},
+      log_x_requested_width = #{logXRequestedWidth,jdbcType=VARCHAR}
+    where log_id = #{logId,jdbcType=VARCHAR}
+  </update>
+</mapper>

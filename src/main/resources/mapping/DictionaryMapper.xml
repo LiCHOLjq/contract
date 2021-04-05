@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.contract.mapper.DictionaryMapper">
+  <resultMap id="BaseResultMap" type="com.contract.domain.Dictionary">
+    <id column="dictionary_id" jdbcType="VARCHAR" property="dictionaryId" />
+    <result column="dictionary_code" jdbcType="VARCHAR" property="dictionaryCode" />
+    <result column="dictionary_sort" jdbcType="INTEGER" property="dictionarySort" />
+    <result column="dictionary_name" jdbcType="VARCHAR" property="dictionaryName" />
+    <result column="dictionary_type" jdbcType="VARCHAR" property="dictionaryType" />
+    <result column="dictionary_father" jdbcType="VARCHAR" property="dictionaryFather" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    dictionary_id, dictionary_code, dictionary_sort, dictionary_name, dictionary_type, 
+    dictionary_father
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dictionary
+    where dictionary_id = #{dictionaryId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from dictionary
+    where dictionary_id = #{dictionaryId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.contract.domain.Dictionary">
+    insert into dictionary (dictionary_id, dictionary_code, dictionary_sort, 
+      dictionary_name, dictionary_type, dictionary_father
+      )
+    values (#{dictionaryId,jdbcType=VARCHAR}, #{dictionaryCode,jdbcType=VARCHAR}, #{dictionarySort,jdbcType=INTEGER}, 
+      #{dictionaryName,jdbcType=VARCHAR}, #{dictionaryType,jdbcType=VARCHAR}, #{dictionaryFather,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.contract.domain.Dictionary">
+    insert into dictionary
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="dictionaryId != null">
+        dictionary_id,
+      </if>
+      <if test="dictionaryCode != null">
+        dictionary_code,
+      </if>
+      <if test="dictionarySort != null">
+        dictionary_sort,
+      </if>
+      <if test="dictionaryName != null">
+        dictionary_name,
+      </if>
+      <if test="dictionaryType != null">
+        dictionary_type,
+      </if>
+      <if test="dictionaryFather != null">
+        dictionary_father,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="dictionaryId != null">
+        #{dictionaryId,jdbcType=VARCHAR},
+      </if>
+      <if test="dictionaryCode != null">
+        #{dictionaryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dictionarySort != null">
+        #{dictionarySort,jdbcType=INTEGER},
+      </if>
+      <if test="dictionaryName != null">
+        #{dictionaryName,jdbcType=VARCHAR},
+      </if>
+      <if test="dictionaryType != null">
+        #{dictionaryType,jdbcType=VARCHAR},
+      </if>
+      <if test="dictionaryFather != null">
+        #{dictionaryFather,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.contract.domain.Dictionary">
+    update dictionary
+    <set>
+      <if test="dictionaryCode != null">
+        dictionary_code = #{dictionaryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dictionarySort != null">
+        dictionary_sort = #{dictionarySort,jdbcType=INTEGER},
+      </if>
+      <if test="dictionaryName != null">
+        dictionary_name = #{dictionaryName,jdbcType=VARCHAR},
+      </if>
+      <if test="dictionaryType != null">
+        dictionary_type = #{dictionaryType,jdbcType=VARCHAR},
+      </if>
+      <if test="dictionaryFather != null">
+        dictionary_father = #{dictionaryFather,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where dictionary_id = #{dictionaryId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.contract.domain.Dictionary">
+    update dictionary
+    set dictionary_code = #{dictionaryCode,jdbcType=VARCHAR},
+      dictionary_sort = #{dictionarySort,jdbcType=INTEGER},
+      dictionary_name = #{dictionaryName,jdbcType=VARCHAR},
+      dictionary_type = #{dictionaryType,jdbcType=VARCHAR},
+      dictionary_father = #{dictionaryFather,jdbcType=VARCHAR}
+    where dictionary_id = #{dictionaryId,jdbcType=VARCHAR}
+  </update>
+</mapper>

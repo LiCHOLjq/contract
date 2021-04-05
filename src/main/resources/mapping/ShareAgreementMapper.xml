@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.contract.mapper.ShareAgreementMapper">
+  <resultMap id="BaseResultMap" type="com.contract.domain.ShareAgreement">
+    <id column="share_agreement_id" jdbcType="VARCHAR" property="shareAgreementId" />
+    <result column="share_id" jdbcType="VARCHAR" property="shareId" />
+    <result column="agreement_id" jdbcType="VARCHAR" property="agreementId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    share_agreement_id, share_id, agreement_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from share_agreement
+    where share_agreement_id = #{shareAgreementId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from share_agreement
+    where share_agreement_id = #{shareAgreementId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.contract.domain.ShareAgreement">
+    insert into share_agreement (share_agreement_id, share_id, agreement_id
+      )
+    values (#{shareAgreementId,jdbcType=VARCHAR}, #{shareId,jdbcType=VARCHAR}, #{agreementId,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.contract.domain.ShareAgreement">
+    insert into share_agreement
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="shareAgreementId != null">
+        share_agreement_id,
+      </if>
+      <if test="shareId != null">
+        share_id,
+      </if>
+      <if test="agreementId != null">
+        agreement_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="shareAgreementId != null">
+        #{shareAgreementId,jdbcType=VARCHAR},
+      </if>
+      <if test="shareId != null">
+        #{shareId,jdbcType=VARCHAR},
+      </if>
+      <if test="agreementId != null">
+        #{agreementId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.contract.domain.ShareAgreement">
+    update share_agreement
+    <set>
+      <if test="shareId != null">
+        share_id = #{shareId,jdbcType=VARCHAR},
+      </if>
+      <if test="agreementId != null">
+        agreement_id = #{agreementId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where share_agreement_id = #{shareAgreementId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.contract.domain.ShareAgreement">
+    update share_agreement
+    set share_id = #{shareId,jdbcType=VARCHAR},
+      agreement_id = #{agreementId,jdbcType=VARCHAR}
+    where share_agreement_id = #{shareAgreementId,jdbcType=VARCHAR}
+  </update>
+</mapper>

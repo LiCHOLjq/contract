@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.contract.mapper.CartMapper">
+  <resultMap id="BaseResultMap" type="com.contract.domain.Cart">
+    <id column="cart_id" jdbcType="VARCHAR" property="cartId" />
+    <result column="cart_admin" jdbcType="VARCHAR" property="cartAdmin" />
+    <result column="cart_agreement" jdbcType="VARCHAR" property="cartAgreement" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    cart_id, cart_admin, cart_agreement
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cart
+    where cart_id = #{cartId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from cart
+    where cart_id = #{cartId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.contract.domain.Cart">
+    insert into cart (cart_id, cart_admin, cart_agreement
+      )
+    values (#{cartId,jdbcType=VARCHAR}, #{cartAdmin,jdbcType=VARCHAR}, #{cartAgreement,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.contract.domain.Cart">
+    insert into cart
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="cartId != null">
+        cart_id,
+      </if>
+      <if test="cartAdmin != null">
+        cart_admin,
+      </if>
+      <if test="cartAgreement != null">
+        cart_agreement,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="cartId != null">
+        #{cartId,jdbcType=VARCHAR},
+      </if>
+      <if test="cartAdmin != null">
+        #{cartAdmin,jdbcType=VARCHAR},
+      </if>
+      <if test="cartAgreement != null">
+        #{cartAgreement,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.contract.domain.Cart">
+    update cart
+    <set>
+      <if test="cartAdmin != null">
+        cart_admin = #{cartAdmin,jdbcType=VARCHAR},
+      </if>
+      <if test="cartAgreement != null">
+        cart_agreement = #{cartAgreement,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where cart_id = #{cartId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.contract.domain.Cart">
+    update cart
+    set cart_admin = #{cartAdmin,jdbcType=VARCHAR},
+      cart_agreement = #{cartAgreement,jdbcType=VARCHAR}
+    where cart_id = #{cartId,jdbcType=VARCHAR}
+  </update>
+</mapper>

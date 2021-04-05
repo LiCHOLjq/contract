@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.contract.mapper.PowerRoleMapper">
+  <resultMap id="BaseResultMap" type="com.contract.domain.PowerRole">
+    <id column="power_role_id" jdbcType="VARCHAR" property="powerRoleId" />
+    <result column="power_id" jdbcType="VARCHAR" property="powerId" />
+    <result column="role_id" jdbcType="VARCHAR" property="roleId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    power_role_id, power_id, role_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from power_role
+    where power_role_id = #{powerRoleId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from power_role
+    where power_role_id = #{powerRoleId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.contract.domain.PowerRole">
+    insert into power_role (power_role_id, power_id, role_id
+      )
+    values (#{powerRoleId,jdbcType=VARCHAR}, #{powerId,jdbcType=VARCHAR}, #{roleId,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.contract.domain.PowerRole">
+    insert into power_role
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="powerRoleId != null">
+        power_role_id,
+      </if>
+      <if test="powerId != null">
+        power_id,
+      </if>
+      <if test="roleId != null">
+        role_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="powerRoleId != null">
+        #{powerRoleId,jdbcType=VARCHAR},
+      </if>
+      <if test="powerId != null">
+        #{powerId,jdbcType=VARCHAR},
+      </if>
+      <if test="roleId != null">
+        #{roleId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.contract.domain.PowerRole">
+    update power_role
+    <set>
+      <if test="powerId != null">
+        power_id = #{powerId,jdbcType=VARCHAR},
+      </if>
+      <if test="roleId != null">
+        role_id = #{roleId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where power_role_id = #{powerRoleId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.contract.domain.PowerRole">
+    update power_role
+    set power_id = #{powerId,jdbcType=VARCHAR},
+      role_id = #{roleId,jdbcType=VARCHAR}
+    where power_role_id = #{powerRoleId,jdbcType=VARCHAR}
+  </update>
+</mapper>
