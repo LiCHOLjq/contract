@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.contract.mapper.ShareMapper">
   <resultMap id="BaseResultMap" type="com.contract.domain.Share">
-    <id column="share_id" jdbcType="INTEGER" property="shareId" />
+    <id column="share_id" jdbcType="VARCHAR" property="shareId" />
     <result column="share_admin" jdbcType="VARCHAR" property="shareAdmin" />
     <result column="share_type" jdbcType="VARCHAR" property="shareType" />
     <result column="share_begin_date" jdbcType="TIMESTAMP" property="shareBeginDate" />
@@ -12,24 +12,32 @@
     <result column="share_delete" jdbcType="BIT" property="shareDelete" />
   </resultMap>
   <sql id="Base_Column_List">
-    share_id, share_admin, share_type, share_begin_date, share_end_date, share_has_password, 
-    share_password, share_delete
+    share_id, share_admin, share_type, share_begin_date, share_end_date, share_has_password, share_delete
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <sql id="Password_Column_List">
+    share_id, share_admin, share_type, share_begin_date, share_end_date, share_has_password, share_password, share_delete
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from share
-    where share_id = #{shareId,jdbcType=INTEGER}
+    where share_id = #{shareId,jdbcType=VARCHAR}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+  <select id="selectByPrimaryKeyHasPassword" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Password_Column_List" />
+    from share
+    where share_id = #{shareId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from share
-    where share_id = #{shareId,jdbcType=INTEGER}
+    where share_id = #{shareId,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.contract.domain.Share">
     insert into share (share_id, share_admin, share_type, 
       share_begin_date, share_end_date, share_has_password, 
       share_password, share_delete)
-    values (#{shareId,jdbcType=INTEGER}, #{shareAdmin,jdbcType=VARCHAR}, #{shareType,jdbcType=VARCHAR}, 
+    values (#{shareId,jdbcType=VARCHAR}, #{shareAdmin,jdbcType=VARCHAR}, #{shareType,jdbcType=VARCHAR}, 
       #{shareBeginDate,jdbcType=TIMESTAMP}, #{shareEndDate,jdbcType=TIMESTAMP}, #{shareHasPassword,jdbcType=BIT}, 
       #{sharePassword,jdbcType=VARCHAR}, #{shareDelete,jdbcType=BIT})
   </insert>
@@ -63,7 +71,7 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="shareId != null">
-        #{shareId,jdbcType=INTEGER},
+        #{shareId,jdbcType=VARCHAR},
       </if>
       <if test="shareAdmin != null">
         #{shareAdmin,jdbcType=VARCHAR},
@@ -113,7 +121,7 @@
         share_delete = #{shareDelete,jdbcType=BIT},
       </if>
     </set>
-    where share_id = #{shareId,jdbcType=INTEGER}
+    where share_id = #{shareId,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.contract.domain.Share">
     update share
@@ -124,6 +132,6 @@
       share_has_password = #{shareHasPassword,jdbcType=BIT},
       share_password = #{sharePassword,jdbcType=VARCHAR},
       share_delete = #{shareDelete,jdbcType=BIT}
-    where share_id = #{shareId,jdbcType=INTEGER}
+    where share_id = #{shareId,jdbcType=VARCHAR}
   </update>
 </mapper>

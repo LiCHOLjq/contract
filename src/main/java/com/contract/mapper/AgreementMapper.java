@@ -1,7 +1,9 @@
 package com.contract.mapper;
 
 import com.contract.domain.Agreement;
+import org.apache.ibatis.annotations.Mapper;
 
+@Mapper
 public interface AgreementMapper {
     int deleteByPrimaryKey(String agreementId);
 

@@ -1,7 +1,9 @@
 package com.contract.mapper;
 
 import com.contract.domain.DictionaryType;
+import org.apache.ibatis.annotations.Mapper;
 
+@Mapper
 public interface DictionaryTypeMapper {
     int deleteByPrimaryKey(String typeId);
 

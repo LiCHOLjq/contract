@@ -7,13 +7,59 @@
     <result column="admin_account" jdbcType="VARCHAR" property="adminAccount" />
     <result column="admin_password" jdbcType="VARCHAR" property="adminPassword" />
     <result column="admin_role" jdbcType="VARCHAR" property="adminRole" />
+    <result column="admin_useful" jdbcType="BIT" property="adminUseful" />
   </resultMap>
   <sql id="Base_Column_List">
-    admin_id, admin_name, admin_account, admin_password, admin_role
+    admin_id, admin_name, admin_account, admin_role, admin_useful
+  </sql>
+  <sql id="Password_Column_List">
+    admin_id, admin_name, admin_account, admin_password, admin_role, admin_useful
+  </sql>
+  <sql id="Search_Where_List">
+    where 1=1
+    <if test="admin.adminId != null and admin.adminId != '' ">
+      and admin_id = #{admin.adminId,jdbcType=VARCHAR}
+    </if>
+    <if test="admin.adminAccount != null and admin.adminAccount != '' ">
+      and admin_account = #{admin.adminAccount,jdbcType=VARCHAR}
+    </if>
+    <if test="admin.adminName != null and admin.adminName != '' ">
+      and admin_name like concat('%',#{admin.adminName,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="admin.adminRole != null and admin.adminRole != '' ">
+      and admin_role = #{admin.adminRole,jdbcType=VARCHAR}
+    </if>
+    <if test="admin.adminUseful != null and admin.adminUseful != '' ">
+      and admin_useful = #{admin.adminUseful,jdbcType=VARCHAR}
+    </if>
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
+    from admin
+    where admin_id = #{adminId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectBySearch" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from admin
+    <include refid="Search_Where_List" />
+
+  </select>
+  <select id="selectBySearchCount" resultType="int">
+    select count(*)
+    from admin
+    <include refid="Search_Where_List" />
+  </select>
+  <select id="selectByAccountKeyHasPassword" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Password_Column_List" />
+    from admin
+    where admin_account = #{adminAccount,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByPrimaryKeyHasPassword" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Password_Column_List" />
     from admin
     where admin_id = #{adminId,jdbcType=VARCHAR}
   </select>
@@ -23,9 +69,11 @@
   </delete>
   <insert id="insert" parameterType="com.contract.domain.Admin">
     insert into admin (admin_id, admin_name, admin_account, 
-      admin_password, admin_role)
+      admin_password, admin_role, admin_useful
+      )
     values (#{adminId,jdbcType=VARCHAR}, #{adminName,jdbcType=VARCHAR}, #{adminAccount,jdbcType=VARCHAR}, 
-      #{adminPassword,jdbcType=VARCHAR}, #{adminRole,jdbcType=VARCHAR})
+      #{adminPassword,jdbcType=VARCHAR}, #{adminRole,jdbcType=VARCHAR}, #{adminUseful,jdbcType=BIT}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.contract.domain.Admin">
     insert into admin
@@ -45,6 +93,9 @@
       <if test="adminRole != null">
         admin_role,
       </if>
+      <if test="adminUseful != null">
+        admin_useful,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="adminId != null">
@@ -61,6 +112,9 @@
       </if>
       <if test="adminRole != null">
         #{adminRole,jdbcType=VARCHAR},
+      </if>
+      <if test="adminUseful != null">
+        #{adminUseful,jdbcType=BIT},
       </if>
     </trim>
   </insert>
@@ -79,6 +133,9 @@
       <if test="adminRole != null">
         admin_role = #{adminRole,jdbcType=VARCHAR},
       </if>
+      <if test="adminUseful != null">
+        admin_useful = #{adminUseful,jdbcType=BIT},
+      </if>
     </set>
     where admin_id = #{adminId,jdbcType=VARCHAR}
   </update>
@@ -87,7 +144,8 @@
     set admin_name = #{adminName,jdbcType=VARCHAR},
       admin_account = #{adminAccount,jdbcType=VARCHAR},
       admin_password = #{adminPassword,jdbcType=VARCHAR},
-      admin_role = #{adminRole,jdbcType=VARCHAR}
+      admin_role = #{adminRole,jdbcType=VARCHAR},
+      admin_useful = #{adminUseful,jdbcType=BIT}
     where admin_id = #{adminId,jdbcType=VARCHAR}
   </update>
 </mapper>

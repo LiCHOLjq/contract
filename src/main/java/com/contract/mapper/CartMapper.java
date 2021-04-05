@@ -1,7 +1,9 @@
 package com.contract.mapper;
 
 import com.contract.domain.Cart;
+import org.apache.ibatis.annotations.Mapper;
 
+@Mapper
 public interface CartMapper {
     int deleteByPrimaryKey(String cartId);
 

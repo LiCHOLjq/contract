@@ -1,7 +1,9 @@
 package com.contract.mapper;
 
 import com.contract.domain.Log;
+import org.apache.ibatis.annotations.Mapper;
 
+@Mapper
 public interface LogMapper {
     int deleteByPrimaryKey(String logId);
 

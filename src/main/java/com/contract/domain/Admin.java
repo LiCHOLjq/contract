@@ -11,6 +11,18 @@ public class Admin {
 
     private String adminRole;
 
+    private Boolean adminUseful;
+
+    private Dictionary adminRoleObj;
+
+    public Dictionary getAdminRoleObj() {
+        return adminRoleObj;
+    }
+
+    public void setAdminRoleObj(Dictionary adminRoleObj) {
+        this.adminRoleObj = adminRoleObj;
+    }
+
     public String getAdminId() {
         return adminId;
     }
@@ -49,5 +61,13 @@ public class Admin {
 
     public void setAdminRole(String adminRole) {
         this.adminRole = adminRole == null ? null : adminRole.trim();
+    }
+
+    public Boolean getAdminUseful() {
+        return adminUseful;
+    }
+
+    public void setAdminUseful(Boolean adminUseful) {
+        this.adminUseful = adminUseful;
     }
 }

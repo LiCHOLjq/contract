@@ -1,5 +1,7 @@
 package com.contract.domain;
 
+import java.util.List;
+
 public class Power {
     private String powerId;
 
@@ -12,6 +14,8 @@ public class Power {
     private String powerFather;
 
     private String powerIcon;
+
+    private List<Power> childrenPowerList;
 
     public String getPowerId() {
         return powerId;
@@ -59,5 +63,13 @@ public class Power {
 
     public void setPowerIcon(String powerIcon) {
         this.powerIcon = powerIcon == null ? null : powerIcon.trim();
+    }
+
+    public List<Power> getChildrenPowerList() {
+        return childrenPowerList;
+    }
+
+    public void setChildrenPowerList(List<Power> childrenPowerList) {
+        this.childrenPowerList = childrenPowerList;
     }
 }

@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 阿里云小霸王
+ Source Server         : 本地数据库
  Source Server Type    : MySQL
  Source Server Version : 80020
- Source Host           : 47.100.92.179:3306
+ Source Host           : localhost:3306
  Source Schema         : contract
 
  Target Server Type    : MySQL
  Target Server Version : 80020
  File Encoding         : 65001
 
- Date: 05/04/2021 20:16:58
+ Date: 06/04/2021 00:36:19
 */
 
 SET NAMES utf8mb4;
@@ -27,13 +27,14 @@ CREATE TABLE `admin`  (
   `admin_account` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户账号',
   `admin_password` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密码',
   `admin_role` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户角色 外键-dictionary',
+  `admin_useful` tinyint(1) NULL DEFAULT NULL COMMENT '用户可用性',
   PRIMARY KEY (`admin_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of admin
 -- ----------------------------
-INSERT INTO `admin` VALUES ('admin', '有点脑残的管理员', 'admin', 'e10adc3949ba59abbe56e057f20f883e', 'admin_role_master');
+INSERT INTO `admin` VALUES ('admin', '有点脑残的管理员', 'admin', 'e10adc3949ba59abbe56e057f20f883e', 'admin_role_master', 1);
 
 -- ----------------------------
 -- Table structure for agreement
@@ -223,7 +224,7 @@ CREATE TABLE `product`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `share`;
 CREATE TABLE `share`  (
-  `share_id` int(0) NOT NULL COMMENT 'UUID',
+  `share_id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'UUID',
   `share_admin` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '分享人',
   `share_type` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '分享类型',
   `share_begin_date` datetime(0) NULL DEFAULT NULL COMMENT '分享开始时间',

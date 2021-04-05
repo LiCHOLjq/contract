@@ -18,6 +18,13 @@
     from power
     where power_id = #{powerId,jdbcType=VARCHAR}
   </select>
+  <select id="selectByAdminRole" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+     p.power_id, power_name, power_router, power_level, power_father,power_icon
+    from power p
+    left join power_role pr on pr.power_id = p.power_id
+    where pr.role_id = #{roleId,jdbcType=VARCHAR}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from power
     where power_id = #{powerId,jdbcType=VARCHAR}

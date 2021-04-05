@@ -3,7 +3,7 @@ package com.contract.domain;
 import java.util.Date;
 
 public class Share {
-    private Integer shareId;
+    private String shareId;
 
     private String shareAdmin;
 
@@ -19,12 +19,12 @@ public class Share {
 
     private Boolean shareDelete;
 
-    public Integer getShareId() {
+    public String getShareId() {
         return shareId;
     }
 
-    public void setShareId(Integer shareId) {
-        this.shareId = shareId;
+    public void setShareId(String shareId) {
+        this.shareId = shareId == null ? null : shareId.trim();
     }
 
     public String getShareAdmin() {
