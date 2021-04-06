@@ -20,11 +20,17 @@ public interface AdminMapper {
 
     Admin selectByAccountKeyHasPassword(String adminAccount);
 
-    List<Admin> selectBySearch(@Param("admin")Admin admin);
+    List<Admin> selectBySearch(@Param("admin") Admin admin);
 
-    int selectBySearchCount(@Param("admin")Admin admin);
+    int selectBySearchCount(@Param("admin") Admin admin);
 
     int updateByPrimaryKeySelective(Admin record);
 
     int updateByPrimaryKey(Admin record);
+    //===========
+    int insertList(List<Admin> adminList);
+    Admin selectByAccountExceptSelf(String adminId, String adminAccount);
+
+    List<Admin> selectAll();
+
 }

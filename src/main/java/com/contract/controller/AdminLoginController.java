@@ -42,7 +42,7 @@ public class AdminLoginController {
             String token = TokenUtil.getAdminToken(accessAdmin,10800);
             logService.addLoginLog(accessAdmin.getAdminId(),httpServletRequest);
             JSONObject object = new JSONObject();
-            accessAdmin.setAdminPassword(null);
+            //accessAdmin.setAdminPassword(null);
             object.put("admin", accessAdmin);
             object.put("token", token);
             result.put("code", 200);

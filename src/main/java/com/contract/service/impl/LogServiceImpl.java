@@ -6,6 +6,7 @@ import com.contract.domain.Log;
 import com.contract.mapper.AdminMapper;
 import com.contract.mapper.LogMapper;
 import com.contract.service.LogService;
+import com.contract.util.PageBean;
 import com.contract.util.TokenUtil;
 import com.contract.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +38,14 @@ public class LogServiceImpl implements LogService {
         logMapper.insertSelective(log);
     }
 
-    public void addLog(HttpServletRequest httpServletRequest, Log log) {
+    public void setLogBase(HttpServletRequest httpServletRequest, Log log){
+        log.setLogRemoteIp(httpServletRequest.getRemoteAddr());
+        log.setLogUserAgent(httpServletRequest.getHeader("User-Agent"));
+        log.setLogXRequestedWidth(httpServletRequest.getHeader("X-Requested-Width"));
+    }
 
+
+    public void setLogAdminByToken(HttpServletRequest httpServletRequest, Log log) {
         try {
             String token = httpServletRequest.getHeader("token");
             String adminId = null;
@@ -46,45 +53,149 @@ public class LogServiceImpl implements LogService {
             if(adminId != null&&!"".equals(adminId)) {
                 log.setLogAdmin(adminId);
             }
-            log.setLogRemoteIp(httpServletRequest.getRemoteAddr());
-            log.setLogUserAgent(httpServletRequest.getHeader("User-Agent"));
-            log.setLogXRequestedWidth(httpServletRequest.getHeader("X-Requested-Width"));
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-        addLog(log);
+
     }
-
-    public void addLog(String adminId, HttpServletRequest httpServletRequest, Log log) {
-
+    public void setLogShareByToken(HttpServletRequest httpServletRequest, Log log) {
         try {
-//            String token = httpServletRequest.getHeader("token");
-//            String adminId = null;
-//            adminId = TokenUtil.getUserId(token);
-//            if(adminId != null&&!"".equals(adminId)) {
+            String token = httpServletRequest.getHeader("token");
+            String adminId = null;
+            adminId = TokenUtil.getId(token);
+            if(adminId != null&&!"".equals(adminId)) {
+                log.setLogMessage3(adminId);
+            }
 
-//            }
-//            String adminRoleGroupId = TokenUtil.getAdminRoleGroupId(token);
-//            if(adminRoleGroupId != null&&!"".equals(adminRoleGroupId)){
-//                log.setLogAdminRoleGroup(adminRoleGroupId);
-//            }
-            log.setLogAdmin(adminId);
-            log.setLogRemoteIp(httpServletRequest.getRemoteAddr());
-            log.setLogUserAgent(httpServletRequest.getHeader("User-Agent"));
-            log.setLogXRequestedWidth(httpServletRequest.getHeader("X-Requested-Width"));
         } catch (Exception e) {
             e.printStackTrace();
         }
-        addLog(log);
+
     }
+
 
     @Override
     public void addLoginLog(String adminId, HttpServletRequest httpServletRequest) {
         Log log = new Log();
         log.setLogType("log_type_login");
-        addLog(adminId,httpServletRequest,log);
-
-
+        log.setLogAdmin(adminId);
+        setLogBase(httpServletRequest,log);
+        addLog(log);
     }
 
+
+    @Override
+    public void addShareAccessLog(String shareId, HttpServletRequest httpServletRequest) {
+        Log log = new Log();
+        log.setLogType("log_type_share_access");
+        log.setLogMessage3(shareId);
+        setLogBase(httpServletRequest,log);
+        addLog(log);
+    }
+
+    @Override
+    public void addShareUploadLog(String agreementId, String agreementName,  HttpServletRequest httpServletRequest) {
+        Log log = new Log();
+        log.setLogType("log_type_share_upload");
+        log.setLogMessage1(agreementId);
+        log.setLogMessage2(agreementName);
+        setLogShareByToken(httpServletRequest,log);
+        setLogBase(httpServletRequest,log);
+        addLog(log);
+    }
+
+    @Override
+    public void addShareDownloadLog(String agreementId, String agreementName,  HttpServletRequest httpServletRequest) {
+        Log log = new Log();
+        log.setLogType("log_type_share_download");
+        log.setLogMessage1(agreementId);
+        log.setLogMessage2(agreementName);
+        setLogShareByToken(httpServletRequest,log);
+        setLogBase(httpServletRequest,log);
+        addLog(log);
+    }
+
+    @Override
+    public void addShareAddLog(String shareId, HttpServletRequest httpServletRequest) {
+        Log log = new Log();
+        log.setLogType("log_type_share_add");
+        log.setLogMessage3(shareId);
+        setLogAdminByToken(httpServletRequest,log);
+        setLogBase(httpServletRequest,log);
+        addLog(log);
+    }
+
+    @Override
+    public void addShareUpdateLog(String shareId, HttpServletRequest httpServletRequest) {
+        Log log = new Log();
+        log.setLogType("log_type_share_update");
+        log.setLogMessage3(shareId);
+        setLogAdminByToken(httpServletRequest,log);
+        setLogBase(httpServletRequest,log);
+        addLog(log);
+    }
+
+    @Override
+    public void addShareDeleteLog(String shareId, HttpServletRequest httpServletRequest) {
+        Log log = new Log();
+        log.setLogType("log_type_share_delete");
+        log.setLogMessage3(shareId);
+        setLogAdminByToken(httpServletRequest,log);
+        setLogBase(httpServletRequest,log);
+        addLog(log);
+    }
+
+    @Override
+    public void addAgreementAddLog(String agreementId, String agreementName, HttpServletRequest httpServletRequest) {
+        Log log = new Log();
+        log.setLogType("log_type_agreement_add");
+        log.setLogMessage1(agreementId);
+        log.setLogMessage2(agreementName);
+        setLogAdminByToken(httpServletRequest,log);
+        setLogBase(httpServletRequest,log);
+        addLog(log);
+    }
+
+    @Override
+    public void addAgreementUpdateLog(String agreementId, String agreementName, HttpServletRequest httpServletRequest) {
+        Log log = new Log();
+        log.setLogType("log_type_agreement_update");
+        log.setLogMessage1(agreementId);
+        log.setLogMessage2(agreementName);
+        setLogAdminByToken(httpServletRequest,log);
+        setLogBase(httpServletRequest,log);
+        addLog(log);
+    }
+
+    @Override
+    public void addAgreementDeleteLog(String agreementId, String agreementName, HttpServletRequest httpServletRequest) {
+        Log log = new Log();
+        log.setLogType("log_type_agreement_delete");
+        log.setLogMessage1(agreementId);
+        log.setLogMessage2(agreementName);
+        setLogAdminByToken(httpServletRequest,log);
+        setLogBase(httpServletRequest,log);
+        addLog(log);
+    }
+
+    @Override
+    public void deleteAll() {
+        logMapper.deleteAll();
+    }
+
+    @Override
+    public void deleteById(String logId) {
+        logMapper.deleteByPrimaryKey(logId);
+    }
+
+    @Override
+    public PageBean<Log> getLogBySearch(Log log, int currentPage, int pageSize) {
+        return null;
+    }
+
+    @Override
+    public List<Log> getAllLogExcel() {
+        return null;
+    }
 }

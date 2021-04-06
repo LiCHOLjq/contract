@@ -10,7 +10,7 @@
       <el-form-item label="角色：">
         <el-select v-model="adminSelectForm.adminRole" placeholder="选择角色" style="width: 120px;">
           <el-option label="全部" value=""></el-option>
-          <el-option v-for="item in roleSelectiveList" :key="item.roleId" :label="item.roleName" :value="item.roleId"></el-option>
+          <el-option v-for="item in roleSelectiveList" :key="item.dictionaryId" :label="item.dictionaryName" :value="item.dictionaryId"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="状态：">
@@ -84,7 +84,7 @@
           </el-form-item>
           <el-form-item label="姓名：" :label-width="adminAddUpdForm.formLabelWidth">
             <el-select v-model="adminAddUpdForm.adminRole" placeholder="选择角色">
-              <el-option v-for="item in roleSelectiveList" :key="item.roleId" :label="item.roleName" :value="item.roleId"></el-option>
+              <el-option v-for="item in roleSelectiveList" :key="item.dictionaryId" :label="item.dictionaryName" :value="item.dictionaryId"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="状态：" :label-width="adminAddUpdForm.formLabelWidth">
@@ -161,7 +161,7 @@ export default {
       // role可选列表
       roleSelectiveList: [],
       // collage可选列表
-      groupSelectiveList: [],
+      // groupSelectiveList: [],
       // 用户表数据
       adminTableData: [],
       // 用户表view页面配置
@@ -261,10 +261,18 @@ export default {
     },
     // 删除用户请求
     handleDeleteAdmin(index, row) {
-      this.adminAddUpdForm.adminId = row.adminId;
-      // this.adminAddUpdForm.adminAccount = row.adminAccount;
-      this.adminAddUpdForm.submitState = "Del";
-      this.alterAdmin();
+      this.$confirm('此操作将永久删除该用户所有相关记录，包括用户已上传的合同，此操作不可恢复，如果您删除的是自己，那么删除之后您将无法在进行任何操作，您确定删除此用户吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.adminAddUpdForm.adminId = row.adminId;
+        // this.adminAddUpdForm.adminAccount = row.adminAccount;
+        this.adminAddUpdForm.submitState = "Del";
+        this.alterAdmin();
+      }).catch(() => {
+
+      });
     },
 
     handleAdminTableSizeChange(val) {
@@ -277,6 +285,115 @@ export default {
       this.initAdminTable();
     },
 
+    initRoleList() {
+      const loading = this.$loading(this.$store.state.loadingOption1);
+      this.axios
+        .post("/dictionary/getDictionaryItems", {
+          params: {
+            dictionaryType: "ADMIN_ROLE"
+          }
+        }, { headers: { token: this.token } })
+        .then(res => {
+          if (res.data.code === 200) {
+            this.roleSelectiveList = res.data.object;
+          } else if (res.data.code == 401) {
+            this.$message({
+              showClose: true,
+              message: res.data.data,
+              type: "error"
+            });
+            this.$router.push({ path: "/login" });
+          } else {
+            this.$alert(res.data.data, "错误", {
+              confirmButtonText: "确定",
+              type: "error",
+              callback: action => {
+
+              }
+            });
+          }
+          loading.close();
+        });
+    },
+    // 修改用户信息请求
+    alterAdmin() {
+      const loading = this.$loading(this.$store.state.loadingOption2);
+      this.axios.post("/admin/alterAdmin", {
+        params: {
+          admin: this.adminAddUpdForm
+        }
+      }, { headers: { token: this.token } }).then(res => {
+        if (res.data.code === 200) {
+          this.initAdminTable();
+          this.$message({
+            showClose: true,
+            message: res.data.data,
+            type: "success"
+          });
+          this.adminAddUpdForm.visible = false;
+        } else if (res.data.code == 401) {
+          this.$message({
+            showClose: true,
+            message: res.data.data,
+            type: "error"
+          });
+          this.$router.push({ path: "/login" });
+        } else if (res.data.code == 402) {
+          this.$message({
+            showClose: true,
+            message: res.data.data,
+            type: "error"
+          });
+          this.$router.push({ path: "/role" });
+        } else {
+          this.$alert(res.data.data, "错误", {
+            confirmButtonText: "确定",
+            type: "error",
+            callback: action => {
+            }
+          });
+        }
+        loading.close();
+      });
+    },
+    handleResetPassword(index, row) {
+      const loading = this.$loading(this.$store.state.loadingOption2);
+      this.axios.post("/admin/resetAdminPassword", {
+        params: {
+          admin: row
+        }
+      }, { headers: { token: this.token } }).then(res => {
+        if (res.data.code === 200) {
+          this.initAdminTable();
+          this.$message({
+            showClose: true,
+            message: res.data.data,
+            type: "success"
+          });
+        } else if (res.data.code == 401) {
+          this.$message({
+            showClose: true,
+            message: res.data.data,
+            type: "error"
+          });
+          this.$router.push({ path: "/login" });
+        } else if (res.data.code == 402) {
+          this.$message({
+            showClose: true,
+            message: res.data.data,
+            type: "error"
+          });
+          this.$router.push({ path: "/role" });
+        } else {
+          this.$message({
+            showClose: true,
+            message: res.data.data,
+            type: "error"
+          });
+        }
+        loading.close();
+      });
+    },
 
 
     // change() {
@@ -413,85 +530,7 @@ export default {
 
 
 
-    // // 修改用户信息请求
-    // alterAdmin() {
-    //   const loading = this.$loading(this.$store.state.loadingOption2);
-    //   this.axios.post("/admin/alterAdmin", {
-    //     params: {
-    //       admin: this.adminAddUpdForm
-    //     }
-    //   }, { headers: { token: this.token } }).then(res => {
-    //     if (res.data.code === 200) {
-    //       this.initAdminTable();
-    //       this.$message({
-    //         showClose: true,
-    //         message: res.data.data,
-    //         type: "success"
-    //       });
-    //       this.adminAddUpdForm.visible = false;
-    //     } else if (res.data.code == 401) {
-    //       this.$message({
-    //         showClose: true,
-    //         message: res.data.data,
-    //         type: "error"
-    //       });
-    //       this.$router.push({ path: "/login" });
-    //     } else if (res.data.code == 402) {
-    //       this.$message({
-    //         showClose: true,
-    //         message: res.data.data,
-    //         type: "error"
-    //       });
-    //       this.$router.push({ path: "/role" });
-    //     } else {
-    //       this.$alert(res.data.data, "错误", {
-    //         confirmButtonText: "确定",
-    //         type: "error",
-    //         callback: action => {
-    //         }
-    //       });
-    //     }
-    //     loading.close();
-    //   });
-    // },
-    // handleResetPassword(index, row) {
-    //   const loading = this.$loading(this.$store.state.loadingOption2);
-    //   this.axios.post("/admin/resetAdminPassword", {
-    //     params: {
-    //       admin: row
-    //     }
-    //   }, { headers: { token: this.token } }).then(res => {
-    //     if (res.data.code === 200) {
-    //       this.initAdminTable();
-    //       this.$message({
-    //         showClose: true,
-    //         message: res.data.data,
-    //         type: "success"
-    //       });
-    //     } else if (res.data.code == 401) {
-    //       this.$message({
-    //         showClose: true,
-    //         message: res.data.data,
-    //         type: "error"
-    //       });
-    //       this.$router.push({ path: "/login" });
-    //     } else if (res.data.code == 402) {
-    //       this.$message({
-    //         showClose: true,
-    //         message: res.data.data,
-    //         type: "error"
-    //       });
-    //       this.$router.push({ path: "/role" });
-    //     } else {
-    //       this.$message({
-    //         showClose: true,
-    //         message: res.data.data,
-    //         type: "error"
-    //       });
-    //     }
-    //     loading.close();
-    //   });
-    // },
+
     // handleInitAdminRoleGroup(index, row) {
     //   this.adminRoleGroupForm.visible = true;
     //   this.adminRoleGroupAddUpdForm.adminId = row.adminId;

@@ -15,6 +15,26 @@
     from dictionary_type
     where type_id = #{typeId,jdbcType=VARCHAR}
   </select>
+  <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from dictionary_type
+    where type_id != #{typeId,jdbcType=VARCHAR} and type_name = #{typeName,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from dictionary_type
+  </select>
+  <select id="selectAllEdit"  resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from dictionary_type
+    where type_edit = 1
+  </select>
+  <select id="selectAllCount" resultType="int">
+    select count(*) from dictionary_type
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from dictionary_type
     where type_id = #{typeId,jdbcType=VARCHAR}
@@ -24,6 +44,13 @@
       )
     values (#{typeId,jdbcType=VARCHAR}, #{typeName,jdbcType=VARCHAR}, #{typeEdit,jdbcType=BIT}
       )
+  </insert>
+  <insert id="insertList" parameterType="java.util.List">
+    insert into dictionary_type (type_id, type_name, type_edit)
+    values
+    <foreach collection="list" item="item" separator="," close=";">
+    (#{item.typeId,jdbcType=VARCHAR}, #{item.typeName,jdbcType=VARCHAR}, #{item.typeEdit,jdbcType=BIT})
+    </foreach>
   </insert>
   <insert id="insertSelective" parameterType="com.contract.domain.DictionaryType">
     insert into dictionary_type

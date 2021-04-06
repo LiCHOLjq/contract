@@ -36,6 +36,9 @@
     delete from log
     where log_id = #{logId,jdbcType=VARCHAR}
   </delete>
+  <delete id="deleteAll" >
+    delete from log
+  </delete>
   <insert id="insert" parameterType="com.contract.domain.Log">
     insert into log (log_id, log_date, log_admin, 
       log_admin_name, log_type, log_remote_ip, 

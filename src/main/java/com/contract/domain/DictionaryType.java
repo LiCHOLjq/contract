@@ -1,11 +1,24 @@
 package com.contract.domain;
 
-public class DictionaryType {
-    private String typeId;
+import cn.afterturn.easypoi.excel.annotation.Excel;
 
+public class DictionaryType {
+    @Excel(name = "ID",orderNum = "0", width = 20)
+    private String typeId;
+    @Excel(name = "字典类别名称",orderNum = "1", width = 20)
     private String typeName;
 
     private Boolean typeEdit;
+
+    private String submitState;
+
+    public String getSubmitState() {
+        return submitState;
+    }
+
+    public void setSubmitState(String submitState) {
+        this.submitState = submitState;
+    }
 
     public String getTypeId() {
         return typeId;

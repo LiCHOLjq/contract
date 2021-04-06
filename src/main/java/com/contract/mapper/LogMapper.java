@@ -7,6 +7,8 @@ import org.apache.ibatis.annotations.Mapper;
 public interface LogMapper {
     int deleteByPrimaryKey(String logId);
 
+    int deleteAll();
+
     int insert(Log record);
 
     int insertSelective(Log record);

@@ -9,16 +9,61 @@
     <result column="dictionary_type" jdbcType="VARCHAR" property="dictionaryType" />
     <result column="dictionary_father" jdbcType="VARCHAR" property="dictionaryFather" />
   </resultMap>
+  <sql id="Base_Where_List">
+    where 1=1
+    <if test="dictionary.dictionaryId != null and dictionary.dictionaryId != '' ">
+      and dictionary_id = #{dictionary.dictionaryId,jdbcType=VARCHAR}
+    </if>
+    <if test="dictionary.dictionaryCode != null and dictionary.dictionaryCode != '' ">
+      and dictionary_code = #{dictionary.dictionaryCode,jdbcType=VARCHAR}
+    </if>
+    <if test="dictionary.dictionaryName != null and dictionary.dictionaryName != '' ">
+      and dictionary_name = #{dictionary.dictionaryName,jdbcType=VARCHAR}
+    </if>
+    <if test="dictionary.dictionaryType != null and dictionary.dictionaryType != '' ">
+      and dictionary_type = #{dictionary.dictionaryType,jdbcType=VARCHAR}
+    </if>
+    <if test="dictionary.dictionaryFather != null and dictionary.dictionaryFather != '' ">
+      and dictionary_father = #{dictionary.dictionaryFather,jdbcType=VARCHAR}
+    </if>
+  </sql>
+
   <sql id="Base_Column_List">
     dictionary_id, dictionary_code, dictionary_sort, dictionary_name, dictionary_type, 
     dictionary_father
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from dictionary
     where dictionary_id = #{dictionaryId,jdbcType=VARCHAR}
   </select>
+  <select id="selectByType" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from dictionary
+    where dictionary_type = #{dictionaryType,jdbcType=VARCHAR}
+    order by dictionary_sort
+  </select>
+  <select id="selectBySearch" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from dictionary
+    <include refid="Base_Where_List" />
+  </select>
+
+  <select id="selectAllEdit" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from dictionary
+    left join dictionary_type on dictionary_type = type_id
+    where type_Edit = 1
+  </select>
+  <select id="selectBySearchCount" resultType="int">
+    select count(*) from dictionary
+    <include refid="Base_Where_List" />
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from dictionary
     where dictionary_id = #{dictionaryId,jdbcType=VARCHAR}
@@ -30,6 +75,13 @@
     values (#{dictionaryId,jdbcType=VARCHAR}, #{dictionaryCode,jdbcType=VARCHAR}, #{dictionarySort,jdbcType=INTEGER}, 
       #{dictionaryName,jdbcType=VARCHAR}, #{dictionaryType,jdbcType=VARCHAR}, #{dictionaryFather,jdbcType=VARCHAR}
       )
+  </insert>
+  <insert id="insertList" parameterType="java.util.List">
+    insert into dictionary (dictionary_id, dictionary_code, dictionary_sort, dictionary_name, dictionary_type, dictionary_father)
+    values
+    <foreach collection="list" item="item" separator="," close=";">
+    (#{item.dictionaryId,jdbcType=VARCHAR}, #{item.dictionaryCode,jdbcType=VARCHAR}, #{item.dictionarySort,jdbcType=INTEGER}, #{item.dictionaryName,jdbcType=VARCHAR}, #{item.dictionaryType,jdbcType=VARCHAR}, #{item.dictionaryFather,jdbcType=VARCHAR})
+    </foreach>
   </insert>
   <insert id="insertSelective" parameterType="com.contract.domain.Dictionary">
     insert into dictionary

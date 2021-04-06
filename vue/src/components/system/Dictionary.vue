@@ -622,9 +622,19 @@ export default {
       this.dictionaryTypeAddUpdForm.submitState = "Upd";
     },
     handleDelDictionaryType(index, row) {
-      this.dictionaryTypeAddUpdForm.typeId = row.typeId;
-      this.dictionaryTypeAddUpdForm.submitState = "Del";
-      this.altherDictionaryType();
+      this.$confirm('此操作必将导致系统不稳定，请在技术人员指导下进行操作，您确定删除此字典类别吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.dictionaryTypeAddUpdForm.typeId = row.typeId;
+        this.dictionaryTypeAddUpdForm.submitState = "Del";
+        this.altherDictionaryType();
+      }).catch(() => {
+
+      });
+
+
     },
     altherDictionaryType() {
       const loading = this.$loading(this.$store.state.loadingOption2);
@@ -677,6 +687,8 @@ export default {
       this.initDictionaryType();
     },
     handleInitDictionary(index, row) {
+
+
       this.dictionarySelectForm.typeId = row.typeId;
       this.dictionaryPage.current = 1;
       this.initDictionary();
@@ -755,10 +767,19 @@ export default {
       this.dictionaryAddUpdForm.submitState = "Upd";
     },
     handleDelDictionary(index, row) {
-      this.dictionaryAddUpdForm.dictionaryId = row.dictionaryId;
-      this.dictionaryAddUpdForm.submitState = "Del";
-      const loading = this.$loading(this.$store.state.loadingOption2);
-      this.altherDictionary();
+
+      this.$confirm('此操作必将导致系统不稳定，请在技术人员指导下进行操作，您确定删除此字典吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.dictionaryAddUpdForm.dictionaryId = row.dictionaryId;
+        this.dictionaryAddUpdForm.submitState = "Del";
+        const loading = this.$loading(this.$store.state.loadingOption2);
+        this.altherDictionary();
+      }).catch(() => {
+
+      });
     },
 
     handleDictionarySizeChange(val) {

@@ -13,10 +13,10 @@ import Home from '../components/Home.vue';
 import Login from '../components/Login.vue';
 import Index from '../components/Index.vue';
 import Admin from '../components/system/Admin.vue';
-
+import Dictionary from '../components/system/Dictionary.vue';
 
 // import Role from '../components/Role.vue';
-// import Dictionary from '../components/system/Dictionary.vue';
+// 
 // import Group from '../components/system/Group.vue';
 // import AdminCheck from '../components/system/AdminCheck.vue';
 // import ProjectList from '../components/plan/ProjectList.vue';
@@ -38,9 +38,9 @@ const routes = [
         children: [
             { path: 'index', component: Index },
             { path: 'admin', component: Admin },
+            { path: 'dictionary', component: Dictionary },
 
 
-            // { path: 'dictionary', component: Dictionary },
             // { path: 'group', component: Group },
             // { path: 'admin/apply', component: AdminCheck },
             // { path: 'project/list', component: ProjectList },

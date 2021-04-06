@@ -63,17 +63,33 @@
     from admin
     where admin_id = #{adminId,jdbcType=VARCHAR}
   </select>
+  <select id="selectByAccountExceptSelf" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from admin
+    where admin_account = #{adminAccount,jdbcType=VARCHAR} and admin_id != #{adminId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from admin
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from admin
     where admin_id = #{adminId,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.contract.domain.Admin">
-    insert into admin (admin_id, admin_name, admin_account, 
+    insert into admin (admin_id, admin_name, admin_account,
       admin_password, admin_role, admin_useful
       )
-    values (#{adminId,jdbcType=VARCHAR}, #{adminName,jdbcType=VARCHAR}, #{adminAccount,jdbcType=VARCHAR}, 
+    values (#{adminId,jdbcType=VARCHAR}, #{adminName,jdbcType=VARCHAR}, #{adminAccount,jdbcType=VARCHAR},
       #{adminPassword,jdbcType=VARCHAR}, #{adminRole,jdbcType=VARCHAR}, #{adminUseful,jdbcType=BIT}
       )
+  </insert>
+  <insert id="insertList" parameterType="java.util.List">
+    insert into admin (admin_id, admin_name, admin_account, admin_password, admin_role, admin_useful ) values
+    <foreach collection="list" item="item" separator="," close=";">
+      (#{item.adminId,jdbcType=VARCHAR}, #{item.adminName,jdbcType=VARCHAR}, #{item.adminAccount,jdbcType=VARCHAR}, #{item.adminPassword,jdbcType=VARCHAR}, #{item.adminRole,jdbcType=VARCHAR}, #{item.adminUseful,jdbcType=BIT})  </foreach>
   </insert>
   <insert id="insertSelective" parameterType="com.contract.domain.Admin">
     insert into admin
