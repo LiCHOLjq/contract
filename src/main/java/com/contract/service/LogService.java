@@ -25,5 +25,5 @@ public interface LogService {
     void deleteAll();
     void deleteById(String logId);
     PageBean<Log> getLogBySearch(Log log, int currentPage, int pageSize);
-    List<Log> getAllLogExcel();
+    List<Log> getAllLogExcel(Log log);
 }

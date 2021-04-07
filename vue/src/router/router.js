@@ -14,7 +14,7 @@ import Login from '../components/Login.vue';
 import Index from '../components/Index.vue';
 import Admin from '../components/system/Admin.vue';
 import Dictionary from '../components/system/Dictionary.vue';
-
+import Log from '../components/system/Log.vue';
 // import Role from '../components/Role.vue';
 // 
 // import Group from '../components/system/Group.vue';
@@ -39,7 +39,7 @@ const routes = [
             { path: 'index', component: Index },
             { path: 'admin', component: Admin },
             { path: 'dictionary', component: Dictionary },
-
+            { path: 'log', component: Log },
 
             // { path: 'group', component: Group },
             // { path: 'admin/apply', component: AdminCheck },

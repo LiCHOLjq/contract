@@ -17,6 +17,30 @@
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.contract.domain.Log">
     <result column="log_long_message" jdbcType="LONGVARCHAR" property="logLongMessage" />
   </resultMap>
+
+  <sql id="Base_Where_List">
+    where 1=1
+    <if test="log.logAdmin != null and log.logAdmin != ''">
+      and( log_admin_name LIKE concat('%', concat(#{log.logAdmin,jdbcType=VARCHAR}, '%'))
+      or log_admin = #{log.logAdmin,jdbcType=VARCHAR})
+    </if>
+    <if test="log.logRemoteIp != null and log.logRemoteIp != ''">
+      and log_remote_ip = #{log.logRemoteIp,jdbcType=VARCHAR}
+    </if>
+    <if test="log.logType != null and log.logType != ''">
+      and log_type = #{log.logType,jdbcType=VARCHAR}
+    </if>
+    <if test="log.logMessage2 != null and log.logMessage2 != ''">
+      and log_message2 LIKE concat('%', concat(#{log.logMessage2,jdbcType=VARCHAR}, '%'))
+    </if>
+    <if test="log.logDateBegin != null and log.logDateBegin != ''">
+      and <![CDATA[ DATE_FORMAT(log_date, '%Y-%m-%d %H:%T:%s') >=  DATE_FORMAT(#{log.logDateBegin}, '%Y-%m-%d %H:%T:%s')   ]]>
+    </if>
+    <if test="log.logDateEnd != null and log.logDateEnd != ''">
+      and <![CDATA[ DATE_FORMAT(log_date, '%Y-%m-%d %H:%T:%s') <  DATE_FORMAT(#{log.logDateEnd}, '%Y-%m-%d %H:%T:%s')   ]]>
+    </if>
+  </sql>
+
   <sql id="Base_Column_List">
     log_id, log_date, log_admin, log_admin_name, log_type, log_remote_ip, log_message1, 
     log_message2, log_message3, log_user_agent, log_x_requested_width
@@ -32,6 +56,30 @@
     from log
     where log_id = #{logId,jdbcType=VARCHAR}
   </select>
+  <select id="selectAll" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from log
+  </select>
+  <select id="selectBySearch" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from log
+    <include refid="Base_Where_List" />
+
+      order by log_date desc
+
+  </select>
+  <select id="selectBySearchCount"  resultType="int">
+    select count(*)
+    from log
+    <include refid="Base_Where_List" />
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from log
     where log_id = #{logId,jdbcType=VARCHAR}

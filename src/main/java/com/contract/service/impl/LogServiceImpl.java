@@ -2,17 +2,21 @@ package com.contract.service.impl;
 
 
 
+import com.contract.domain.Admin;
 import com.contract.domain.Log;
 import com.contract.mapper.AdminMapper;
+import com.contract.mapper.DictionaryMapper;
 import com.contract.mapper.LogMapper;
 import com.contract.service.LogService;
 import com.contract.util.PageBean;
 import com.contract.util.TokenUtil;
 import com.contract.util.UUIDUtil;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,6 +30,9 @@ public class LogServiceImpl implements LogService {
 
     @Autowired
     private LogMapper logMapper;
+
+    @Autowired
+    private DictionaryMapper dictionaryMapper;
 
     @Override
     public void addLog(Log log) {
@@ -51,7 +58,9 @@ public class LogServiceImpl implements LogService {
             String adminId = null;
             adminId = TokenUtil.getId(token);
             if(adminId != null&&!"".equals(adminId)) {
-                log.setLogAdmin(adminId);
+                Admin admin = adminMapper.selectByPrimaryKey(adminId);
+                log.setLogAdmin(admin.getAdminAccount());
+                log.setLogAdminName(admin.getAdminName());
             }
 
         } catch (Exception e) {
@@ -79,7 +88,9 @@ public class LogServiceImpl implements LogService {
     public void addLoginLog(String adminId, HttpServletRequest httpServletRequest) {
         Log log = new Log();
         log.setLogType("log_type_login");
-        log.setLogAdmin(adminId);
+        Admin admin = adminMapper.selectByPrimaryKey(adminId);
+        log.setLogAdmin(admin.getAdminAccount());
+        log.setLogAdminName(admin.getAdminName());
         setLogBase(httpServletRequest,log);
         addLog(log);
     }
@@ -191,11 +202,37 @@ public class LogServiceImpl implements LogService {
 
     @Override
     public PageBean<Log> getLogBySearch(Log log, int currentPage, int pageSize) {
-        return null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            log.setLogDateBegin(sdf.parse(log.getLogDateBeginStr()));
+        } catch (ParseException e) {
+            log.setLogDateBegin(null);
+        }
+        try {
+            log.setLogDateEnd(sdf.parse(log.getLogDateEndStr()));
+        } catch (ParseException e) {
+            log.setLogDateEnd(null);
+        }
+        PageHelper.startPage(currentPage,pageSize);
+        List<Log> logList= logMapper.selectBySearch(log);
+        for (Log item : logList){
+            item.setLogDateStr(sdf.format(item.getLogDate()));
+            item.setLogTypeStr(dictionaryMapper.selectByPrimaryKey(item.getLogType()).getDictionaryName());
+        }
+        int countNums = logMapper.selectBySearchCount(log);
+        PageBean<Log> pageData = new PageBean<>(currentPage,pageSize,countNums);
+        pageData.setItems(logList);
+        return pageData;
     }
 
     @Override
-    public List<Log> getAllLogExcel() {
-        return null;
+    public List<Log> getAllLogExcel(Log log) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        List<Log> logList= logMapper.selectBySearch(log);
+        for (Log item : logList){
+            item.setLogDateStr(sdf.format(item.getLogDate()));
+            item.setLogTypeStr(dictionaryMapper.selectByPrimaryKey(item.getLogType()).getDictionaryName());
+        }
+        return logList;
     }
 }

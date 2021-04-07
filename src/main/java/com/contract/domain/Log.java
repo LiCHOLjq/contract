@@ -9,39 +9,80 @@ public class Log {
     private String logId;
 
     private Date logDate;
-    @Excel(name = "用户账号",orderNum = "0", width = 20)
+    @Excel(name = "用户账号",orderNum = "2", width = 20)
     private String logAdmin;
-    @Excel(name = "用户姓名",orderNum = "0", width = 20)
+    @Excel(name = "用户姓名",orderNum = "3", width = 20)
     private String logAdminName;
-    @Excel(name = "记录类型",orderNum = "0", width = 20)
+
     private String logType;
-    @Excel(name = "访问者IP",orderNum = "0", width = 20)
+    @Excel(name = "访问者IP",orderNum = "5", width = 20)
     private String logRemoteIp;
-    @Excel(name = "关联合同ID",orderNum = "0", width = 20)
+    @Excel(name = "关联合同ID",orderNum = "6", width = 20)
     private String logMessage1;
-    @Excel(name = "关联合同名称",orderNum = "0", width = 20)
+    @Excel(name = "关联合同名称",orderNum = "7", width = 20)
     private String logMessage2;
-    @Excel(name = "关联分享ID",orderNum = "0", width = 20)
+    @Excel(name = "关联分享ID",orderNum = "8", width = 20)
     private String logMessage3;
-    @Excel(name = "User-Agent",orderNum = "0", width = 20)
+    @Excel(name = "User-Agent",orderNum = "9", width = 20)
     private String logUserAgent;
-    @Excel(name = "X-Requested-Width",orderNum = "0", width = 20)
+    @Excel(name = "X-Requested-Width",orderNum = "10", width = 20)
     private String logXRequestedWidth;
 
     private String logLongMessage;
+    @Excel(name = "记录类型",orderNum = "4", width = 20)
+    private String logTypeStr;
 
-    @Excel(name = "时间",orderNum = "0", width = 20)
+    @Excel(name = "时间",orderNum = "1", width = 20)
     private String logDateStr;
 
-    private Admin logAdminObj;
+    private Date logDateBegin;
 
-    public Admin getLogAdminObj() {
-        return logAdminObj;
+    private Date logDateEnd;
+
+    private String logDateBeginStr;
+
+    private String logDateEndStr;
+
+    public String getLogTypeStr() {
+        return logTypeStr;
     }
 
-    public void setLogAdminObj(Admin logAdminObj) {
-        this.logAdminObj = logAdminObj;
+    public void setLogTypeStr(String logTypeStr) {
+        this.logTypeStr = logTypeStr;
     }
+
+    public Date getLogDateBegin() {
+        return logDateBegin;
+    }
+
+    public void setLogDateBegin(Date logDateBegin) {
+        this.logDateBegin = logDateBegin;
+    }
+
+    public Date getLogDateEnd() {
+        return logDateEnd;
+    }
+
+    public void setLogDateEnd(Date logDateEnd) {
+        this.logDateEnd = logDateEnd;
+    }
+
+    public String getLogDateBeginStr() {
+        return logDateBeginStr;
+    }
+
+    public void setLogDateBeginStr(String logDateBeginStr) {
+        this.logDateBeginStr = logDateBeginStr;
+    }
+
+    public String getLogDateEndStr() {
+        return logDateEndStr;
+    }
+
+    public void setLogDateEndStr(String logDateEndStr) {
+        this.logDateEndStr = logDateEndStr;
+    }
+
 
     public String getLogDateStr() {
         return logDateStr;

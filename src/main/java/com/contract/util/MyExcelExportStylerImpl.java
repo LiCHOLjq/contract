@@ -51,6 +51,7 @@ public class MyExcelExportStylerImpl extends AbstractExcelExportStyler implement
         if(titleStyle == null){
             Font font2 = this.workbook.createFont();
             font2.setBold(true);
+            font2.setColor(IndexedColors.WHITE.getIndex());
             titleStyle = workbook.createCellStyle();
             titleStyle.setFont(font2);
             titleStyle.setWrapText(true);
@@ -59,7 +60,7 @@ public class MyExcelExportStylerImpl extends AbstractExcelExportStyler implement
             // 靠上对齐
             titleStyle.setVerticalAlignment(VerticalAlignment.CENTER);
             titleStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-            titleStyle.setFillForegroundColor(IndexedColors.SKY_BLUE.getIndex());
+            titleStyle.setFillForegroundColor(IndexedColors.DARK_RED.getIndex());
             //下边框
             titleStyle.setBorderBottom(BorderStyle.THIN);
             //左边框
