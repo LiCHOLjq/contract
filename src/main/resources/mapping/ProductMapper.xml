@@ -7,9 +7,10 @@
     <result column="product_type" jdbcType="VARCHAR" property="productType" />
     <result column="product_model" jdbcType="VARCHAR" property="productModel" />
     <result column="product_number" jdbcType="DOUBLE" property="productNumber" />
+    <result column="product_sort" jdbcType="INTEGER" property="productSort" />
   </resultMap>
   <sql id="Base_Column_List">
-    product_id, product_agreement, product_type, product_model, product_number
+    product_id, product_agreement, product_type, product_model, product_number, product_sort
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -17,15 +18,33 @@
     from product
     where product_id = #{productId,jdbcType=VARCHAR}
   </select>
+  <select id="selectByAgreement" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from product
+    where product_agreement = #{agreementId,jdbcType=VARCHAR}
+    order by product_sort
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from product
     where product_id = #{productId,jdbcType=VARCHAR}
   </delete>
+  <delete id="deleteByAgreement" parameterType="java.lang.String">
+    delete from product
+    where product_agreement = #{agreementId,jdbcType=VARCHAR}
+  </delete>
+
   <insert id="insert" parameterType="com.contract.domain.Product">
     insert into product (product_id, product_agreement, product_type, 
-      product_model, product_number)
+      product_model, product_number,product_sort)
     values (#{productId,jdbcType=VARCHAR}, #{productAgreement,jdbcType=VARCHAR}, #{productType,jdbcType=VARCHAR}, 
-      #{productModel,jdbcType=VARCHAR}, #{productNumber,jdbcType=DOUBLE})
+      #{productModel,jdbcType=VARCHAR}, #{productNumber,jdbcType=DOUBLE}, #{productSort,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertList" parameterType="java.util.List">
+    insert into product (product_id, product_agreement, product_type, product_model, product_number,product_sort) values
+    <foreach collection="list" item="item" separator="," close=";">
+    (#{item.productId,jdbcType=VARCHAR}, #{item.productAgreement,jdbcType=VARCHAR}, #{item.productType,jdbcType=VARCHAR}, #{item.productModel,jdbcType=VARCHAR}, #{item.productNumber,jdbcType=DOUBLE}, #{item.productSort,jdbcType=INTEGER})
+    </foreach>
   </insert>
   <insert id="insertSelective" parameterType="com.contract.domain.Product">
     insert into product
@@ -42,8 +61,12 @@
       <if test="productModel != null">
         product_model,
       </if>
+
       <if test="productNumber != null">
         product_number,
+      </if>
+      <if test="productSort != null">
+        product_sort,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -59,8 +82,12 @@
       <if test="productModel != null">
         #{productModel,jdbcType=VARCHAR},
       </if>
+
       <if test="productNumber != null">
         #{productNumber,jdbcType=DOUBLE},
+      </if>
+      <if test="productSort != null">
+        #{productSort,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -76,8 +103,12 @@
       <if test="productModel != null">
         product_model = #{productModel,jdbcType=VARCHAR},
       </if>
+
       <if test="productNumber != null">
         product_number = #{productNumber,jdbcType=DOUBLE},
+      </if>
+      <if test="productSort != null">
+        product_sort = #{productSort,jdbcType=INTEGER},
       </if>
     </set>
     where product_id = #{productId,jdbcType=VARCHAR}
@@ -87,7 +118,8 @@
     set product_agreement = #{productAgreement,jdbcType=VARCHAR},
       product_type = #{productType,jdbcType=VARCHAR},
       product_model = #{productModel,jdbcType=VARCHAR},
-      product_number = #{productNumber,jdbcType=DOUBLE}
+      product_number = #{productNumber,jdbcType=DOUBLE},
+    product_sort = #{productSort,jdbcType=INTEGER}
     where product_id = #{productId,jdbcType=VARCHAR}
   </update>
 </mapper>

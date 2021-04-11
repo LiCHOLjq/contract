@@ -19,6 +19,26 @@ public class Share {
 
     private Boolean shareDelete;
 
+    private String shareBeginDateStr;
+
+    private String shareEndDateStr;
+
+    public String getShareBeginDateStr() {
+        return shareBeginDateStr;
+    }
+
+    public void setShareBeginDateStr(String shareBeginDateStr) {
+        this.shareBeginDateStr = shareBeginDateStr;
+    }
+
+    public String getShareEndDateStr() {
+        return shareEndDateStr;
+    }
+
+    public void setShareEndDateStr(String shareEndDateStr) {
+        this.shareEndDateStr = shareEndDateStr;
+    }
+
     public String getShareId() {
         return shareId;
     }

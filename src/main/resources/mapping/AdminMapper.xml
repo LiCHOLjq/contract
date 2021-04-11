@@ -89,7 +89,8 @@
   <insert id="insertList" parameterType="java.util.List">
     insert into admin (admin_id, admin_name, admin_account, admin_password, admin_role, admin_useful ) values
     <foreach collection="list" item="item" separator="," close=";">
-      (#{item.adminId,jdbcType=VARCHAR}, #{item.adminName,jdbcType=VARCHAR}, #{item.adminAccount,jdbcType=VARCHAR}, #{item.adminPassword,jdbcType=VARCHAR}, #{item.adminRole,jdbcType=VARCHAR}, #{item.adminUseful,jdbcType=BIT})  </foreach>
+      (#{item.adminId,jdbcType=VARCHAR}, #{item.adminName,jdbcType=VARCHAR}, #{item.adminAccount,jdbcType=VARCHAR}, #{item.adminPassword,jdbcType=VARCHAR}, #{item.adminRole,jdbcType=VARCHAR}, #{item.adminUseful,jdbcType=BIT})
+       </foreach>
   </insert>
   <insert id="insertSelective" parameterType="com.contract.domain.Admin">
     insert into admin

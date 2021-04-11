@@ -15,6 +15,8 @@ import Index from '../components/Index.vue';
 import Admin from '../components/system/Admin.vue';
 import Dictionary from '../components/system/Dictionary.vue';
 import Log from '../components/system/Log.vue';
+import AgreementList from '../components/plan/AgreementList.vue';
+import Agreement from '../components/plan/Agreement.vue';
 // import Role from '../components/Role.vue';
 // 
 // import Group from '../components/system/Group.vue';
@@ -40,7 +42,9 @@ const routes = [
             { path: 'admin', component: Admin },
             { path: 'dictionary', component: Dictionary },
             { path: 'log', component: Log },
-
+            { path: 'agreement/list', component: AgreementList },
+            { path: 'agreement/details', component: Agreement },
+            { path: 'agreement/details/add/:agreementId', component: Agreement },
             // { path: 'group', component: Group },
             // { path: 'admin/apply', component: AdminCheck },
             // { path: 'project/list', component: ProjectList },
@@ -55,7 +59,7 @@ const routes = [
 
         ]
     },
-    // { path: '/phone/news', component: News_Phone },
+
     { path: '/login', component: Login, },   //登录页面路由
     // { path: '/role', component: Role, },   //登录页面路由
     { path: '*', redirect: '/home' },   /*默认跳转路由*/

@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface ShareAgreementMapper {
     int deleteByPrimaryKey(String shareAgreementId);
-
+    int deleteByAgreement(String agreementId);
     int insert(ShareAgreement record);
 
     int insertSelective(ShareAgreement record);

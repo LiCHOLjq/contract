@@ -11,6 +11,18 @@ public class Product {
 
     private Double productNumber;
 
+    private Integer productSort;
+
+    private Dictionary productTypeObj;
+
+    public Dictionary getProductTypeObj() {
+        return productTypeObj;
+    }
+
+    public void setProductTypeObj(Dictionary productTypeObj) {
+        this.productTypeObj = productTypeObj;
+    }
+
     public String getProductId() {
         return productId;
     }
@@ -49,5 +61,13 @@ public class Product {
 
     public void setProductNumber(Double productNumber) {
         this.productNumber = productNumber;
+    }
+
+    public Integer getProductSort() {
+        return productSort;
+    }
+
+    public void setProductSort(Integer productSort) {
+        this.productSort = productSort;
     }
 }

@@ -26,7 +26,7 @@
           查询
         </el-button>
 
-        <el-button type="success" @click="excelForm.visible = true">Excel</el-button>
+        <el-button @click="excelForm.visible = true">Excel</el-button>
       </el-form-item>
     </el-form>
     <el-row>
@@ -61,7 +61,7 @@
               <el-button size="mini" type="danger" @click="handleDeleteAdmin(scope.$index, scope.row)">删除</el-button>
               <!-- <el-button size="mini" v-if="scope.row.adminUseful=='admin_userful_able'" @click="handleOpenAdmin(scope.$index, scope.row)">启用</el-button>
               <el-button size="mini" v-if="scope.row.adminUseful=='admin_userful_ban'" @click="handleFreezeAdmin(scope.$index, scope.row)">冻结</el-button> -->
-              <el-button size="mini" type="info" @click="handleResetPassword(scope.$index, scope.row)">重置密码</el-button>
+              <el-button size="mini" @click="handleResetPassword(scope.$index, scope.row)">重置密码</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -122,7 +122,7 @@
             </el-table-column>
             <el-table-column label="操作" width="120">
               <template slot-scope="scope">
-                <el-button size="mini" type="success" @click="downloadExcel(scope.$index, scope.row)">下载Excel</el-button>
+                <el-button size="mini" type="primary" @click="downloadExcel(scope.$index, scope.row)">下载Excel</el-button>
               </template>
             </el-table-column>
 
@@ -132,7 +132,7 @@
           <h1>导入</h1>
           <el-upload class="upload-demo" ref="upload" :action="axios.defaults.baseURL + '/admin/importAdminExcel'" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList" :limit="1" :on-success="excelImportOver" :on-error="excelImportError" accept=".xlsx" :auto-upload="false" :headers="{'token': token}">
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-            <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+            <el-button style="margin-left: 10px;" size="small" type="primary" @click="submitUpload">上传到服务器</el-button>
             <div slot="tip" class="el-upload__tip">只能上传xlsx文件</div>
             <div slot="tip" class="el-upload__tip">此导入功能为追加模式</div>
           </el-upload>
@@ -261,7 +261,7 @@ export default {
     },
     // 删除用户请求
     handleDeleteAdmin(index, row) {
-      this.$confirm('此操作将永久删除该用户所有相关记录，包括用户已上传的合同，此操作不可恢复，如果您删除的是自己，那么删除之后您将无法在进行任何操作，您确定删除此用户吗？', '提示', {
+      this.$confirm('此操作将永久删除该用户所有相关记录，该用户已上传的合同将视为分享上传，此操作不可恢复，如果您删除的是自己，那么删除之后您将无法在进行任何操作，您确定删除此用户吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -338,13 +338,6 @@ export default {
             type: "error"
           });
           this.$router.push({ path: "/login" });
-        } else if (res.data.code == 402) {
-          this.$message({
-            showClose: true,
-            message: res.data.data,
-            type: "error"
-          });
-          this.$router.push({ path: "/role" });
         } else {
           this.$alert(res.data.data, "错误", {
             confirmButtonText: "确定",
@@ -377,13 +370,6 @@ export default {
             type: "error"
           });
           this.$router.push({ path: "/login" });
-        } else if (res.data.code == 402) {
-          this.$message({
-            showClose: true,
-            message: res.data.data,
-            type: "error"
-          });
-          this.$router.push({ path: "/role" });
         } else {
           this.$message({
             showClose: true,
@@ -748,7 +734,7 @@ export default {
     // this.initCheckStateList();
 
     this.initAdminTable();
-
+    this.initRoleList();
     // this.initCollegeSelectiveList();
   }
 

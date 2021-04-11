@@ -7,7 +7,7 @@
     <result column="agreement_type" jdbcType="VARCHAR" property="agreementType" />
     <result column="agreement_innovation" jdbcType="BIT" property="agreementInnovation" />
     <result column="agreement_client" jdbcType="VARCHAR" property="agreementClient" />
-    <result column="agreement_amount" jdbcType="VARCHAR" property="agreementAmount" />
+    <result column="agreement_amount" jdbcType="DOUBLE" property="agreementAmount" />
     <result column="agreement_sign_date" jdbcType="TIMESTAMP" property="agreementSignDate" />
     <result column="agreement_provider" jdbcType="VARCHAR" property="agreementProvider" />
     <result column="agreement_upload_type" jdbcType="VARCHAR" property="agreementUploadType" />
@@ -27,6 +27,61 @@
   <sql id="Blob_Column_List">
     agreement_text
   </sql>
+
+  <sql id="Search_Where_List">
+    left join product on product_agreement = agreement_id
+    where 1=1
+    <if test="agreement.agreementName != null and agreement.agreementName != '' ">
+      and agreement_name like concat('%',#{agreement.agreementName ,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="agreement.agreementTypeList != null">
+      <foreach collection="agreement.agreementTypeList" item="item" separator=" or " open="and ( " close=")" >
+        agreement_type = #{item,jdbcType=VARCHAR}
+      </foreach>
+    </if>
+    <if test="agreement.agreementInnovation != null">
+      and agreement_innovation = #{agreement.agreementInnovation,jdbcType=BIT}
+    </if>
+    <if test="agreement.agreementClient != null and agreement.agreementClient != '' ">
+      and agreement_client like concat('%',#{agreement.agreementClient ,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="agreement.agreementAmountBegin != null">
+      and agreement_amount &gt;= #{agreement.agreementAmountBegin,jdbcType=DOUBLE}
+    </if>
+    <if test="agreement.agreementAmountEnd != null">
+      and agreement_amount &lt;= #{agreement.agreementAmountEnd,jdbcType=DOUBLE}
+    </if>
+    <if test="agreement.agreementSignDateBegin != null">
+      and <![CDATA[ DATE_FORMAT(agreement_sign_date, '%Y-%m-%d %H:%T:%s') >=  DATE_FORMAT(#{agreement.agreementSignDateBegin}, '%Y-%m-%d %H:%T:%s')   ]]>
+    </if>
+    <if test="agreement.agreementSignDateEnd != null">
+      and <![CDATA[ DATE_FORMAT(agreement_sign_date, '%Y-%m-%d %H:%T:%s') <=  DATE_FORMAT(#{agreement.agreementSignDateEnd}, '%Y-%m-%d %H:%T:%s')   ]]>
+    </if>
+    <if test="agreement.agreementProvider != null and agreement.agreementProvider != '' ">
+      and agreement_provider like concat('%',#{agreement.agreementProvider ,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="agreement.agreementText != null and agreement.agreementText != '' ">
+      and agreement_text like concat('%',#{agreement.agreementText ,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="agreement.productTypeList != null">
+      <foreach collection="agreement.productTypeList" item="item" separator=" or " open="and ( " close=")">
+        product_type = #{item,jdbcType=VARCHAR}
+      </foreach>
+    </if>
+    <if test="agreement.productModel != null and agreement.productModel != '' ">
+      and product_model like concat('%',#{agreement.productModel ,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="agreement.productNumberBegin != null">
+      and agreement_amount &gt;= #{agreement.productNumberBegin,jdbcType=DOUBLE}
+    </if>
+    <if test="agreement.productNumberEnd != null">
+      and product_number &lt;= #{agreement.productNumberEnd,jdbcType=DOUBLE}
+    </if>
+    <if test="agreement.agreementDelete != null">
+      and agreement_delete = #{agreement.agreementDelete,jdbcType=BIT}
+    </if>
+  </sql>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
     select 
     <include refid="Base_Column_List" />
@@ -34,6 +89,28 @@
     <include refid="Blob_Column_List" />
     from agreement
     where agreement_id = #{agreementId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByUploadAdmin" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from agreement
+    where agreement_upload_admin = #{adminId,jdbcType=VARCHAR} and agreement_upload_type = "agreement_upload_type_admin"
+  </select>
+  <select id="selectBySearch" resultMap="ResultMapWithBLOBs">
+    select distinct
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from agreement
+    <include refid="Search_Where_List" />
+    order by ${sort}
+  </select>
+  <select id="selectBySearchCount" resultType="int">
+    select count(agreement_id) from agreement
+    <include refid="Search_Where_List" />
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from agreement
@@ -47,7 +124,7 @@
       agreement_upload_date, agreement_delete, agreement_extend, 
       agreement_text)
     values (#{agreementId,jdbcType=VARCHAR}, #{agreementName,jdbcType=VARCHAR}, #{agreementType,jdbcType=VARCHAR}, 
-      #{agreementInnovation,jdbcType=BIT}, #{agreementClient,jdbcType=VARCHAR}, #{agreementAmount,jdbcType=VARCHAR}, 
+      #{agreementInnovation,jdbcType=BIT}, #{agreementClient,jdbcType=VARCHAR}, #{agreementAmount,jdbcType=DOUBLE},
       #{agreementSignDate,jdbcType=TIMESTAMP}, #{agreementProvider,jdbcType=VARCHAR}, 
       #{agreementUploadType,jdbcType=VARCHAR}, #{agreementUploadAdmin,jdbcType=VARCHAR}, 
       #{agreementUploadDate,jdbcType=TIMESTAMP}, #{agreementDelete,jdbcType=BIT}, #{agreementExtend,jdbcType=VARCHAR}, 
@@ -160,7 +237,7 @@
         agreement_client = #{agreementClient,jdbcType=VARCHAR},
       </if>
       <if test="agreementAmount != null">
-        agreement_amount = #{agreementAmount,jdbcType=VARCHAR},
+        agreement_amount = #{agreementAmount,jdbcType=DOUBLE},
       </if>
       <if test="agreementSignDate != null">
         agreement_sign_date = #{agreementSignDate,jdbcType=TIMESTAMP},
@@ -195,7 +272,7 @@
       agreement_type = #{agreementType,jdbcType=VARCHAR},
       agreement_innovation = #{agreementInnovation,jdbcType=BIT},
       agreement_client = #{agreementClient,jdbcType=VARCHAR},
-      agreement_amount = #{agreementAmount,jdbcType=VARCHAR},
+      agreement_amount = #{agreementAmount,jdbcType=DOUBLE},
       agreement_sign_date = #{agreementSignDate,jdbcType=TIMESTAMP},
       agreement_provider = #{agreementProvider,jdbcType=VARCHAR},
       agreement_upload_type = #{agreementUploadType,jdbcType=VARCHAR},
@@ -212,7 +289,7 @@
       agreement_type = #{agreementType,jdbcType=VARCHAR},
       agreement_innovation = #{agreementInnovation,jdbcType=BIT},
       agreement_client = #{agreementClient,jdbcType=VARCHAR},
-      agreement_amount = #{agreementAmount,jdbcType=VARCHAR},
+      agreement_amount = #{agreementAmount,jdbcType=DOUBLE},
       agreement_sign_date = #{agreementSignDate,jdbcType=TIMESTAMP},
       agreement_provider = #{agreementProvider,jdbcType=VARCHAR},
       agreement_upload_type = #{agreementUploadType,jdbcType=VARCHAR},

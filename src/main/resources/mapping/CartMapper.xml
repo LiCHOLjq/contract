@@ -15,9 +15,29 @@
     from cart
     where cart_id = #{cartId,jdbcType=VARCHAR}
   </select>
+  <select id="selectByAdmin" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from cart
+    where cart_admin = #{adminId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByAdminAgreement" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from cart
+    where cart_admin = #{adminId,jdbcType=VARCHAR} and cart_agreement = #{agreementId,jdbcType=VARCHAR}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from cart
     where cart_id = #{cartId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByAdminId" parameterType="java.lang.String">
+    delete from cart
+    where cart_admin = #{adminId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByAgreementId" parameterType="java.lang.String">
+    delete from cart
+    where cart_agreement = #{agreementId,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.contract.domain.Cart">
     insert into cart (cart_id, cart_admin, cart_agreement

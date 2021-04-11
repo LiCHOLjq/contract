@@ -1,6 +1,7 @@
 package com.contract.domain;
 
 import java.util.Date;
+import java.util.List;
 
 public class Agreement {
     private String agreementId;
@@ -13,7 +14,7 @@ public class Agreement {
 
     private String agreementClient;
 
-    private String agreementAmount;
+    private Double agreementAmount;
 
     private Date agreementSignDate;
 
@@ -30,6 +31,40 @@ public class Agreement {
     private String agreementExtend;
 
     private String agreementText;
+
+
+    //查询
+    private List<String> agreementTypeList;
+
+    private Date agreementSignDateBegin;
+
+    private String agreementSignDateBeginStr;
+
+    private Date agreementSignDateEnd;
+
+    private String agreementSignDateEndStr;
+
+    private List<String> productTypeList;
+
+    private String productModel;
+
+    private Double agreementAmountBegin;
+
+    private Double agreementAmountEnd;
+
+    private Double productNumberBegin;
+
+    private Double productNumberEnd;
+    //注入
+    private Dictionary agreementTypeObj;
+
+    private String agreementSignDateStr;
+
+    private String  agreementUploadDateStr;
+
+    private List<Product> productList;
+
+    private Boolean shareState;
 
     public String getAgreementId() {
         return agreementId;
@@ -71,12 +106,12 @@ public class Agreement {
         this.agreementClient = agreementClient == null ? null : agreementClient.trim();
     }
 
-    public String getAgreementAmount() {
+    public Double getAgreementAmount() {
         return agreementAmount;
     }
 
-    public void setAgreementAmount(String agreementAmount) {
-        this.agreementAmount = agreementAmount == null ? null : agreementAmount.trim();
+    public void setAgreementAmount(Double agreementAmount) {
+        this.agreementAmount = agreementAmount;
     }
 
     public Date getAgreementSignDate() {
@@ -141,5 +176,134 @@ public class Agreement {
 
     public void setAgreementText(String agreementText) {
         this.agreementText = agreementText == null ? null : agreementText.trim();
+    }
+
+    public List<String> getAgreementTypeList() {
+        return agreementTypeList;
+    }
+
+    public void setAgreementTypeList(List<String> agreementTypeList) {
+        this.agreementTypeList = agreementTypeList;
+    }
+
+    public Date getAgreementSignDateBegin() {
+        return agreementSignDateBegin;
+    }
+
+    public void setAgreementSignDateBegin(Date agreementSignDateBegin) {
+        this.agreementSignDateBegin = agreementSignDateBegin;
+    }
+
+    public String getAgreementSignDateBeginStr() {
+        return agreementSignDateBeginStr;
+    }
+
+    public void setAgreementSignDateBeginStr(String agreementSignDateBeginStr) {
+        this.agreementSignDateBeginStr = agreementSignDateBeginStr;
+    }
+
+    public Date getAgreementSignDateEnd() {
+        return agreementSignDateEnd;
+    }
+
+    public void setAgreementSignDateEnd(Date agreementSignDateEnd) {
+        this.agreementSignDateEnd = agreementSignDateEnd;
+    }
+
+    public String getAgreementSignDateEndStr() {
+        return agreementSignDateEndStr;
+    }
+
+    public void setAgreementSignDateEndStr(String agreementSignDateEndStr) {
+        this.agreementSignDateEndStr = agreementSignDateEndStr;
+    }
+
+    public List<String> getProductTypeList() {
+        return productTypeList;
+    }
+
+    public void setProductTypeList(List<String> productTypeList) {
+        this.productTypeList = productTypeList;
+    }
+
+    public String getProductModel() {
+        return productModel;
+    }
+
+    public void setProductModel(String productModel) {
+        this.productModel = productModel;
+    }
+
+    public Dictionary getAgreementTypeObj() {
+        return agreementTypeObj;
+    }
+
+    public void setAgreementTypeObj(Dictionary agreementTypeObj) {
+        this.agreementTypeObj = agreementTypeObj;
+    }
+
+    public String getAgreementSignDateStr() {
+        return agreementSignDateStr;
+    }
+
+    public void setAgreementSignDateStr(String agreementSignDateStr) {
+        this.agreementSignDateStr = agreementSignDateStr;
+    }
+
+
+    public String getAgreementUploadDateStr() {
+        return agreementUploadDateStr;
+    }
+
+    public void setAgreementUploadDateStr(String agreementUploadDateStr) {
+        this.agreementUploadDateStr = agreementUploadDateStr;
+    }
+
+    public List<Product> getProductList() {
+        return productList;
+    }
+
+    public void setProductList(List<Product> productList) {
+        this.productList = productList;
+    }
+
+    public Boolean getShareState() {
+        return shareState;
+    }
+
+    public void setShareState(Boolean shareState) {
+        this.shareState = shareState;
+    }
+
+    public Double getAgreementAmountBegin() {
+        return agreementAmountBegin;
+    }
+
+    public void setAgreementAmountBegin(Double agreementAmountBegin) {
+        this.agreementAmountBegin = agreementAmountBegin;
+    }
+
+    public Double getAgreementAmountEnd() {
+        return agreementAmountEnd;
+    }
+
+    public void setAgreementAmountEnd(Double agreementAmountEnd) {
+        this.agreementAmountEnd = agreementAmountEnd;
+    }
+
+    public Double getProductNumberBegin() {
+        return productNumberBegin;
+    }
+
+    public void setProductNumberBegin(Double productNumberBegin) {
+        this.productNumberBegin = productNumberBegin;
+    }
+
+    public Double getProductNumberEnd() {
+        return productNumberEnd;
+    }
+
+    public void setProductNumberEnd(Double productNumberEnd) {
+        this.productNumberEnd = productNumberEnd;
     }
 }

@@ -89,7 +89,7 @@ public class AESUtil {
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.println("  ".trim());
+        System.out.println("111.222".substring("111.222".lastIndexOf(".")));
     }
 
 }

@@ -1,10 +1,13 @@
 package com.contract.service.impl;
 
 import com.contract.domain.Admin;
+import com.contract.domain.Agreement;
 import com.contract.domain.Dictionary;
 import com.contract.exception.ExcelIdNameRepeatException;
 import com.contract.exception.ExcelImportException;
 import com.contract.mapper.AdminMapper;
+import com.contract.mapper.AgreementMapper;
+import com.contract.mapper.CartMapper;
 import com.contract.mapper.DictionaryMapper;
 import com.contract.service.AdminService;
 import com.contract.util.PageBean;
@@ -27,6 +30,12 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private DictionaryMapper dictionaryMapper;
+
+    @Autowired
+    private CartMapper cartMapper;
+
+    @Autowired
+    private AgreementMapper agreementMapper;
 
     @Autowired
     private DataSourceTransactionManager dataSourceTransactionManager;
@@ -74,7 +83,25 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void delAdmin(Admin admin) {
-        adminMapper.deleteByPrimaryKey(admin.getAdminId());
+
+        TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
+        try {
+            Admin adminSel = adminMapper.selectByPrimaryKey(admin.getAdminId());
+            adminMapper.deleteByPrimaryKey(admin.getAdminId());
+            cartMapper.deleteByAdminId(admin.getAdminId());
+            List<Agreement> agreementList = agreementMapper.selectByUploadAdmin(admin.getAdminId());
+            for(Agreement agreement : agreementList){
+                Agreement updAgreement = new Agreement();
+                updAgreement.setAgreementId(agreement.getAgreementId());
+                updAgreement.setAgreementUploadType("agreement_upload_type_user");
+                updAgreement.setAgreementUploadAdmin(adminSel.getAdminName());
+                agreementMapper.updateByPrimaryKeySelective(updAgreement);
+            }
+            dataSourceTransactionManager.commit(transactionStatus);     //手动提交
+        }catch (Exception e){
+            dataSourceTransactionManager.rollback(transactionStatus);       //事务回滚
+            throw e;
+        }
     }
 
     @Override

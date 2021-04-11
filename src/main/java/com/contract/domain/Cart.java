@@ -7,6 +7,16 @@ public class Cart {
 
     private String cartAgreement;
 
+    private Agreement cartAgreementObj;
+
+    public Agreement getCartAgreementObj() {
+        return cartAgreementObj;
+    }
+
+    public void setCartAgreementObj(Agreement cartAgreementObj) {
+        this.cartAgreementObj = cartAgreementObj;
+    }
+
     public String getCartId() {
         return cartId;
     }
