@@ -23,6 +23,16 @@ public class Share {
 
     private String shareEndDateStr;
 
+    private Admin shareAdminObj;
+
+    public Admin getShareAdminObj() {
+        return shareAdminObj;
+    }
+
+    public void setShareAdminObj(Admin shareAdminObj) {
+        this.shareAdminObj = shareAdminObj;
+    }
+
     public String getShareBeginDateStr() {
         return shareBeginDateStr;
     }

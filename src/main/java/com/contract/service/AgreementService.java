@@ -19,4 +19,8 @@ public interface AgreementService {
     void relDelAgreement(Agreement agreement);
 
     void addAgreement(Agreement agreement, List<Product> productList, MultipartFile file,String adminId) throws ParseException, IOException;
+
+    Agreement getAgreementDetails(String agreementId);
+
+    void updAgreement(Agreement agreement, List<Product> productList, String adminId) throws ParseException;
 }

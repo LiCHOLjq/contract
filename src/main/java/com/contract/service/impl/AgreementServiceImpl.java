@@ -182,4 +182,55 @@ public class AgreementServiceImpl implements AgreementService {
             throw e;
         }
     }
+
+    @Override
+    public Agreement getAgreementDetails(String agreementId) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
+        Agreement item = agreementMapper.selectByPrimaryKey(agreementId);
+        item.setAgreementTypeObj(dictionaryMapper.selectByPrimaryKey(item.getAgreementType()));
+        item.setAgreementSignDateStr(sdf2.format(item.getAgreementSignDate()));
+
+        item.setAgreementUploadDateStr(sdf.format(item.getAgreementUploadDate()));
+        List<Product> productList = productMapper.selectByAgreement(item.getAgreementId());
+        for(Product product : productList){
+            product.setProductTypeObj(dictionaryMapper.selectByPrimaryKey(product.getProductType()));
+        }
+        item.setProductList(productList);
+        return item;
+    }
+
+    @Override
+    public void updAgreement(Agreement agreement, List<Product> productList, String adminId) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
+        try {
+            //处理agreement productList
+
+            agreement.setAgreementSignDate(sdf.parse(agreement.getAgreementSignDateStr()));
+            agreement.setAgreementUploadDate(null);
+            agreement.setAgreementUploadAdmin(null);
+            agreement.setAgreementUploadType(null);
+            agreement.setAgreementDelete(null);
+            agreement.setAgreementExtend(null);
+            int sort = 1;
+            for (Product product : productList){
+                product.setProductId(UUIDUtil.getUUID());
+                product.setProductAgreement(agreement.getAgreementId());
+                product.setProductSort(sort);
+                sort++;
+            }
+            productMapper.deleteByAgreement(agreement.getAgreementId());
+
+
+            agreementMapper.updateByPrimaryKeySelective(agreement);
+            if(productList.size()>0){
+                productMapper.insertList(productList);
+            }
+            dataSourceTransactionManager.commit(transactionStatus);     //手动提交
+        }catch (Exception e){
+            dataSourceTransactionManager.rollback(transactionStatus);       //事务回滚
+            throw e;
+        }
+    }
 }

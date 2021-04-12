@@ -44,7 +44,7 @@ const routes = [
             { path: 'log', component: Log },
             { path: 'agreement/list', component: AgreementList },
             { path: 'agreement/details', component: Agreement },
-            { path: 'agreement/details/add/:agreementId', component: Agreement },
+            { path: 'agreement/details/:agreementId', component: Agreement },
             // { path: 'group', component: Group },
             // { path: 'admin/apply', component: AdminCheck },
             // { path: 'project/list', component: ProjectList },
@@ -61,6 +61,8 @@ const routes = [
     },
 
     { path: '/login', component: Login, },   //登录页面路由
+    // { path: '/share/login/:shareId', component: Login, },   //登录页面路由
+    // { path: '/share/items/:shareId', component: Login, },   //登录页面路由
     // { path: '/role', component: Role, },   //登录页面路由
     { path: '*', redirect: '/home' },   /*默认跳转路由*/
     // { path: '/news/:newsId', component: News, },

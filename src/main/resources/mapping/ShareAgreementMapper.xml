@@ -29,6 +29,13 @@
     values (#{shareAgreementId,jdbcType=VARCHAR}, #{shareId,jdbcType=VARCHAR}, #{agreementId,jdbcType=VARCHAR}
       )
   </insert>
+  <insert id="insertList" parameterType="java.util.List">
+    insert into share_agreement (share_agreement_id, share_id, agreement_id ) values
+    <foreach collection="list" item="item" separator="," close=";">
+    (#{item.shareAgreementId,jdbcType=VARCHAR}, #{item.shareId,jdbcType=VARCHAR}, #{item.agreementId,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+
   <insert id="insertSelective" parameterType="com.contract.domain.ShareAgreement">
     insert into share_agreement
     <trim prefix="(" suffix=")" suffixOverrides=",">

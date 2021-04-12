@@ -247,4 +247,57 @@ public class AgreementController {
         }
         return result;
     }
+//    getAgrementDetails
+
+@RequestMapping(value = "/getAgreementDetails", method = RequestMethod.POST)
+@UserLoginToken
+@UserRoleToken(passRoleList = {"admin_role_master","admin_role_normal"})
+public JSONObject getAgreementDetails(@RequestBody String params, HttpServletRequest httpServletRequest) {
+    JSONObject result = new JSONObject();
+    try {
+        JSONObject paramsJson = JSONObject.parseObject(JSONObject.parseObject(params).getString("params"));
+
+        String agreementId = paramsJson.getString("agreementId");
+        Agreement agreement = agreementService.getAgreementDetails(agreementId);
+        if(agreement==null){
+            throw new Exception("合同不存在");
+        }
+        if(agreement.getAgreementDelete()){
+            throw new Exception("合同不存在");
+        }
+
+        result.put("object", agreement);
+        result.put("code", 200);
+    } catch (Exception e) {
+        e.printStackTrace();
+        result.put("data", e.getMessage());
+        result.put("code", 500);
+
+    }
+    return result;
 }
+//    updAgreement
+@RequestMapping("/updAgreement")
+@UserLoginToken
+@UserRoleToken(passRoleList = {"admin_role_master","admin_role_normal"})
+public JSONObject updAgreement(@RequestBody String params, HttpServletRequest httpServletRequest) {
+    JSONObject result = new JSONObject();
+    //导入操作
+    try {
+        JSONObject paramsJson = JSONObject.parseObject(JSONObject.parseObject(params).getString("params"));
+        Agreement agreement = JSONObject.parseObject(paramsJson.getString("agreement"), Agreement.class);
+        List<Product> productList = JSONArray.parseArray(paramsJson.getString("productList"), Product.class);
+        String token = httpServletRequest.getHeader("token");// 从 http 请求头中取出 token
+        String adminId = TokenUtil.getId(token);
+        agreementService.updAgreement(agreement,productList,adminId);
+        result.put("data","【合同】修改成功");
+        result.put("code", 200);
+    } catch (Exception e) {
+        e.printStackTrace();
+        result.put("code", 500);
+        result.put("data",e.getMessage());
+    }
+    return result;
+}
+}
+

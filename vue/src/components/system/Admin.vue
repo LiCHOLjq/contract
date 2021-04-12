@@ -82,7 +82,7 @@
           <el-form-item label="姓名：" :label-width="adminAddUpdForm.formLabelWidth">
             <el-input v-model="adminAddUpdForm.adminName" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="姓名：" :label-width="adminAddUpdForm.formLabelWidth">
+          <el-form-item label="角色：" :label-width="adminAddUpdForm.formLabelWidth">
             <el-select v-model="adminAddUpdForm.adminRole" placeholder="选择角色">
               <el-option v-for="item in roleSelectiveList" :key="item.dictionaryId" :label="item.dictionaryName" :value="item.dictionaryId"></el-option>
             </el-select>

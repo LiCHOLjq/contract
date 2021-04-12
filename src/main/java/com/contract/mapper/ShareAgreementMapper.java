@@ -3,6 +3,8 @@ package com.contract.mapper;
 import com.contract.domain.ShareAgreement;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface ShareAgreementMapper {
     int deleteByPrimaryKey(String shareAgreementId);
@@ -10,6 +12,8 @@ public interface ShareAgreementMapper {
     int insert(ShareAgreement record);
 
     int insertSelective(ShareAgreement record);
+
+    int insertList(List<ShareAgreement> record);
 
     ShareAgreement selectByPrimaryKey(String shareAgreementId);
 

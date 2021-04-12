@@ -26,8 +26,8 @@
                   <h1 style="padding-left:15px">是否信创</h1>
                   <el-form-item>
                     <el-select v-model="agreement.agreementInnovation" placeholder="选择是否信创">
-                      <el-option label="是" value="1"></el-option>
-                      <el-option label="否" value="0"></el-option>
+                      <el-option label="是" :value="true"></el-option>
+                      <el-option label="否" :value="false"></el-option>
                     </el-select>
                   </el-form-item>
                 </el-col>
@@ -146,7 +146,7 @@
               <el-row class="auto-table">
                 <el-form-item>
                   <el-button v-if="agreement.submitState == 'Add'" icon="el-icon-upload2" type="primary" @click="submitUpload">确定添加</el-button>
-                  <el-button v-if="agreement.submitState == 'Upd'" icon="el-icon-upload2" @click="alterProject" type="primary">确定修改</el-button>
+                  <el-button v-if="agreement.submitState == 'Upd'" icon="el-icon-upload2" @click="updAgreement" type="primary">确定修改</el-button>
                   <el-button v-if="agreement.submitState == 'Upd'" icon="el-icon-download" @click="exportProjectApprovalWord" type="primary">下载合同文件</el-button>
                 </el-form-item>
               </el-row>
@@ -174,7 +174,7 @@ export default {
       agreement: {
         agreementName: "",
         agreementType: "agreement_type_1",
-        agreementInnovation: "1",
+        agreementInnovation: true,
         agreementClient: "",
         agreementProvider: "",
         agreementSignDateStr: "",
@@ -311,14 +311,20 @@ export default {
 
     excelImportOver(response, file, fileList) {
       if (response.code == 200) {
-        this.$alert(response.data, "合同添加成功", {
-          confirmButtonText: "确定",
-          type: "success",
-          callback: action => {
-            this.back();
-            this.fileList = []
-          }
+        this.$message({
+          showClose: true,
+          message: response.data,
+          type: "success"
         });
+        this.back();
+        // this.$alert(response.data, "合同添加成功", {
+        //   confirmButtonText: "确定",
+        //   type: "success",
+        //   callback: action => {
+        //     this.back();
+        //     this.fileList = []
+        //   }
+        // });
       } else if (res.data.code == 401) {
         this.$message({
           showClose: true,
@@ -384,6 +390,101 @@ export default {
         }
       });
     },
+
+
+    init(agreementId) {
+      const loading = this.$loading(this.$store.state.loadingOption1);
+      this.axios
+        .post(
+          "/agreement/getAgreementDetails",
+          {
+            params: {
+              agreementId: agreementId
+            }
+          },
+          { headers: { token: this.token } }
+        )
+        .then(res => {
+          if (res.data.code === 200) {
+            this.agreement = res.data.object;
+            this.agreement.submitState = "Upd";
+            // {
+            //   agreementName: res.data.object.agreement.agreementName,
+            //   agreementType: res.data.object.agreement.agreementType,
+            //   agreementInnovation: res.data.object.agreement.agreementInnovation,
+            //   agreementClient: res.data.object.agreement.agreementClient,
+            //   agreementProvider: res.data.object.agreement.agreementProvider,
+            //   agreementSignDateStr: res.data.object.agreement.agreementSignDateStr,
+            //   agreementAmount: res.data.object.agreement.agreementAmount,
+            //   submitState: "Upd"
+            // };
+            this.productList = res.data.object.productList;
+
+          } else if (res.data.code == 401) {
+            this.$message({
+              showClose: true,
+              message: res.data.data,
+              type: "error"
+            });
+            this.$router.push({ path: "/login" });
+          } else {
+            this.$alert(res.data.data, "错误", {
+              confirmButtonText: "确定",
+              type: "error",
+              callback: action => { }
+            });
+            this.$router.push({ path: "/home/agreement/list" });
+          }
+          loading.close();
+        });
+    },
+    updAgreement() {
+      const loading = this.$loading(this.$store.state.loadingOption1);
+      this.axios
+        .post(
+          "/agreement/updAgreement",
+          {
+            params: {
+              agreement: this.agreement,
+              productList: this.productList
+            }
+          },
+          { headers: { token: this.token } }
+        )
+        .then(res => {
+          if (res.data.code === 200) {
+
+            this.$message({
+              showClose: true,
+              message: res.data.data,
+              type: "success"
+            });
+
+            // this.$alert(res.data.data, "合同修改成功", {
+            //   confirmButtonText: "确定",
+            //   type: "success",
+            //   callback: action => { }
+            // });
+            this.back();
+          } else if (res.data.code == 401) {
+            this.$message({
+              showClose: true,
+              message: res.data.data,
+              type: "error"
+            });
+            this.$router.push({ path: "/login" });
+          } else {
+            this.$alert(res.data.data, "错误", {
+              confirmButtonText: "确定",
+              type: "error",
+              callback: action => { }
+            });
+            this.$router.push({ path: "/home/agreement/list" });
+          }
+          loading.close();
+        });
+    }
+
     // sumBudget() {
     //   var sum = 0.0;
     //   for (var i = 0; i < this.projectBudgetList.length; i++) {
@@ -891,14 +992,11 @@ export default {
 
     // this.initGroupList();
     // this.initCitySelectiveList();
-    // if (this.$route.params.projectId == null) {
-    //   this.isAdd = true;
-
-    //   this.initProjectBudgetList();
-    //   this.project.submitState = 'Add'
-    // } else {
-    //   this.init(this.$route.params.projectId)
-    // }
+    if (this.$route.params.agreementId == null) {
+      this.project.submitState = 'Add'
+    } else {
+      this.init(this.$route.params.agreementId)
+    }
 
 
     // localStorage.removeItem("admin");

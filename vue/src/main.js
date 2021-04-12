@@ -16,6 +16,10 @@ import 'echarts/theme/vintage.js'
 import md5 from 'js-md5';
 Vue.prototype.$md5 = md5;
 
+import Clipboard from 'vue-clipboard2';
+Vue.use(Clipboard)
+
+
 Vue.use(ElementUI);
 Vue.prototype.axios = axios
 Vue.use(Vueaxios, axios);
