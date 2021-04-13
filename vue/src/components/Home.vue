@@ -99,8 +99,20 @@ export default {
 
 }
 </script>
-<style scoped>
+<style  lang="scss">
 .el-header {
   padding: 0px;
 }
+  .el-dialog__header {
+    background-color: #E1140A;
+    padding: 15px 20px 15px;
+  }
+  .el-dialog__title {
+    line-height: 24px;
+    font-size: 16px;
+    color: #fff;
+  }
+  .el-dialog__headerbtn .el-dialog__close {
+    color: #fff;
+  }
 </style>

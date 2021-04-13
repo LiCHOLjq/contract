@@ -1096,5 +1096,6 @@ export default {
     padding-right: 15px;
     text-align: left;
   }
+  
 }
 </style>

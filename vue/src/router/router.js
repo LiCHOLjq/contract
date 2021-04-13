@@ -17,6 +17,7 @@ import Dictionary from '../components/system/Dictionary.vue';
 import Log from '../components/system/Log.vue';
 import AgreementList from '../components/plan/AgreementList.vue';
 import Agreement from '../components/plan/Agreement.vue';
+import Share_Admin from '../components/plan/Share.vue';
 // import Role from '../components/Role.vue';
 // 
 // import Group from '../components/system/Group.vue';
@@ -45,6 +46,7 @@ const routes = [
             { path: 'agreement/list', component: AgreementList },
             { path: 'agreement/details', component: Agreement },
             { path: 'agreement/details/:agreementId', component: Agreement },
+            { path: 'share', component: Share_Admin },
             // { path: 'group', component: Group },
             // { path: 'admin/apply', component: AdminCheck },
             // { path: 'project/list', component: ProjectList },

@@ -1,134 +1,46 @@
 <template>
   <div id="agreementList">
-    <el-card style="padding:0px;  padding-bottom:10px;margin:10px">
-      <div slot="header" class="search-header">
-        <p style="margin-top:10px;float:left">搜索设置</p>
-        <el-tooltip  v-if="!agreementSelectForm.visible" class="item" effect="dark" content="展开" placement="bottom">
-        <el-button style="float:right;margin-left:10px;margin-right:10px;" type="primary" icon="el-icon-arrow-down" circle @click="agreementSelectForm.visible = true;"></el-button>
-        </el-tooltip>
-        <el-tooltip v-if="agreementSelectForm.visible"  class="item" effect="dark" content="收起" placement="bottom">
-        <el-button style="float:right;margin-left:10px;margin-right:10px;" type="primary" icon="el-icon-arrow-up" circle @click="agreementSelectForm.visible = false;"></el-button>
-        </el-tooltip>
-        <el-tooltip class="item" effect="dark" content="添加新合同" placement="bottom">
-        <el-button  style="float:right;margin-left:10px;margin-right:10px;" circle icon="el-icon-plus" type="primary" @click="handleAddAgreement()"></el-button>
-        </el-tooltip>
-        <el-tooltip class="item" effect="dark" content="添加上传合同分享" placement="bottom">
-        <el-button  style="float:right;margin-left:10px;margin-right:10px;" circle icon="el-icon-upload" type="primary" @click="handleAddAgreement()"></el-button>
-        </el-tooltip>
-        <el-tooltip class="item" effect="dark" content="添加下载合同分享" placement="bottom">
-        <el-badge style="float:right;margin-left:10px;margin-right:10px;" :value="cartNum" type="success">
-          <el-button type="primary" icon="el-icon-share" circle @click="shareForm.visible = true;initCart()"></el-button>
-        </el-badge>
-        </el-tooltip>
-        <el-tooltip class="item" effect="dark" content="搜索" placement="bottom">
-        <el-button style="float:right;margin-left:10px;margin-right:10px;" type="primary" icon="el-icon-search" circle @click="agreementPage.current=1;initAgreementList();"></el-button>
-        </el-tooltip>
-      </div>
-      <div v-show="agreementSelectForm.visible" class="search-body" style="padding-left:10px;padding-right:10px">
-        <el-form :inline="true" :model="agreementSelectForm" class="demo-form-inline">
-          <el-row>
+        <el-card style="padding:0px;  padding-bottom:10px;margin:10px">
+      <!-- <div slot="header" class="search-header"> -->
+        <!-- <p style="margin-top:10px;float:left">搜索设置</p> -->
+<el-form :inline="true" :model="agreementSelectForm" class="demo-form-inline"  style="margin-top:10px;float:left">
 
-            <el-form-item label="合同名称: ">
-              <!-- 模糊 -->
-              <el-input style="width:400px" v-model="agreementSelectForm.agreementName" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="合同类型：">
-              <el-select style="width:450px" multiple v-model="agreementSelectForm.agreementTypeList" placeholder="选择合同类型">
-                <el-option v-for="item in agreementTypeSelectiveList" :key="item.dictionaryId" :label="item.dictionaryName" :value="item.dictionaryId"></el-option>
+            <el-form-item style="margin-top:0px" label="分享人：">
+              <el-select multiple v-model="agreementSelectForm.agreementTypeList" placeholder="选择分享人">
+                <el-option v-for="item in adminSelectiveList" :key="item.adminId" :label="item.adminName" :value="item.adminId"></el-option>
               </el-select>
             </el-form-item>
-
-            <el-form-item label="是否信创：">
-              <el-select style="width:140px" v-model="agreementSelectForm.agreementInnovation" placeholder="选择是否信创">
-                <el-option label="全部" value=""></el-option>
-                <el-option label="是" value="1"></el-option>
-                <el-option label="否" value="0"></el-option>
-              </el-select>
-            </el-form-item>
-
-            <el-form-item label="客户名称: ">
-              <!-- 模糊 -->
-              <el-input style="width:220px" v-model="agreementSelectForm.agreementClient" autocomplete="off"></el-input>
-            </el-form-item>
-
-            <el-form-item label="提供者: ">
-              <!-- 模糊 -->
-              <el-input style="width:330px" v-model="agreementSelectForm.agreementProvider" autocomplete="off"></el-input>
-            </el-form-item>
-
-            <el-form-item label="总金额范围: ">
-              <el-input-number style="width:210px" v-model="agreementSelectForm.agreementAmountBegin"></el-input-number>
-            </el-form-item>
-            <el-form-item label="→">
-              <el-input-number style="width:210px" v-model="agreementSelectForm.agreementAmountEnd"></el-input-number>
-            </el-form-item>
-
-            <el-form-item label="签约日期范围：">
-              <el-date-picker style="width:220px" v-model="agreementSelectForm.agreementSignDateBeginStr" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="选择日期">
-              </el-date-picker>
-            </el-form-item>
-            <el-form-item label="→">
-              <el-date-picker style="width:220px" v-model="agreementSelectForm.agreementSignDateEndStr" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="选择日期">
-              </el-date-picker>
-            </el-form-item>
-
-            <el-form-item label="备注: ">
-              <!-- 模糊 -->
-              <el-input style="width:980px" v-model="agreementSelectForm.agreementText" autocomplete="off"></el-input>
-            </el-form-item>
-
-            <el-form-item label="产品类型：">
-              <el-select style="width:560px" multiple v-model="agreementSelectForm.productTypeList" placeholder="选择合同类型">
-                <el-option v-for="item in productTypeSelectiveList" :key="item.dictionaryId" :label="item.dictionaryName" :value="item.dictionaryId"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="产品型号：">
-              <!-- 模糊 -->
-              <el-input style="width:300px" v-model="agreementSelectForm.productModel" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="产品数量: ">
-              <el-input-number style="width:200px" v-model="agreementSelectForm.productNumberBegin"></el-input-number>
-            </el-form-item>
-            <el-form-item label="→">
-              <el-input-number style="width:200px" v-model="agreementSelectForm.productNumberEnd"></el-input-number>
-            </el-form-item>
-            <el-form-item v-if="role == 'admin_role_master'" label="是否删除：">
+            <el-form-item  style="margin-top:0px" v-if="role == 'admin_role_master'" label="是否删除：">
               <el-select v-model="agreementSelectForm.agreementDelete" placeholder="选择是否删除" style="width: 180px;">
                 <el-option label="全部" value=""></el-option>
                 <el-option label="是" value="1"></el-option>
                 <el-option label="否" value="0"></el-option>
               </el-select>
             </el-form-item>
-            <!-- <el-form-item>
-              <el-button @click="sortForm.visible = true" type="primary">排序</el-button>
-              <el-button type="primary" @click="agreementPage.current=1;initAgreementList();">
-                查询
-              </el-button>
-            </el-form-item> -->
-          </el-row>
-          <el-row>
-            <el-row>
-              <div style="font-size: 14px;margin-left:20px;margin-top:28px;float:left">排序规则：</div>
-              <el-tag style="margin-left:20px;margin-top:20px;" v-for="tag in sortTags" :key="tag.name" closable @close="handleRemoveTag(tag)">
-                {{tag.name}}
-              </el-tag>
-            </el-row>
-            <div style="font-size: 14px;margin-left:20px;margin-top:30px;float:left">添加排序规则：</div>
-            <el-select style="margin-left:20px;margin-top:20px;" v-model="sortForm.field" value-key="field" placeholder="请选择">
-              <el-option v-for="field in fieldsDic" :key="field.field" :label="field.name" :value="field" />
-            </el-select>
-            <el-select style="margin-left:20px;margin-top:20px;" v-model="sortForm.type" value-key="type" placeholder="请选择">
-              <el-option v-for="type in typeDic" :key="type.type" :label="type.name" :value="type" />
-            </el-select>
-            <el-button type="primary" style="margin-left:20px;margin-top:20px;" @click="handleAddTag()">添 加</el-button>
-          </el-row>
+
         </el-form>
-      </div>
+        <el-tooltip class="item" effect="dark" content="添加上传合同分享" placement="bottom">
+        <el-button  style="float:right;margin-left:10px;margin-right:10px;margin-top:10px;" circle icon="el-icon-upload" type="primary" @click="handleAddAgreement()"></el-button>
+        </el-tooltip>
+        <el-tooltip class="item" effect="dark" content="添加下载合同分享" placement="bottom">
+        <el-badge style="float:right;margin-left:10px;margin-right:10px;margin-top:10px;" :value="cartNum" type="success">
+          <el-button type="primary" icon="el-icon-share" circle @click="shareForm.visible = true;initCart()"></el-button>
+        </el-badge>
+        </el-tooltip>
+        <el-tooltip class="item" effect="dark" content="搜索" placement="bottom">
+        <el-button style="float:right;margin-left:10px;margin-right:10px;margin-top:10px;" type="primary" icon="el-icon-search" circle @click="agreementPage.current=1;initAgreementList();"></el-button>
+        </el-tooltip>
+      <!-- </div> -->
+
     </el-card>
+
+
+
+
     <el-card style="padding:0px;  padding-bottom:10px;margin:10px">
       <el-row>
         <el-col class="main-col" :span="24">
-
+          
           <el-table v-bind:data="agreementTableData" border style="width: 100%">
             <el-table-column label="名称">
               <template slot-scope="scope">
