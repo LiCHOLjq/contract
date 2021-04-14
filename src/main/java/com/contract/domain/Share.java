@@ -23,7 +23,29 @@ public class Share {
 
     private String shareEndDateStr;
 
+
+    //=============
     private Admin shareAdminObj;
+
+    private Dictionary shareTypeObj;
+
+    private String shareDateStr;
+
+    public String getShareDateStr() {
+        return shareDateStr;
+    }
+
+    public void setShareDateStr(String shareDateStr) {
+        this.shareDateStr = shareDateStr;
+    }
+
+    public Dictionary getShareTypeObj() {
+        return shareTypeObj;
+    }
+
+    public void setShareTypeObj(Dictionary shareTypeObj) {
+        this.shareTypeObj = shareTypeObj;
+    }
 
     public Admin getShareAdminObj() {
         return shareAdminObj;

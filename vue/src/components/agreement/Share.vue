@@ -1,131 +1,103 @@
 <template>
-  <div id="agreementList">
-        <el-card style="padding:0px;  padding-bottom:10px;margin:10px">
+  <div id="share">
+    <el-card style="padding:0px;  padding-bottom:10px;margin:10px">
       <!-- <div slot="header" class="search-header"> -->
-        <!-- <p style="margin-top:10px;float:left">搜索设置</p> -->
-<el-form :inline="true" :model="agreementSelectForm" class="demo-form-inline"  style="margin-top:10px;float:left">
+      <!-- <p style="margin-top:10px;float:left">搜索设置</p> -->
+      <el-form :inline="true" :model="shareSelectForm" class="demo-form-inline" style="margin-top:10px;float:left">
 
-            <el-form-item style="margin-top:0px" label="分享人：">
-              <el-select multiple v-model="agreementSelectForm.agreementTypeList" placeholder="选择分享人">
-                <el-option v-for="item in adminSelectiveList" :key="item.adminId" :label="item.adminName" :value="item.adminId"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item  style="margin-top:0px" v-if="role == 'admin_role_master'" label="是否删除：">
-              <el-select v-model="agreementSelectForm.agreementDelete" placeholder="选择是否删除" style="width: 180px;">
-                <el-option label="全部" value=""></el-option>
-                <el-option label="是" value="1"></el-option>
-                <el-option label="否" value="0"></el-option>
-              </el-select>
-            </el-form-item>
+        <el-form-item style="margin-top:0px" label="分享人：">
+          <el-select v-model="shareSelectForm.shareAdmin" placeholder="选择分享人">
+            <el-option v-for="item in adminSelectiveList" :key="item.adminId" :label="item.adminName" :value="item.adminId"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item style="margin-top:0px" label="分享类型：">
+          <el-select v-model="shareSelectForm.shareType" placeholder="选择分享类型">
+            <el-option v-for="item in shareTypeSelectiveList" :key="item.dictionaryId" :label="item.dictionaryName" :value="item.dictionaryId"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item style="margin-top:0px" v-if="role == 'admin_role_master'" label="是否删除：">
+          <el-select v-model="shareSelectForm.shareDelete" placeholder="选择是否删除" style="width: 180px;">
+            <el-option label="全部" value=""></el-option>
+            <el-option label="是" value="1"></el-option>
+            <el-option label="否" value="0"></el-option>
+          </el-select>
+        </el-form-item>
 
-        </el-form>
-        <el-tooltip class="item" effect="dark" content="添加上传合同分享" placement="bottom">
-        <el-button  style="float:right;margin-left:10px;margin-right:10px;margin-top:10px;" circle icon="el-icon-upload" type="primary" @click="handleAddAgreement()"></el-button>
-        </el-tooltip>
-        <el-tooltip class="item" effect="dark" content="添加下载合同分享" placement="bottom">
+      </el-form>
+      <el-tooltip class="item" effect="dark" content="邀请上传合同" placement="bottom">
+        <el-button style="float:right;margin-left:10px;margin-right:10px;margin-top:10px;" circle icon="el-icon-upload" type="primary" @click="shareForm.visible2 = true;shareForm.shareType='share_type_upload';"></el-button>
+      </el-tooltip>
+      <el-tooltip class="item" effect="dark" content="分享合同" placement="bottom">
         <el-badge style="float:right;margin-left:10px;margin-right:10px;margin-top:10px;" :value="cartNum" type="success">
-          <el-button type="primary" icon="el-icon-share" circle @click="shareForm.visible = true;initCart()"></el-button>
+          <el-button type="primary" icon="el-icon-share" circle @click="shareForm.visible = true;shareForm.shareType='share_type_download';initCart()"></el-button>
         </el-badge>
-        </el-tooltip>
-        <el-tooltip class="item" effect="dark" content="搜索" placement="bottom">
-        <el-button style="float:right;margin-left:10px;margin-right:10px;margin-top:10px;" type="primary" icon="el-icon-search" circle @click="agreementPage.current=1;initAgreementList();"></el-button>
-        </el-tooltip>
+      </el-tooltip>
+      <el-tooltip class="item" effect="dark" content="搜索" placement="bottom">
+        <el-button style="float:right;margin-left:10px;margin-right:10px;margin-top:10px;" type="primary" icon="el-icon-search" circle @click="sharePage.current=1;initShareList();"></el-button>
+      </el-tooltip>
       <!-- </div> -->
 
     </el-card>
 
-
-
-
     <el-card style="padding:0px;  padding-bottom:10px;margin:10px">
       <el-row>
         <el-col class="main-col" :span="24">
-          
-          <el-table v-bind:data="agreementTableData" border style="width: 100%">
-            <el-table-column label="名称">
+
+          <el-table v-bind:data="shareTableData" border style="width: 100%">
+            <el-table-column label="链接">
               <template slot-scope="scope">
                 <span style="margin-left: 10px">
-                  <el-button type="text" @click="handleDelProject(scope.$index, scope.row)">{{ scope.row.agreementName == null ? '' : scope.row.agreementName }}</el-button>
+                  <el-link type="text" :href=" scope.row.shareId == null ? '' :( baseURL + '/share/items/' + scope.row.shareId )" target="_blank">{{ scope.row.shareId == null ? '' :( baseURL + '/share/items/' + scope.row.shareId )   }}</el-link>
                 </span>
               </template>
             </el-table-column>
-            <el-table-column label="类型" width="140">
+            <el-table-column label="分享人" width="150">
               <template slot-scope="scope">
-                <span style="margin-left: 10px">{{ scope.row.agreementTypeObj == null ? '' : scope.row.agreementTypeObj.dictionaryName == null ? '' : scope.row.agreementTypeObj.dictionaryName }}</span>
+                <span style="margin-left: 10px">{{ scope.row.shareAdminObj == null ? '' : scope.row.shareAdminObj.adminName == null ? '' : scope.row.shareAdminObj.adminName }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="是否信创" width="90">
+            <el-table-column label="类型" width="100">
               <template slot-scope="scope">
-                <span style="margin-left: 10px">{{ scope.row.agreementInnovation == null ? '' : scope.row.agreementInnovation ? '是' : '否' }}</span>
+                <span style="margin-left: 10px">{{ scope.row.shareTypeObj == null ? '' : scope.row.shareTypeObj.dictionaryName == null ? '' : scope.row.shareTypeObj.dictionaryName }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="客户名称" width="140">
+            <el-table-column label="有效期" width="190">
               <template slot-scope="scope">
-                <span style="margin-left: 10px">{{ scope.row.agreementClient == null ? '' : scope.row.agreementClient }}</span>
+                <span style="margin-left: 10px">{{ scope.row.shareDateStr == null ? '' : scope.row.shareDateStr }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="提供者" width="140">
+            <el-table-column label="是否开启密码保护" width="140">
               <template slot-scope="scope">
-                <span style="margin-left: 10px">{{ scope.row.agreementProvider == null ? '' : scope.row.agreementProvider }}</span>
+                <span style="margin-left: 10px">{{ scope.row.shareHasPassword == null ? '' : scope.row.shareHasPassword  ? '是' : '否'  }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="总金额" width="140">
+            <el-table-column label="密码" width="140">
               <template slot-scope="scope">
-                <span style="margin-left: 10px">{{ scope.row.agreementAmount == null ? '' : scope.row.agreementAmount }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="签约日期" width="130">
-              <template slot-scope="scope">
-                <span style="margin-left: 10px">{{ scope.row.agreementSignDateStr == null ? '' : scope.row.agreementSignDateStr }}</span>
-              </template>
-            </el-table-column>
-
-            <el-table-column label="备注">
-              <template slot-scope="scope">
-                <span style="margin-left: 10px">{{ scope.row.agreementText == null ? '' : scope.row.agreementText }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="产品类型" width="150">
-              <template slot-scope="scope">
-                <el-popover v-for="item in scope.row.productList" :key="item.productId" trigger="hover">
-                  <p>{{ item.productModel == null ? '' : ("型号：" + item.productModel)}}</p>
-                  <p>{{ item.productNumber == null ? '' : ("数量：" + item.productNumber)}}</p>
-                  <div slot="reference" class="name-wrapper">
-                    <el-tag size="medium">{{ item.productTypeObj == null ? '' : item.productTypeObj.dictionaryName  == null ? '' : item.productTypeObj.dictionaryName}}</el-tag>
-                  </div>
-                </el-popover>
-              </template>
-            </el-table-column>
-            <el-table-column label="上传信息" width="250">
-              <template slot-scope="scope">
-                <span style="margin-left: 10px">{{ scope.row.agreementUploadAdmin == null ? '' : ("上传人：" + scope.row.agreementUploadAdmin)}}</span><br />
-                <span style="margin-left: 10px">{{ scope.row.agreementUploadDateStr == null ? '' :("上传时间："+ scope.row.agreementUploadDateStr)}}</span>
+                <span style="margin-left: 10px">{{ scope.row.sharePassword == null ? '' : scope.row.sharePassword }}</span>
               </template>
             </el-table-column>
             <el-table-column v-if="role == 'admin_role_master'" label="是否删除" width="100">
               <template slot-scope="scope">
-                <span style="margin-left: 10px">{{ scope.row.agreementDelete == null ? '' : scope.row.agreementDelete ? '已删除' : '' }}</span>
+                <span style="margin-left: 10px">{{ scope.row.shareDelete == null ? '' : scope.row.shareDelete ? '已删除' : '' }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="160">
+            <el-table-column label="操作" width="200">
               <template slot-scope="scope">
-                <el-button style="margin-bottom:10px" v-if="!scope.row.agreementDelete" size="mini" type="primary" @click="handleDetails(scope.$index, scope.row)">编辑</el-button>
-                <el-button style="margin-bottom:10px" v-if="!scope.row.agreementDelete" size="mini" type="danger" @click="handleDelAgreement(scope.$index, scope.row)">删除</el-button>
-                <el-button style="margin-bottom:10px" v-if="scope.row.agreementDelete&&role == 'admin_role_master'" size="mini" type="success" @click="handleRestoreAgreement(scope.$index, scope.row)">还原</el-button>
-                <el-button style="margin-bottom:10px" v-if="scope.row.agreementDelete&&role == 'admin_role_master'" size="mini" type="danger" @click="handleRelDelAgreement(scope.$index, scope.row)">彻底删除</el-button>
-                <el-button style="margin-bottom:10px" v-if="!scope.row.agreementDelete&&!scope.row.shareState" size="mini" type="success" @click="handleAddToCart(scope.$index, scope.row)">添加分享</el-button>
-                <el-button style="margin-bottom:10px" v-if="!scope.row.agreementDelete&&scope.row.shareState" size="mini" type="danger" @click="handleDelFormCart(scope.$index, scope.row)">移除分享</el-button>
-                <el-button style="margin-bottom:10px" v-if="!scope.row.agreementDelete" size="mini" type="info" @click="handleDownload(scope.$index, scope.row)">下载</el-button>
+                <!-- <el-button style="margin-bottom:10px" v-if="!scope.row.agreementDelete" size="mini" type="primary" @click="handleDetails(scope.$index, scope.row)">编辑</el-button> -->
+                <el-button style="margin-bottom:10px" v-if="!scope.row.shareDelete" size="mini" type="danger" @click="handleDelShare(scope.$index, scope.row)">删除</el-button>
+                <el-button style="margin-bottom:10px" v-if="scope.row.shareDelete&&role == 'admin_role_master'" size="mini" type="success" @click="handleRestoreShare(scope.$index, scope.row)">还原</el-button>
+                <el-button style="margin-bottom:10px" v-if="scope.row.shareDelete&&role == 'admin_role_master'" size="mini" type="danger" @click="handleRelDelShare(scope.$index, scope.row)">彻底删除</el-button>
+                <el-button style="margin-bottom:10px" v-if="!scope.row.shareDelete" size="mini" type="info" @click="handleCopy(scope.$index, scope.row)">复制分享内容</el-button>
               </template>
             </el-table-column>
           </el-table>
           <div class="pager" style="padding-top:10px; padding-right:10px; float: right;">
-            <el-pagination background @size-change="handleAgreementTableSizeChange" @current-change="handleAgreementTableCurrentChange" :hide-on-single-page="false" :current-page="agreementPage.current" :page-sizes="[5, 10, 20, 30, 50, 100]" :page-size="agreementPage.showCount" layout="total, sizes, prev, pager, next, jumper" :total="agreementPage.totalCount"></el-pagination>
+            <el-pagination background @size-change="handleShareTableSizeChange" @current-change="handleShareTableCurrentChange" :hide-on-single-page="false" :current-page="sharePage.current" :page-sizes="[5, 10, 20, 30, 50, 100]" :page-size="sharePage.showCount" layout="total, sizes, prev, pager, next, jumper" :total="sharePage.totalCount"></el-pagination>
           </div>
         </el-col>
       </el-row>
     </el-card>
-    <el-drawer title="待分享列表" :visible.sync="shareForm.visible" direction="rtl" size="770px" @closed="initAgreementList">
+    <el-drawer title="添加下载合同分享" :visible.sync="shareForm.visible" direction="rtl" size="770px">
       <el-row style="padding:10px">
         <el-table v-bind:data="cartTableData" border style="width: 100%">
           <el-table-column label="名称">
@@ -171,6 +143,37 @@
         </el-form>
       </el-row>
     </el-drawer>
+    <el-drawer title="添加上传合同分享" :visible.sync="shareForm.visible2" direction="rtl" size="770px">
+
+      <el-row>
+        <el-form :inline="true" :model="shareForm" class="demo-form-inline">
+          <el-row>
+            <el-form-item label="有效期：">
+              <el-date-picker style="width:300px" v-model="shareForm.shareBeginDateStr" type="datetime" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择开始时间（不填写无此限定）">
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item label="→">
+              <el-date-picker style="width:300px" v-model="shareForm.shareEndDateStr" type="datetime" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择结束时间（不填写无此限定）">
+              </el-date-picker>
+            </el-form-item>
+          </el-row>
+          <el-row>
+            <el-form-item label="开启密码保护：">
+              <el-switch v-model="shareForm.shareHasPassword">
+              </el-switch>
+            </el-form-item>
+            <el-form-item v-if="shareForm.shareHasPassword" label="设置密码：">
+              <el-input style="width:465px" v-model="shareForm.sharePassword" placeholder="不填写将生成4位随机密码" autocomplete="off"></el-input>
+            </el-form-item>
+          </el-row>
+          <el-row style="margin-left:300px">
+            <el-form-item>
+              <el-button type="primary" icon="el-icon-share" @click="addDownLoadShare()">分享</el-button>
+            </el-form-item>
+          </el-row>
+        </el-form>
+      </el-row>
+    </el-drawer>
     <el-dialog :close-on-click-modal="false" title="分享成功" :visible.sync="shareSuccess.visible" width="50%">
       <el-form style="padding-left:20px;padding-right:40px">
         <el-form-item label="分享人：" :label-width="shareSuccess.formLabelWidth">
@@ -179,7 +182,7 @@
         <el-form-item label="链接：" :label-width="shareSuccess.formLabelWidth">
           <el-input v-model="shareSuccess.url" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="提取码：" :label-width="shareSuccess.formLabelWidth">
+        <el-form-item label="密码：" :label-width="shareSuccess.formLabelWidth">
           <el-input v-model="shareSuccess.password" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="有效期：" :label-width="shareSuccess.formLabelWidth">
@@ -200,67 +203,68 @@ export default {
     return {
       token: "",
       role: "",
-      // role collage form 选择框
-      agreementSelectForm: {
-        visible: false,
-        agreementName: "",
-        agreementTypeList: [],
-        agreementInnovation: "",
-        agreementClient: "",
-        agreementAmountBegin: undefined,
-        agreementAmountEnd: undefined,
-        agreementSignDateBeginStr: "",
-        agreementSignDateEndStr: "",
-        agreementProvider: "",
-        agreementText: "",
-        productTypeList: [],
-        productModel: "",
-        productNumberBegin: undefined,
-        productNumberEnd: undefined,
+      baseURL: "",
+      shareSelectForm: {
+        shareAdmin: "",
+        shareType: "",
+        shareDelete: "",
       },
-      agreementTypeSelectiveList: [],
-      productTypeSelectiveList: [],
-      agreementTableData: [],
-      agreementPage: {
+
+      adminSelectiveList: [],
+      shareTypeSelectiveList: [],
+
+      shareTableData: [],
+      sharePage: {
         showCount: 10,
         totalCount: 0,
         current: 1
       },
-      //排序
-      sortForm: {
-        title: "排序",
-        visible: false,
-        field: { name: '上传时间', field: 'agreement_upload_date' },
-        type: { name: '降序', type: 'desc' },
-      },
-      sortTags: [
-        { name: '上传时间 降序', field: 'agreement_upload_date', type: 'desc' },
-      ],
-      fieldsDic: [
-        { name: '名称', field: 'agreement_name' },
-        { name: '类型', field: 'agreement_type' },
-        { name: '是否信创', field: 'agreement_innovation' },
-        { name: '客户名称', field: 'agreement_client' },
-        { name: '总金额', field: 'agreement_amount' },
-        { name: '签约日期', field: 'agreement_sign_date' },
-        { name: '提供者', field: 'agreement_provider' },
-        { name: '上传时间', field: 'agreement_upload_date' },
-      ],
-      typeDic: [
-        { name: '升序', type: 'asc' },
-        { name: '降序', type: 'desc' },
-      ],
-      click: {
 
-      },
-      sortValue: "agreement_upload_date ",
+      // agreementTypeSelectiveList: [],
+      // productTypeSelectiveList: [],
+      // agreementTableData: [],
+      // agreementPage: {
+      //   showCount: 10,
+      //   totalCount: 0,
+      //   current: 1
+      // },
+      //排序
+      // sortForm: {
+      //   title: "排序",
+      //   visible: false,
+      //   field: { name: '上传时间', field: 'agreement_upload_date' },
+      //   type: { name: '降序', type: 'desc' },
+      // },
+      // sortTags: [
+      //   { name: '上传时间 降序', field: 'agreement_upload_date', type: 'desc' },
+      // ],
+      // fieldsDic: [
+      //   { name: '名称', field: 'agreement_name' },
+      //   { name: '类型', field: 'agreement_type' },
+      //   { name: '是否信创', field: 'agreement_innovation' },
+      //   { name: '客户名称', field: 'agreement_client' },
+      //   { name: '总金额', field: 'agreement_amount' },
+      //   { name: '签约日期', field: 'agreement_sign_date' },
+      //   { name: '提供者', field: 'agreement_provider' },
+      //   { name: '上传时间', field: 'agreement_upload_date' },
+      // ],
+      // typeDic: [
+      //   { name: '升序', type: 'asc' },
+      //   { name: '降序', type: 'desc' },
+      // ],
+      // click: {
+
+      // },
+      // sortValue: "agreement_upload_date ",
 
       shareForm: {
         visible: false,
+        visible2: false,
         shareBeginDateStr: "",
         shareEndDateStr: "",
         shareHasPassword: true,
         sharePassword: "",
+        shareType: ""
       },
       cartNum: 0,
       cartTableData: [],
@@ -270,34 +274,32 @@ export default {
         admin: "",
         url: "",
         password: "",
-        date: ""
+        date: "",
+        type: ""
       }
 
     }
   },
   methods: {
-    initAgreementList() {
-
-
-
+    initShareList() {
       const loading = this.$loading(this.$store.state.loadingOption1);
       this.axios
         .post(
-          "/agreement/getAgreementBySearch",
+          "/share/getShareBySearch",
           {
             params: {
-              agreement: this.agreementSelectForm,
-              sort: this.sortValue,
-              currentPage: this.agreementPage.current,
-              showCount: this.agreementPage.showCount
+              share: this.shareSelectForm,
+
+              currentPage: this.sharePage.current,
+              showCount: this.sharePage.showCount
             }
           },
           { headers: { token: this.token } }
         )
         .then(res => {
           if (res.data.code === 200) {
-            this.agreementPage.totalCount = res.data.object.totalNum;
-            this.agreementTableData = res.data.object.items;
+            this.sharePage.totalCount = res.data.object.totalNum;
+            this.shareTableData = res.data.object.items;
           } else if (res.data.code == 401) {
             this.$message({
               showClose: true,
@@ -315,17 +317,17 @@ export default {
           loading.close();
         });
     },
-    initAgreementTypeList() {
+    initShareTypeList() {
       const loading = this.$loading(this.$store.state.loadingOption1);
       this.axios
         .post("/dictionary/getDictionaryItems", {
           params: {
-            dictionaryType: "AGREEMENT_TYPE"
+            dictionaryType: "SHARE_TYPE"
           }
         }, { headers: { token: this.token } })
         .then(res => {
           if (res.data.code === 200) {
-            this.agreementTypeSelectiveList = res.data.object;
+            this.shareTypeSelectiveList = res.data.object;
 
           } else if (res.data.code == 401) {
             this.$message({
@@ -346,17 +348,17 @@ export default {
           loading.close();
         });
     },
-    initProductTypeStateList() {
+    initAdminSelectiveList() {
       const loading = this.$loading(this.$store.state.loadingOption1);
       this.axios
-        .post("/dictionary/getDictionaryItems", {
+        .post("/admin/getAllAdmin", {
           params: {
-            dictionaryType: "PRODUCT_TYPE"
+
           }
         }, { headers: { token: this.token } })
         .then(res => {
           if (res.data.code === 200) {
-            this.productTypeSelectiveList = res.data.object;
+            this.adminSelectiveList = res.data.object;
 
           } else if (res.data.code == 401) {
             this.$message({
@@ -379,78 +381,78 @@ export default {
     },
 
 
-    handleAddAgreement() {
-      this.savePage()
-      this.$router.push({ path: "/home/agreement/details" });
-    },
+    // handleAddAgreement() {
+    //   this.savePage()
+    //   this.$router.push({ path: "/home/agreement/details" });
+    // },
 
-    handleDetails(index, row) {
-      this.savePage()
-      this.$router.push({ path: "/home/agreement/details/" + row.agreementId });
-    },
+    // handleDetails(index, row) {
+    //   this.savePage()
+    //   this.$router.push({ path: "/home/agreement/details/" + row.agreementId });
+    // },
 
     // handleDelProject(index, row) {
 
     // },
 
-    handleAgreementTableSizeChange(val) {
-      this.agreementPage.showCount = val;
-      this.agreementPage.current = 1;
-      this.initAgreementList();
+    handleShareTableSizeChange(val) {
+      this.sharePage.showCount = val;
+      this.sharePage.current = 1;
+      this.initShareList();
     },
-    handleAgreementTableCurrentChange(val) {
-      this.agreementPage.current = val;
-      this.initAgreementList();
+    handleShareTableCurrentChange(val) {
+      this.sharePage.current = val;
+      this.initShareList();
     },
-    savePage() {
-      localStorage.setItem("agreementListPageMessage", JSON.stringify({
-        agreementSelectForm: this.agreementSelectForm,
-        agreementPage: this.agreementPage,
-        sortForm: this.sortForm,
-        sortTags: this.sortTags,
-        sortValue: this.sortValue,
-      }))
-    },
+    // savePage() {
+    //   localStorage.setItem("agreementListPageMessage", JSON.stringify({
+    //     agreementSelectForm: this.agreementSelectForm,
+    //     agreementPage: this.agreementPage,
+    //     sortForm: this.sortForm,
+    //     sortTags: this.sortTags,
+    //     sortValue: this.sortValue,
+    //   }))
+    // },
 
-    handleRemoveTag(tag) {
-      this.sortTags.splice(this.sortTags.indexOf(tag), 1);
-    },
-    handleAddTag() {
-      var i = 0;
-      for (var i = 0; i < this.sortTags.length; i++) {
-        if (this.sortTags[i].field == this.sortForm.field.field) {
-          break;
-        }
-      }
-      if (i < this.sortTags.length) {
-        this.sortTags.splice(i, 1);
-      }
-      this.sortTags.push(
-        { name: this.sortForm.field.name + " " + this.sortForm.type.name, field: this.sortForm.field.field, type: this.sortForm.type.type }
-      )
-    },
-    alterSort() {
-      this.sortValue = "";
-      for (var i = 0; i < this.sortTags.length; i++) {
-        this.sortValue = this.sortValue + " " + this.sortTags[i].field + " " + this.sortTags[i].type + " ,";
-      }
-      this.sortValue = this.sortValue.substring(0, this.sortValue.length - 1);
-      this.initAgreementList();
-    },
-    handleDelAgreement(index, row) {
-      this.$confirm('您确定删除此合同吗？', '提示', {
+    // handleRemoveTag(tag) {
+    //   this.sortTags.splice(this.sortTags.indexOf(tag), 1);
+    // },
+    // handleAddTag() {
+    //   var i = 0;
+    //   for (var i = 0; i < this.sortTags.length; i++) {
+    //     if (this.sortTags[i].field == this.sortForm.field.field) {
+    //       break;
+    //     }
+    //   }
+    //   if (i < this.sortTags.length) {
+    //     this.sortTags.splice(i, 1);
+    //   }
+    //   this.sortTags.push(
+    //     { name: this.sortForm.field.name + " " + this.sortForm.type.name, field: this.sortForm.field.field, type: this.sortForm.type.type }
+    //   )
+    // },
+    // alterSort() {
+    //   this.sortValue = "";
+    //   for (var i = 0; i < this.sortTags.length; i++) {
+    //     this.sortValue = this.sortValue + " " + this.sortTags[i].field + " " + this.sortTags[i].type + " ,";
+    //   }
+    //   this.sortValue = this.sortValue.substring(0, this.sortValue.length - 1);
+    //   this.initAgreementList();
+    // },
+    handleDelShare(index, row) {
+      this.$confirm('您确定删除此分享吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         const loading = this.$loading(this.$store.state.loadingOption2);
-        this.axios.post("/agreement/alterAgreementDel", {
+        this.axios.post("/share/alterShareDel", {
           params: {
-            agreement: row
+            share: row
           }
         }, { headers: { token: this.token } }).then(res => {
           if (res.data.code === 200) {
-            this.initAgreementList();
+            this.initShareList();
             this.initCart();
             this.$message({
               showClose: true,
@@ -479,15 +481,15 @@ export default {
 
       });
     },
-    handleRestoreAgreement(index, row) {
+    handleRestoreShare(index, row) {
       const loading = this.$loading(this.$store.state.loadingOption2);
-      this.axios.post("/agreement/alterAgreementRestore", {
+      this.axios.post("/share/alterShareRestore", {
         params: {
-          agreement: row
+          share: row
         }
       }, { headers: { token: this.token } }).then(res => {
         if (res.data.code === 200) {
-          this.initAgreementList();
+          this.initShareList();
           this.$message({
             showClose: true,
             message: res.data.data,
@@ -512,20 +514,20 @@ export default {
         loading.close();
       });
     },
-    handleRelDelAgreement(index, row) {
-      this.$confirm('此操作将永久删除该合同的所有相关记录，此操作不可恢复，您确定彻底删除此合同吗？', '提示', {
+    handleRelDelShare(index, row) {
+      this.$confirm('您确定彻底删除此分享吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         const loading = this.$loading(this.$store.state.loadingOption2);
-        this.axios.post("/agreement/alterAgreementRelDel", {
+        this.axios.post("/share/alterShareRelDel", {
           params: {
-            agreement: row
+            share: row
           }
         }, { headers: { token: this.token } }).then(res => {
           if (res.data.code === 200) {
-            this.initAgreementList();
+            this.initShareList();
             this.$message({
               showClose: true,
               message: res.data.data,
@@ -553,78 +555,78 @@ export default {
 
       });
     },
-    handleAddToCart(index, row) {
-      const loading = this.$loading(this.$store.state.loadingOption2);
-      this.axios.post("/agreement/addToCart", {
-        params: {
-          agreement: row
-        }
-      }, { headers: { token: this.token } }).then(res => {
-        if (res.data.code === 200) {
-          row.shareState = true;
-          this.cartNum = this.cartNum + 1;
+    // handleAddToCart(index, row) {
+    //   const loading = this.$loading(this.$store.state.loadingOption2);
+    //   this.axios.post("/agreement/addToCart", {
+    //     params: {
+    //       agreement: row
+    //     }
+    //   }, { headers: { token: this.token } }).then(res => {
+    //     if (res.data.code === 200) {
+    //       row.shareState = true;
+    //       this.cartNum = this.cartNum + 1;
 
-          this.$message({
-            showClose: true,
-            message: res.data.data,
-            type: "success"
-          });
+    //       this.$message({
+    //         showClose: true,
+    //         message: res.data.data,
+    //         type: "success"
+    //       });
 
-        } else if (res.data.code == 401) {
-          this.$message({
-            showClose: true,
-            message: res.data.data,
-            type: "error"
-          });
-          this.$router.push({ path: "/login" });
-        } else {
-          this.$alert(res.data.data, "错误", {
-            confirmButtonText: "确定",
-            type: "error",
-            callback: action => {
-            }
-          });
-        }
-        loading.close();
-      });
-    },
-    handleDelFormCart(index, row) {
-      const loading = this.$loading(this.$store.state.loadingOption2);
-      this.axios.post("/agreement/delFromCart", {
-        params: {
-          agreement: row
-        }
-      }, { headers: { token: this.token } }).then(res => {
-        if (res.data.code === 200) {
-          row.shareState = false;
-          this.cartNum = this.cartNum - 1;
-          this.$message({
-            showClose: true,
-            message: res.data.data,
-            type: "success"
-          });
+    //     } else if (res.data.code == 401) {
+    //       this.$message({
+    //         showClose: true,
+    //         message: res.data.data,
+    //         type: "error"
+    //       });
+    //       this.$router.push({ path: "/login" });
+    //     } else {
+    //       this.$alert(res.data.data, "错误", {
+    //         confirmButtonText: "确定",
+    //         type: "error",
+    //         callback: action => {
+    //         }
+    //       });
+    //     }
+    //     loading.close();
+    //   });
+    // },
+    // handleDelFormCart(index, row) {
+    //   const loading = this.$loading(this.$store.state.loadingOption2);
+    //   this.axios.post("/agreement/delFromCart", {
+    //     params: {
+    //       agreement: row
+    //     }
+    //   }, { headers: { token: this.token } }).then(res => {
+    //     if (res.data.code === 200) {
+    //       row.shareState = false;
+    //       this.cartNum = this.cartNum - 1;
+    //       this.$message({
+    //         showClose: true,
+    //         message: res.data.data,
+    //         type: "success"
+    //       });
 
-        } else if (res.data.code == 401) {
-          this.$message({
-            showClose: true,
-            message: res.data.data,
-            type: "error"
-          });
-          this.$router.push({ path: "/login" });
-        } else {
-          this.$alert(res.data.data, "错误", {
-            confirmButtonText: "确定",
-            type: "error",
-            callback: action => {
-            }
-          });
-        }
-        loading.close();
-      });
-    },
-    handleDownload(index, row) {
+    //     } else if (res.data.code == 401) {
+    //       this.$message({
+    //         showClose: true,
+    //         message: res.data.data,
+    //         type: "error"
+    //       });
+    //       this.$router.push({ path: "/login" });
+    //     } else {
+    //       this.$alert(res.data.data, "错误", {
+    //         confirmButtonText: "确定",
+    //         type: "error",
+    //         callback: action => {
+    //         }
+    //       });
+    //     }
+    //     loading.close();
+    //   });
+    // },
+    // handleDownload(index, row) {
 
-    },
+    // },
     initCart() {
       const loading = this.$loading(this.$store.state.loadingOption1);
       this.axios
@@ -718,7 +720,7 @@ export default {
       }, { headers: { token: this.token } }).then(res => {
         if (res.data.code === 200) {
           this.shareSuccess.admin = res.data.object.shareAdminObj == null ? "" : res.data.object.shareAdminObj.adminName == null ? "" : res.data.object.shareAdminObj.adminName;
-          this.shareSuccess.url = this.axios.defaults.baseURL + "share/items/" + res.data.object.shareId;
+          this.shareSuccess.url = this.baseURL + "/share/items/" + res.data.object.shareId;
           this.shareSuccess.password = res.data.object.sharePassword;
 
           if (res.data.object.shareBeginDateStr != "" && res.data.object.shareEndDateStr != "") {
@@ -734,6 +736,8 @@ export default {
             this.shareSuccess.date = "永久有效";
           }
           this.shareSuccess.visible = true;
+          this.shareSuccess.type = res.data.object.shareType == "share_type_download" ? "下载" : res.data.object.shareType == "share_type_upload" ? "上传" : ""
+          this.initShareList();
           this.initCart();
         } else if (res.data.code == 401) {
           this.$message({
@@ -761,10 +765,18 @@ export default {
     //   url: "",
     //   password: "",
     //   date: ""
-
+    handleCopy(index, row) {
+      this.shareSuccess.admin = row.shareAdminObj == null ? "" : row.shareAdminObj.adminName == null ? "" : row.shareAdminObj.adminName;
+      this.shareSuccess.url = this.baseURL + "/share/items/" + row.shareId;
+      this.shareSuccess.password = row.sharePassword;
+      this.shareSuccess.date = row.shareDateStr;
+      //this.shareSuccess.visible = true;
+      this.shareSuccess.type = row.shareType == "share_type_download" ? "下载" : row.shareType == "share_type_upload" ? "上传" : ""
+      this.copy();
+    },
 
     copy() {
-      this.$copyText(this.shareSuccess.admin + "邀请您下载合同文件\n链接：" + this.shareSuccess.url + (this.shareSuccess.password == "" ? "" : ("\n提取码：" + this.shareSuccess.password)) + "\n有效期：" + this.shareSuccess.date).then(
+      this.$copyText(this.shareSuccess.admin + "邀请您" + this.shareSuccess.type + "合同文件\n链接：" + this.shareSuccess.url + (this.shareSuccess.password == "" ? "" : ("\n密码：" + this.shareSuccess.password)) + "\n有效期：" + this.shareSuccess.date).then(
         res => {
           this.$message({
             showClose: true,
@@ -947,22 +959,28 @@ export default {
       return;
     }
     this.role = JSON.parse(localStorage.getItem("admin")).adminRole;
-    var str = localStorage.getItem("agreementListPageMessage")
-    if (str != "" && str != null && str != "null") {
-      var agreementListPageMessage = JSON.parse(str)
-      this.agreementSelectForm = agreementListPageMessage.agreementSelectForm
-      this.agreementPage = agreementListPageMessage.agreementPage
-      this.sortForm = agreementListPageMessage.sortForm
-      this.sortTags = agreementListPageMessage.sortTags
-      this.sortValue = agreementListPageMessage.sortValue
-      localStorage.setItem("agreementListPageMessage", null)
-    }
-    // 加载学院列表数据
-    this.initAgreementTypeList();
-    // 加载admin table data
-    this.initProductTypeStateList();
 
-    this.initAgreementList();
+    this.baseURL = window.location.protocol + "//" + window.location.hostname;
+    if (window.location.port != "") {
+      this.baseURL = this.baseURL + ":" + window.location.port;
+    }
+    this.baseURL = this.baseURL + "/agreement"
+    // var str = localStorage.getItem("agreementListPageMessage")
+    // if (str != "" && str != null && str != "null") {
+    //   var agreementListPageMessage = JSON.parse(str)
+    //   this.agreementSelectForm = agreementListPageMessage.agreementSelectForm
+    //   this.agreementPage = agreementListPageMessage.agreementPage
+    //   this.sortForm = agreementListPageMessage.sortForm
+    //   this.sortTags = agreementListPageMessage.sortTags
+    //   this.sortValue = agreementListPageMessage.sortValue
+    //   localStorage.setItem("agreementListPageMessage", null)
+    // }
+    // 加载学院列表数据
+    this.initShareTypeList();
+    // 加载admin table data
+    this.initAdminSelectiveList();
+
+    this.initShareList();
 
     this.initCart();
 
@@ -980,7 +998,7 @@ export default {
 </script>
 
 <style  lang="scss">
-#agreementList {
+#share {
   .el-main {
     padding: 0px;
   }
@@ -1023,10 +1041,10 @@ export default {
   .el-badge__content {
     margin-top: 6px;
   }
-  .el-drawer__header{
+  .el-drawer__header {
     margin: 0px;
-    padding:20px;
-    background-color: #E1140A;
+    padding: 20px;
+    background-color: #e1140a;
     color: #fff;
   }
   // .form-item-1 {

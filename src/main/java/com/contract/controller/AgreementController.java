@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.contract.annotation.UserLoginToken;
 import com.contract.annotation.UserRoleToken;
+import com.contract.config.FileSaveConfig;
 import com.contract.domain.Admin;
 import com.contract.domain.Agreement;
 import com.contract.domain.Cart;
@@ -19,6 +20,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -299,5 +304,34 @@ public JSONObject updAgreement(@RequestBody String params, HttpServletRequest ht
     }
     return result;
 }
+    @GetMapping("/admin/download")
+    @UserLoginToken
+    @UserRoleToken(passRoleList = {"admin_role_master"})
+    public void exportAdminNullExcel(HttpServletResponse response,String type,String id) throws IOException {
+        // 导出操作
+        try {
+            if(type!=null&&type.equals("agreement")){
+                Agreement agreement = agreementService.getAgreementDetails(id);
+                if(agreement==null||agreement.getAgreementDelete()){
+                    throw new Exception("合同不存在");
+                }
+                FileUtil.downloadFile(response, FileSaveConfig.AGREEMENT,agreement.getAgreementId()+agreement.getAgreementExtend());
+            }
+            if(type!=null&&type.equals("share")){
+
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            response.setHeader("content-type", "application/json");
+            response.setCharacterEncoding("UTF-8");      //获取PrintWriter输出流
+            JSONObject result = new JSONObject();
+            PrintWriter out = response.getWriter();
+            result.put("data", e.getMessage());
+            result.put("code", 500);
+            out.write(result.toJSONString());
+        }
+
+    }
 }
 

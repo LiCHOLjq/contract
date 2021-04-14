@@ -11,6 +11,22 @@
     <result column="share_password" jdbcType="VARCHAR" property="sharePassword" />
     <result column="share_delete" jdbcType="BIT" property="shareDelete" />
   </resultMap>
+
+  <sql id="Search_Where_List">
+
+    where 1=1
+
+    <if test="share.shareAdmin != null and share.shareAdmin != '' ">
+      and share_admin = #{share.shareAdmin,jdbcType=VARCHAR}
+    </if>
+    <if test="share.shareType != null and share.shareType != '' ">
+      and share_type = #{share.shareType,jdbcType=VARCHAR}
+    </if>
+    <if test="share.shareDelete != null and share.shareDelete != '' ">
+      and share_delete = #{share.shareDelete,jdbcType=BIT}
+    </if>
+  </sql>
+
   <sql id="Base_Column_List">
     share_id, share_admin, share_type, share_begin_date, share_end_date, share_has_password, share_delete
   </sql>
@@ -22,6 +38,17 @@
     <include refid="Base_Column_List" />
     from share
     where share_id = #{shareId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectBySearch"  resultMap="BaseResultMap">
+    select
+    <include refid="Password_Column_List" />
+    from share
+    <include refid="Search_Where_List" />
+  </select>
+  <select id="selectBySearchCount"  resultType="int">
+    select count(*)
+    from share
+    <include refid="Search_Where_List" />
   </select>
   <select id="selectByPrimaryKeyHasPassword" parameterType="java.lang.String" resultMap="BaseResultMap">
     select

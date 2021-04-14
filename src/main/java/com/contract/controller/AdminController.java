@@ -53,7 +53,24 @@ public class AdminController {
         }
         return result;
     }
+//    getAllAdmin
+@RequestMapping(value = "/getAllAdmin", method = RequestMethod.POST)
+@UserLoginToken
+@UserRoleToken(passRoleList = {"admin_role_master","admin_role_normal"})
+public JSONObject getAllAdmin(@RequestBody String params) {
+    JSONObject result = new JSONObject();
+    try {
+        JSONObject paramsJson = JSONObject.parseObject(JSONObject.parseObject(params).getString("params"));
+        result.put("object", adminService.getAllAdminExcel());
+        result.put("code", 200);
+    } catch (Exception e) {
+        e.printStackTrace();
+        result.put("data", e.getMessage());
+        result.put("code", 500);
 
+    }
+    return result;
+}
     @RequestMapping(value = "/alterAdmin", method = RequestMethod.POST)
     @UserLoginToken
     @UserRoleToken(passRoleList = {"admin_role_master"})

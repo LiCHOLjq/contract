@@ -3,26 +3,25 @@
     <el-card style="padding:0px;  padding-bottom:10px;margin:10px">
       <div slot="header" class="search-header">
         <p style="margin-top:10px;float:left">搜索设置</p>
-        <el-tooltip  v-if="!agreementSelectForm.visible" class="item" effect="dark" content="展开" placement="bottom">
-        <el-button style="float:right;margin-left:10px;margin-right:10px;" type="primary" icon="el-icon-arrow-down" circle @click="agreementSelectForm.visible = true;"></el-button>
+
+        <el-tooltip v-if="!agreementSelectForm.visible" class="item" effect="dark" content="搜索" placement="bottom">
+          <el-button style="float:right;margin-left:10px;margin-right:10px;" type="primary" icon="el-icon-search" circle @click="agreementSelectForm.visible = true;"></el-button>
         </el-tooltip>
-        <el-tooltip v-if="agreementSelectForm.visible"  class="item" effect="dark" content="收起" placement="bottom">
-        <el-button style="float:right;margin-left:10px;margin-right:10px;" type="primary" icon="el-icon-arrow-up" circle @click="agreementSelectForm.visible = false;"></el-button>
+        <el-tooltip v-if="agreementSelectForm.visible" class="item" effect="dark" content="收起" placement="bottom">
+          <el-button style="float:right;margin-left:10px;margin-right:10px;" type="primary" icon="el-icon-arrow-up" circle @click="agreementSelectForm.visible = false;"></el-button>
         </el-tooltip>
-        <el-tooltip class="item" effect="dark" content="添加新合同" placement="bottom">
-        <el-button  style="float:right;margin-left:10px;margin-right:10px;" circle icon="el-icon-plus" type="primary" @click="handleAddAgreement()"></el-button>
+        <el-tooltip class="item" effect="dark" content="上传合同" placement="bottom">
+          <el-button style="float:right;margin-left:10px;margin-right:10px;" circle icon="el-icon-plus" type="primary" @click="handleAddAgreement()"></el-button>
         </el-tooltip>
-        <el-tooltip class="item" effect="dark" content="添加上传合同分享" placement="bottom">
-        <el-button  style="float:right;margin-left:10px;margin-right:10px;" circle icon="el-icon-upload" type="primary" @click="handleAddAgreement()"></el-button>
+        <el-tooltip class="item" effect="dark" content="邀请上传合同" placement="bottom">
+          <el-button style="float:right;margin-left:10px;margin-right:10px;" circle icon="el-icon-upload" type="primary" @click="shareForm.visible2 = true;shareForm.shareType='share_type_upload';"></el-button>
         </el-tooltip>
-        <el-tooltip class="item" effect="dark" content="添加下载合同分享" placement="bottom">
-        <el-badge style="float:right;margin-left:10px;margin-right:10px;" :value="cartNum" type="success">
-          <el-button type="primary" icon="el-icon-share" circle @click="shareForm.visible = true;initCart()"></el-button>
-        </el-badge>
+        <el-tooltip class="item" effect="dark" content="分享合同" placement="bottom">
+          <el-badge style="float:right;margin-left:10px;margin-right:10px;" :value="cartNum" type="success">
+            <el-button type="primary" icon="el-icon-share" circle @click="shareForm.visible = true;shareForm.shareType='share_type_download';initCart()"></el-button>
+          </el-badge>
         </el-tooltip>
-        <el-tooltip class="item" effect="dark" content="搜索" placement="bottom">
-        <el-button style="float:right;margin-left:10px;margin-right:10px;" type="primary" icon="el-icon-search" circle @click="agreementPage.current=1;initAgreementList();"></el-button>
-        </el-tooltip>
+
       </div>
       <div v-show="agreementSelectForm.visible" class="search-body" style="padding-left:10px;padding-right:10px">
         <el-form :inline="true" :model="agreementSelectForm" class="demo-form-inline">
@@ -121,6 +120,7 @@
               <el-option v-for="type in typeDic" :key="type.type" :label="type.name" :value="type" />
             </el-select>
             <el-button type="primary" style="margin-left:20px;margin-top:20px;" @click="handleAddTag()">添 加</el-button>
+            <el-button style="margin-left:20px;margin-top:20px;" type="primary" icon="el-icon-search" @click="agreementPage.current=1;initAgreementList();">搜索</el-button>
           </el-row>
         </el-form>
       </div>
@@ -133,31 +133,31 @@
             <el-table-column label="名称">
               <template slot-scope="scope">
                 <span style="margin-left: 10px">
-                  <el-button type="text" @click="handleDelProject(scope.$index, scope.row)">{{ scope.row.agreementName == null ? '' : scope.row.agreementName }}</el-button>
+                  <el-button type="text" @click="handleDownload(scope.$index, scope.row)">{{ (scope.row.agreementName == null ? '' : scope.row.agreementName) + (scope.row.agreementExtend == null ? '' : scope.row.agreementExtend) }}</el-button>
                 </span>
               </template>
             </el-table-column>
-            <el-table-column label="类型" width="140">
+            <el-table-column label="类型" width="100">
               <template slot-scope="scope">
                 <span style="margin-left: 10px">{{ scope.row.agreementTypeObj == null ? '' : scope.row.agreementTypeObj.dictionaryName == null ? '' : scope.row.agreementTypeObj.dictionaryName }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="是否信创" width="90">
+            <el-table-column label="信创" width="50">
               <template slot-scope="scope">
                 <span style="margin-left: 10px">{{ scope.row.agreementInnovation == null ? '' : scope.row.agreementInnovation ? '是' : '否' }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="客户名称" width="140">
+            <el-table-column label="客户名称" width="100">
               <template slot-scope="scope">
                 <span style="margin-left: 10px">{{ scope.row.agreementClient == null ? '' : scope.row.agreementClient }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="提供者" width="140">
+            <el-table-column label="提供者" width="100">
               <template slot-scope="scope">
                 <span style="margin-left: 10px">{{ scope.row.agreementProvider == null ? '' : scope.row.agreementProvider }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="总金额" width="140">
+            <el-table-column label="总金额" width="100">
               <template slot-scope="scope">
                 <span style="margin-left: 10px">{{ scope.row.agreementAmount == null ? '' : scope.row.agreementAmount }}</span>
               </template>
@@ -184,10 +184,10 @@
                 </el-popover>
               </template>
             </el-table-column>
-            <el-table-column label="上传信息" width="250">
+            <el-table-column label="上传信息" width="200">
               <template slot-scope="scope">
-                <span style="margin-left: 10px">{{ scope.row.agreementUploadAdmin == null ? '' : ("上传人：" + scope.row.agreementUploadAdmin)}}</span><br />
-                <span style="margin-left: 10px">{{ scope.row.agreementUploadDateStr == null ? '' :("上传时间："+ scope.row.agreementUploadDateStr)}}</span>
+                <span style="margin-left: 10px">{{ scope.row.agreementUploadAdmin == null ? '' : ( scope.row.agreementUploadAdmin)}}</span><br />
+                <span style="margin-left: 10px">{{ scope.row.agreementUploadDateStr == null ? '' :( scope.row.agreementUploadDateStr)}}</span>
               </template>
             </el-table-column>
             <el-table-column v-if="role == 'admin_role_master'" label="是否删除" width="100">
@@ -195,7 +195,7 @@
                 <span style="margin-left: 10px">{{ scope.row.agreementDelete == null ? '' : scope.row.agreementDelete ? '已删除' : '' }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="160">
+            <el-table-column label="操作" width="225">
               <template slot-scope="scope">
                 <el-button style="margin-bottom:10px" v-if="!scope.row.agreementDelete" size="mini" type="primary" @click="handleDetails(scope.$index, scope.row)">编辑</el-button>
                 <el-button style="margin-bottom:10px" v-if="!scope.row.agreementDelete" size="mini" type="danger" @click="handleDelAgreement(scope.$index, scope.row)">删除</el-button>
@@ -203,7 +203,7 @@
                 <el-button style="margin-bottom:10px" v-if="scope.row.agreementDelete&&role == 'admin_role_master'" size="mini" type="danger" @click="handleRelDelAgreement(scope.$index, scope.row)">彻底删除</el-button>
                 <el-button style="margin-bottom:10px" v-if="!scope.row.agreementDelete&&!scope.row.shareState" size="mini" type="success" @click="handleAddToCart(scope.$index, scope.row)">添加分享</el-button>
                 <el-button style="margin-bottom:10px" v-if="!scope.row.agreementDelete&&scope.row.shareState" size="mini" type="danger" @click="handleDelFormCart(scope.$index, scope.row)">移除分享</el-button>
-                <el-button style="margin-bottom:10px" v-if="!scope.row.agreementDelete" size="mini" type="info" @click="handleDownload(scope.$index, scope.row)">下载</el-button>
+                <!-- <el-button style="margin-bottom:10px" v-if="!scope.row.agreementDelete" size="mini" type="info" @click="handleDownload(scope.$index, scope.row)">下载</el-button> -->
               </template>
             </el-table-column>
           </el-table>
@@ -259,6 +259,36 @@
         </el-form>
       </el-row>
     </el-drawer>
+    <el-drawer title="添加上传合同分享" :visible.sync="shareForm.visible2" direction="rtl" size="770px">
+      <el-row>
+        <el-form :inline="true" :model="shareForm" class="demo-form-inline">
+          <el-row>
+            <el-form-item label="有效期：">
+              <el-date-picker style="width:300px" v-model="shareForm.shareBeginDateStr" type="datetime" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择开始时间（不填写无此限定）">
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item label="→">
+              <el-date-picker style="width:300px" v-model="shareForm.shareEndDateStr" type="datetime" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择结束时间（不填写无此限定）">
+              </el-date-picker>
+            </el-form-item>
+          </el-row>
+          <el-row>
+            <el-form-item label="开启密码保护：">
+              <el-switch v-model="shareForm.shareHasPassword">
+              </el-switch>
+            </el-form-item>
+            <el-form-item v-if="shareForm.shareHasPassword" label="设置密码：">
+              <el-input style="width:465px" v-model="shareForm.sharePassword" placeholder="不填写将生成4位随机密码" autocomplete="off"></el-input>
+            </el-form-item>
+          </el-row>
+          <el-row style="margin-left:300px">
+            <el-form-item>
+              <el-button type="primary" icon="el-icon-share" @click="addDownLoadShare()">分享</el-button>
+            </el-form-item>
+          </el-row>
+        </el-form>
+      </el-row>
+    </el-drawer>
     <el-dialog :close-on-click-modal="false" title="分享成功" :visible.sync="shareSuccess.visible" width="50%">
       <el-form style="padding-left:20px;padding-right:40px">
         <el-form-item label="分享人：" :label-width="shareSuccess.formLabelWidth">
@@ -267,7 +297,7 @@
         <el-form-item label="链接：" :label-width="shareSuccess.formLabelWidth">
           <el-input v-model="shareSuccess.url" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="提取码：" :label-width="shareSuccess.formLabelWidth">
+        <el-form-item label="密码：" :label-width="shareSuccess.formLabelWidth">
           <el-input v-model="shareSuccess.password" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="有效期：" :label-width="shareSuccess.formLabelWidth">
@@ -288,6 +318,7 @@ export default {
     return {
       token: "",
       role: "",
+      baseURL: "",
       // role collage form 选择框
       agreementSelectForm: {
         visible: false,
@@ -345,10 +376,12 @@ export default {
 
       shareForm: {
         visible: false,
+        visible2: false,
         shareBeginDateStr: "",
         shareEndDateStr: "",
         shareHasPassword: true,
         sharePassword: "",
+        shareType: ""
       },
       cartNum: 0,
       cartTableData: [],
@@ -358,7 +391,8 @@ export default {
         admin: "",
         url: "",
         password: "",
-        date: ""
+        date: "",
+        type: ""
       }
 
     }
@@ -711,7 +745,40 @@ export default {
       });
     },
     handleDownload(index, row) {
+      const loading = this.$loading(this.$store.state.loadingOption1);
+      let url = '/agreement/admin/download?type=agreement&id=' + row.agreementId;
+      this.axios({
+        method: "get",
+        url: url,
+        responseType: "blob",
+        headers: { token: this.token }
+      }).then(data => {
+        console.log(data.headers)
+        if (data.headers["content-type"] == "application/json;charset=UTF-8") {
+          this.$alert("下载文件出错", "错误", {
+            confirmButtonText: "确定",
+            type: "error",
+            callback: action => {
+            }
+          });
+          loading.close();
+          return;
+        }
 
+        if (!data) {
+          loading.close();
+          return;
+        }
+        debugger;
+        let url = window.URL.createObjectURL(data.data);
+        let link = document.createElement("a");
+        link.style.display = "none";
+        link.href = url;
+        link.setAttribute("download", row.agreementName + row.agreementExtend);
+        document.body.appendChild(link);
+        link.click();
+        loading.close();
+      });
     },
     initCart() {
       const loading = this.$loading(this.$store.state.loadingOption1);
@@ -806,7 +873,7 @@ export default {
       }, { headers: { token: this.token } }).then(res => {
         if (res.data.code === 200) {
           this.shareSuccess.admin = res.data.object.shareAdminObj == null ? "" : res.data.object.shareAdminObj.adminName == null ? "" : res.data.object.shareAdminObj.adminName;
-          this.shareSuccess.url = this.axios.defaults.baseURL + "share/items/" + res.data.object.shareId;
+          this.shareSuccess.url = this.baseURL + "/share/items/" + res.data.object.shareId;
           this.shareSuccess.password = res.data.object.sharePassword;
 
           if (res.data.object.shareBeginDateStr != "" && res.data.object.shareEndDateStr != "") {
@@ -822,7 +889,10 @@ export default {
             this.shareSuccess.date = "永久有效";
           }
           this.shareSuccess.visible = true;
-          this.initCart();
+          this.shareSuccess.type = res.data.object.shareType == "share_type_download" ? "下载" : res.data.object.shareType == "share_type_upload" ? "上传" : ""
+          if (res.data.object.shareType == "share_type_download") {
+            this.initCart();
+          }
         } else if (res.data.code == 401) {
           this.$message({
             showClose: true,
@@ -852,7 +922,7 @@ export default {
 
 
     copy() {
-      this.$copyText(this.shareSuccess.admin + "邀请您下载合同文件\n链接：" + this.shareSuccess.url + (this.shareSuccess.password == "" ? "" : ("\n提取码：" + this.shareSuccess.password)) + "\n有效期：" + this.shareSuccess.date).then(
+      this.$copyText(this.shareSuccess.admin + "邀请您" + this.shareSuccess.type + "合同文件\n链接：" + this.shareSuccess.url + (this.shareSuccess.password == "" ? "" : ("\n密码：" + this.shareSuccess.password)) + "\n有效期：" + this.shareSuccess.date).then(
         res => {
           this.$message({
             showClose: true,
@@ -1035,6 +1105,12 @@ export default {
       return;
     }
     this.role = JSON.parse(localStorage.getItem("admin")).adminRole;
+
+    this.baseURL = window.location.protocol + "//" + window.location.hostname;
+    if (window.location.port != "") {
+      this.baseURL = this.baseURL + ":" + window.location.port;
+    }
+    this.baseURL = this.baseURL + "/agreement"
     var str = localStorage.getItem("agreementListPageMessage")
     if (str != "" && str != null && str != "null") {
       var agreementListPageMessage = JSON.parse(str)
@@ -1111,10 +1187,10 @@ export default {
   .el-badge__content {
     margin-top: 6px;
   }
-  .el-drawer__header{
+  .el-drawer__header {
     margin: 0px;
-    padding:20px;
-    background-color: #E1140A;
+    padding: 20px;
+    background-color: #e1140a;
     color: #fff;
   }
   // .form-item-1 {

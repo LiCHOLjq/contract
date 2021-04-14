@@ -9,6 +9,7 @@ import java.util.List;
 public interface ShareAgreementMapper {
     int deleteByPrimaryKey(String shareAgreementId);
     int deleteByAgreement(String agreementId);
+    int deleteByShare(String shareId);
     int insert(ShareAgreement record);
 
     int insertSelective(ShareAgreement record);

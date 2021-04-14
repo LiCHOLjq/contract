@@ -23,6 +23,10 @@
     delete from share_agreement
     where agreement_id = #{agreementId,jdbcType=VARCHAR}
   </delete>
+  <delete id="deleteByShare" parameterType="java.lang.String">
+    delete from share_agreement
+    where share_id = #{shareId,jdbcType=VARCHAR}
+  </delete>
   <insert id="insert" parameterType="com.contract.domain.ShareAgreement">
     insert into share_agreement (share_agreement_id, share_id, agreement_id
       )

@@ -51,8 +51,9 @@ export default {
         String.fromCharCode(26446) +
         String.fromCharCode(20339) +
         String.fromCharCode(20346) + " " +
-        String.fromCharCode(29256) +
-        String.fromCharCode(26412) + " " +
+        String.fromCharCode(20869) +
+        String.fromCharCode(27979) +
+        String.fromCharCode(29256) + " " +
         String.fromCharCode(118) +
         String.fromCharCode(49) +
         String.fromCharCode(46) +
@@ -103,16 +104,16 @@ export default {
 .el-header {
   padding: 0px;
 }
-  .el-dialog__header {
-    background-color: #E1140A;
-    padding: 15px 20px 15px;
-  }
-  .el-dialog__title {
-    line-height: 24px;
-    font-size: 16px;
-    color: #fff;
-  }
-  .el-dialog__headerbtn .el-dialog__close {
-    color: #fff;
-  }
+.el-dialog__header {
+  background-color: #e1140a;
+  padding: 15px 20px 15px;
+}
+.el-dialog__title {
+  line-height: 24px;
+  font-size: 16px;
+  color: #fff;
+}
+.el-dialog__headerbtn .el-dialog__close {
+  color: #fff;
+}
 </style>

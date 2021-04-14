@@ -39,7 +39,7 @@ public class AdminLoginController {
             if(!accessAdmin.getAdminUseful()){
                 throw new BaseException("用户已冻结，请联系管理员",500);
             }
-            String token = TokenUtil.getAdminToken(accessAdmin,10800);
+            String token = TokenUtil.getAdminToken(accessAdmin,604800);
             logService.addLoginLog(accessAdmin.getAdminId(),httpServletRequest);
             JSONObject object = new JSONObject();
             //accessAdmin.setAdminPassword(null);

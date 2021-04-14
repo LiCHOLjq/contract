@@ -147,7 +147,7 @@
                 <el-form-item>
                   <el-button v-if="agreement.submitState == 'Add'" icon="el-icon-upload2" type="primary" @click="submitUpload">确定添加</el-button>
                   <el-button v-if="agreement.submitState == 'Upd'" icon="el-icon-upload2" @click="updAgreement" type="primary">确定修改</el-button>
-                  <el-button v-if="agreement.submitState == 'Upd'" icon="el-icon-download" @click="exportProjectApprovalWord" type="primary">下载合同文件</el-button>
+                  <el-button v-if="agreement.submitState == 'Upd'" icon="el-icon-download" @click="handleDownload" type="primary">下载合同文件</el-button>
                 </el-form-item>
               </el-row>
               <!-- <div class="login-btn">
@@ -483,8 +483,43 @@ export default {
           }
           loading.close();
         });
-    }
+    },
+    handleDownload() {
+      const loading = this.$loading(this.$store.state.loadingOption1);
+      let url = '/agreement/admin/download?type=agreement&id=' + this.agreement.agreementId;
+      this.axios({
+        method: "get",
+        url: url,
+        responseType: "blob",
+        headers: { token: this.token }
+      }).then(data => {
+        console.log(data.headers)
+        if (data.headers["content-type"] == "application/json;charset=UTF-8") {
+          this.$alert("下载文件出错", "错误", {
+            confirmButtonText: "确定",
+            type: "error",
+            callback: action => {
+            }
+          });
+          loading.close();
+          return;
+        }
 
+        if (!data) {
+          loading.close();
+          return;
+        }
+        debugger;
+        let url = window.URL.createObjectURL(data.data);
+        let link = document.createElement("a");
+        link.style.display = "none";
+        link.href = url;
+        link.setAttribute("download", this.agreement.agreementName + this.agreement.agreementExtend);
+        document.body.appendChild(link);
+        link.click();
+        loading.close();
+      });
+    },
     // sumBudget() {
     //   var sum = 0.0;
     //   for (var i = 0; i < this.projectBudgetList.length; i++) {
@@ -1096,6 +1131,5 @@ export default {
     padding-right: 15px;
     text-align: left;
   }
-  
 }
 </style>

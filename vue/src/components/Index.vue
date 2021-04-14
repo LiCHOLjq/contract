@@ -1,6 +1,8 @@
 <template>
   <div id="inds">
-    <el-row v-for="power in powerList" :key="power.powerId">
+    <!-- <img class="head-img" width="700" src="../assets/img/wx.jpg" /> -->
+    <!-- <img class="head-img" width="700" src="../assets/img/zfb.jpg" />s -->
+    <!-- <el-row v-for="power in powerList" :key="power.powerId">
       <h1 class="index-title">{{power.powerName}}</h1>
 
       <el-col v-for="child in power.childrenPowerList" :key="child.powerId" class="index-col" :span="4">
@@ -10,7 +12,7 @@
         </el-card>
       </el-col>
 
-    </el-row>
+    </el-row> -->
     <!-- <el-carousel indicator-position="outside">
       <el-carousel-item
         v-for="item in imagesbox"

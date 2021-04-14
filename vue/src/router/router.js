@@ -15,9 +15,9 @@ import Index from '../components/Index.vue';
 import Admin from '../components/system/Admin.vue';
 import Dictionary from '../components/system/Dictionary.vue';
 import Log from '../components/system/Log.vue';
-import AgreementList from '../components/plan/AgreementList.vue';
-import Agreement from '../components/plan/Agreement.vue';
-import Share_Admin from '../components/plan/Share.vue';
+import AgreementList from '../components/agreement/AgreementList.vue';
+import Agreement from '../components/agreement/Agreement.vue';
+import Share_Admin from '../components/agreement/Share.vue';
 // import Role from '../components/Role.vue';
 // 
 // import Group from '../components/system/Group.vue';
@@ -75,7 +75,7 @@ const routes = [
 
 const router = new VueRouter({
     mode: 'history',   /*hash模式改为history*/
-    base: '/promotionVue',
+    base: '/agreement',
     routes // （缩写）相当于 routes: routes
 })
 
