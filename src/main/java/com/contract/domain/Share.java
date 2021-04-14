@@ -1,6 +1,7 @@
 package com.contract.domain;
 
 import java.util.Date;
+import java.util.List;
 
 public class Share {
     private String shareId;
@@ -30,6 +31,16 @@ public class Share {
     private Dictionary shareTypeObj;
 
     private String shareDateStr;
+
+    private List<ShareAgreement> shareAgreementList;
+
+    public List<ShareAgreement> getShareAgreementList() {
+        return shareAgreementList;
+    }
+
+    public void setShareAgreementList(List<ShareAgreement> shareAgreementList) {
+        this.shareAgreementList = shareAgreementList;
+    }
 
     public String getShareDateStr() {
         return shareDateStr;

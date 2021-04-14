@@ -7,6 +7,26 @@ public class ShareAgreement {
 
     private String agreementId;
 
+    private String agreementName;
+
+    private String agreementExtend;
+
+    public String getAgreementName() {
+        return agreementName;
+    }
+
+    public void setAgreementName(String agreementName) {
+        this.agreementName = agreementName;
+    }
+
+    public String getAgreementExtend() {
+        return agreementExtend;
+    }
+
+    public void setAgreementExtend(String agreementExtend) {
+        this.agreementExtend = agreementExtend;
+    }
+
     public String getShareAgreementId() {
         return shareAgreementId;
     }

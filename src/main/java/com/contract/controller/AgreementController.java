@@ -8,12 +8,11 @@ import com.contract.config.FileSaveConfig;
 import com.contract.domain.Admin;
 import com.contract.domain.Agreement;
 import com.contract.domain.Cart;
+import com.contract.domain.Dictionary;
 import com.contract.domain.Product;
 import com.contract.exception.AddException;
 import com.contract.exception.BaseException;
-import com.contract.service.AdminService;
-import com.contract.service.AgreementService;
-import com.contract.service.CartService;
+import com.contract.service.*;
 import com.contract.util.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,10 +20,10 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/agreement")
@@ -35,6 +34,10 @@ public class AgreementController {
     private AdminService adminService;
     @Resource
     private CartService cartService;
+    @Resource
+    private LogService logService;
+    @Resource
+    private DictionaryService dictionaryService;
 
 
     //getAgreementBySearch
@@ -75,17 +78,87 @@ public class AgreementController {
         }
         return result;
     }
+    @RequestMapping("/exportAgreement")
+    @UserLoginToken
+    @UserRoleToken(passRoleList = {"admin_role_master"})
+    public void exportAgreement(HttpServletResponse response, HttpServletRequest httpServletRequest,@RequestBody String params) throws IOException {
+        try {
+            JSONObject paramsJson = JSONObject.parseObject(JSONObject.parseObject(params).getString("params"));
+            String sort = paramsJson.getString("sort");
+            Agreement agreement = JSONObject.parseObject(paramsJson.getString("agreement"), Agreement.class);
+            List<Agreement> agreementList = agreementService.getAgreementBySearch(agreement,sort);
+            Set<String> titleList = new LinkedHashSet<>();
+            List<Map<String,Object>> mapList = new ArrayList<>();
+            titleList.add("名称");
+            titleList.add("类型");
+            titleList.add("信创");
+            titleList.add("客户名称");
+            titleList.add("提供者");
+            titleList.add("总金额");
+            titleList.add("签约日期");
+            titleList.add("备注");
+            titleList.add("上传者");
+            titleList.add("上传时间");
+            titleList.add("扩展名");
+            List<Dictionary> dictionaryList = dictionaryService.getDictionaryByType("PRODUCT_TYPE");
+            for(Dictionary dictionary : dictionaryList){
+                titleList.add(dictionary.getDictionaryName());
+            }
+            for(Agreement item : agreementList){
+                Map<String,Object> map = new LinkedHashMap<>();
+                map.put("名称",item.getAgreementName());
+                map.put("类型",item.getAgreementTypeObj().getDictionaryName());
+                map.put("信创",item.getAgreementInnovation() ? "是" : "否");
+                map.put("客户名称",item.getAgreementClient());
+                map.put("提供者",item.getAgreementProvider());
+                map.put("总金额",item.getAgreementAmount().toString());
+                map.put("签约日期",item.getAgreementSignDateStr());
+                map.put("备注",item.getAgreementText());
+                map.put("上传者",item.getAgreementUploadAdmin());
+                map.put("上传时间",item.getAgreementUploadDateStr());
+                map.put("扩展名",item.getAgreementExtend());
+                for(Dictionary dictionary : dictionaryList){
+                    map.put(dictionary.getDictionaryName(),0);
+                }
+                int i = 1;
+                for(Product product : item.getProductList()){
+                    map.put(product.getProductTypeObj().getDictionaryName(),((Integer)map.get(product.getProductTypeObj().getDictionaryName())+1));
+                    titleList.add("产品类型"+i);
+                    map.put("产品类型"+i,product.getProductTypeObj().getDictionaryName());
+                    titleList.add("产品型号"+i);
+                    map.put("产品型号"+i,product.getProductModel());
+                    titleList.add("产品数量"+i);
+                    map.put("产品数量"+i,product.getProductNumber());
+                    i++;
+                }
+                mapList.add(map);
+            }
+            ExcelUtils.exportExcel(mapList,titleList,"合同信息","合同信息导出.xlsx",response);
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            response.setHeader("content-type", "application/json");
+            response.setCharacterEncoding("UTF-8");      //获取PrintWriter输出流
+            JSONObject result = new JSONObject();
+            PrintWriter out = response.getWriter();
+            result.put("data", e.getMessage());
+            result.put("code", 500);
+            out.write(result.toJSONString());
+        }
+    }
 
     //alterAgreementDel
     @RequestMapping(value = "/alterAgreementDel", method = RequestMethod.POST)
     @UserLoginToken
     @UserRoleToken(passRoleList = {"admin_role_master","admin_role_normal"})
-    public JSONObject alterAgreementDel(@RequestBody String params) {
+    public JSONObject alterAgreementDel(HttpServletRequest httpServletRequest,@RequestBody String params) {
         JSONObject result = new JSONObject();
         try {
             JSONObject paramsJson = JSONObject.parseObject(JSONObject.parseObject(params).getString("params"));
             Agreement agreement = JSONObject.parseObject(paramsJson.getString("agreement"), Agreement.class);
             agreementService.delAgreement(agreement);
+            logService.addAgreementDeleteLog(agreement.getAgreementId(),agreement.getAgreementName(),httpServletRequest);
             result.put("data", "【合同】删除成功");
             result.put("code", 200);
 
@@ -153,6 +226,7 @@ public class AgreementController {
             String token = httpServletRequest.getHeader("token");// 从 http 请求头中取出 token
             String adminId = TokenUtil.getId(token);
             agreementService.addAgreement(agreement,productList,file,adminId);
+            logService.addAgreementAddLog(agreement.getAgreementId(),agreement.getAgreementName(),httpServletRequest);
             result.put("data","【合同】添加成功");
             result.put("code", 200);
         } catch (Exception e) {
@@ -295,6 +369,7 @@ public JSONObject updAgreement(@RequestBody String params, HttpServletRequest ht
         String token = httpServletRequest.getHeader("token");// 从 http 请求头中取出 token
         String adminId = TokenUtil.getId(token);
         agreementService.updAgreement(agreement,productList,adminId);
+        logService.addAgreementUpdateLog(agreement.getAgreementId(),agreement.getAgreementName(),httpServletRequest);
         result.put("data","【合同】修改成功");
         result.put("code", 200);
     } catch (Exception e) {
@@ -331,7 +406,56 @@ public JSONObject updAgreement(@RequestBody String params, HttpServletRequest ht
             result.put("code", 500);
             out.write(result.toJSONString());
         }
-
     }
+    @GetMapping("/downLoadCart")
+    @UserLoginToken
+    @UserRoleToken(passRoleList = {"admin_role_master"})
+    public void downLoadCart(HttpServletRequest httpServletRequest,HttpServletResponse response) throws IOException {
+        // 导出操作
+        try {
+            String token = httpServletRequest.getHeader("token");// 从 http 请求头中取出 token
+            String adminId = TokenUtil.getId(token);
+            List<Cart> cartList = cartService.getCartByAdmin(adminId);
+            List<ZipFile> zipFileList = new ArrayList<>();
+            int i=1;
+            for(Cart cart : cartList){
+                Agreement agreement = agreementService.getAgreementById(cart.getCartAgreement());
+                zipFileList.add(new ZipFile(new File(FileSaveConfig.AGREEMENT+agreement.getAgreementId()+agreement.getAgreementExtend()),i+"."+agreement.getAgreementName()+agreement.getAgreementExtend()));
+                i++;
+            }
+            ZipUtils.downloadZip(zipFileList,response);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            response.setHeader("content-type", "application/json");
+            response.setCharacterEncoding("UTF-8");      //获取PrintWriter输出流
+            JSONObject result = new JSONObject();
+            PrintWriter out = response.getWriter();
+            result.put("data", e.getMessage());
+            result.put("code", 500);
+            out.write(result.toJSONString());
+        }
+    }
+    @RequestMapping("/clearCart")
+    @UserLoginToken
+    @UserRoleToken(passRoleList = {"admin_role_master","admin_role_normal"})
+    public JSONObject clearCart(@RequestBody String params, HttpServletRequest httpServletRequest) {
+        JSONObject result = new JSONObject();
+        //导入操作
+        try {
+            JSONObject paramsJson = JSONObject.parseObject(JSONObject.parseObject(params).getString("params"));
+            String token = httpServletRequest.getHeader("token");// 从 http 请求头中取出 token
+            String adminId = TokenUtil.getId(token);
+            cartService.clearCart(adminId);
+            result.put("data","【待分享列表】已清空");
+            result.put("code", 200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("code", 500);
+            result.put("data",e.getMessage());
+        }
+        return result;
+    }
+
 }
 

@@ -9,6 +9,9 @@ import java.text.ParseException;
 
 public interface ShareService {
     Share getShareByIdHasPassword(String shareId);
+
+    Share getShareDetails(String shareId);
+
     Share addDownLoadShare(Share share,String adminId) throws Exception;
 
     PageBean<Share> getShareBySearch(Share share, int currentPage, int pageSize);

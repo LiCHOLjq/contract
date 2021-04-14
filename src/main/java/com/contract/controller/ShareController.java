@@ -9,6 +9,7 @@ import com.contract.domain.Agreement;
 import com.contract.domain.Product;
 import com.contract.domain.Share;
 import com.contract.service.AdminService;
+import com.contract.service.LogService;
 import com.contract.service.ShareService;
 import com.contract.util.PageBean;
 import com.contract.util.TokenUtil;
@@ -31,6 +32,9 @@ public class ShareController {
     @Resource
     private AdminService adminService;
 
+    @Resource
+    private LogService logService;
+
     //addShare
     @RequestMapping("/addDownLoadShare")
     @UserLoginToken
@@ -44,6 +48,7 @@ public class ShareController {
             String token = httpServletRequest.getHeader("token");// 从 http 请求头中取出 token
             String adminId = TokenUtil.getId(token);
             Share share1 = shareService.addDownLoadShare(share,adminId);
+            logService.addShareAddLog(share1.getShareId(),httpServletRequest);
             result.put("object",share1);
             result.put("code", 200);
         } catch (Exception e) {
@@ -98,12 +103,13 @@ public class ShareController {
     @RequestMapping(value = "/alterShareDel", method = RequestMethod.POST)
     @UserLoginToken
     @UserRoleToken(passRoleList = {"admin_role_master","admin_role_normal"})
-    public JSONObject alterShareDel(@RequestBody String params) {
+    public JSONObject alterShareDel(@RequestBody String params, HttpServletRequest httpServletRequest) {
         JSONObject result = new JSONObject();
         try {
             JSONObject paramsJson = JSONObject.parseObject(JSONObject.parseObject(params).getString("params"));
             Share share = JSONObject.parseObject(paramsJson.getString("share"), Share.class);
             shareService.delShare(share);
+            logService.addShareDeleteLog(share.getShareId(),httpServletRequest);
             result.put("data", "【分享】删除成功");
             result.put("code", 200);
 

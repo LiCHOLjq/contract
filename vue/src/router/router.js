@@ -18,6 +18,9 @@ import Log from '../components/system/Log.vue';
 import AgreementList from '../components/agreement/AgreementList.vue';
 import Agreement from '../components/agreement/Agreement.vue';
 import Share_Admin from '../components/agreement/Share.vue';
+
+import Share_Login from '../components/share/Login.vue';
+import Share_Error from '../components/share/Error.vue';
 // import Role from '../components/Role.vue';
 // 
 // import Group from '../components/system/Group.vue';
@@ -63,8 +66,9 @@ const routes = [
     },
 
     { path: '/login', component: Login, },   //登录页面路由
-    // { path: '/share/login/:shareId', component: Login, },   //登录页面路由
-    // { path: '/share/items/:shareId', component: Login, },   //登录页面路由
+    { path: '/share/login/:shareId', component: Share_Login, },   //登录页面路由
+    { path: '/share/items/:shareId', component: Share_Login, },   //登录页面路由
+    { path: '/share/error', component: Share_Error, },   //登录页面路由
     // { path: '/role', component: Role, },   //登录页面路由
     { path: '*', redirect: '/home' },   /*默认跳转路由*/
     // { path: '/news/:newsId', component: News, },

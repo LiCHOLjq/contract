@@ -38,19 +38,23 @@ public class ExcelUtils {
 
      */
 
-    public static void exportExcel(List<Map<String, Object>> list, String sheetname, String fileName, HttpServletResponse response){
+    public static void exportExcel(List<Map<String, Object>> list,Set<String> titles, String sheetname, String fileName, HttpServletResponse response){
         //新建工作簿
         XSSFWorkbook workbook=new XSSFWorkbook();
         //创建Excel的sheet
         XSSFSheet sheet=workbook.createSheet(sheetname);
         //从list任意一个Map对象里获取标题（字段名或属性名）放到sheet的第一行上，若第一条记录某字段值没有，则会没有该字段
-        Map<String, Object> map=list.get(0);
+        //Map<String, Object> map=list.get(0);
         int num=0;
         XSSFRow first=sheet.createRow(0);//创建sheet的第一行
-        for(String key:map.keySet()) {
-            first.createCell(num).setCellValue(key);//创建num+1行并在第num+1列上赋值（字段名）
+        for(String title : titles){
+            first.createCell(num).setCellValue(title);//创建num+1行并在第num+1列上赋值（字段名）
             num++;
         }
+//        for(String key:map.keySet()) {
+//            first.createCell(num).setCellValue(key);//创建num+1行并在第num+1列上赋值（字段名）
+//            num++;
+//        }
         //从list取第一行到最后一行的内容并放到对应的Excel里，若记录里某字段值没有会有问题
         int rownum=1;//行数
         for(Map<String, Object> data:list) {

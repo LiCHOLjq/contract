@@ -25,11 +25,11 @@
 
       </el-form>
       <el-tooltip class="item" effect="dark" content="邀请上传合同" placement="bottom">
-        <el-button style="float:right;margin-left:10px;margin-right:10px;margin-top:10px;" circle icon="el-icon-upload" type="primary" @click="shareForm.visible2 = true;shareForm.shareType='share_type_upload';"></el-button>
+        <el-button style="float:right;margin-left:10px;margin-right:10px;margin-top:10px;" circle icon="el-icon-upload" type="primary" @click="shareForm.visible2 = true;shareForm.shareType='share_type_upload';setEndDate();"></el-button>
       </el-tooltip>
       <el-tooltip class="item" effect="dark" content="分享合同" placement="bottom">
         <el-badge style="float:right;margin-left:10px;margin-right:10px;margin-top:10px;" :value="cartNum" type="success">
-          <el-button type="primary" icon="el-icon-share" circle @click="shareForm.visible = true;shareForm.shareType='share_type_download';initCart()"></el-button>
+          <el-button type="primary" icon="el-icon-share" circle @click="shareForm.visible = true;shareForm.shareType='share_type_download';initCart();setEndDate();"></el-button>
         </el-badge>
       </el-tooltip>
       <el-tooltip class="item" effect="dark" content="搜索" placement="bottom">
@@ -122,7 +122,7 @@
               </el-date-picker>
             </el-form-item>
             <el-form-item label="→">
-              <el-date-picker style="width:300px" v-model="shareForm.shareEndDateStr" type="datetime" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择结束时间（不填写无此限定）">
+              <el-date-picker style="width:300px" v-model="shareForm.shareEndDateStr" type="datetime" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" :picker-options="pickerOptions" placeholder="选择结束时间（不填写无此限定）">
               </el-date-picker>
             </el-form-item>
           </el-row>
@@ -135,8 +135,10 @@
               <el-input style="width:465px" v-model="shareForm.sharePassword" placeholder="不填写将生成4位随机密码" autocomplete="off"></el-input>
             </el-form-item>
           </el-row>
-          <el-row style="margin-left:300px">
+          <el-row style="margin-left:200px">
             <el-form-item>
+              <el-button type="primary" icon="el-icon-delete-solid" @click="clearCart()">清空列表</el-button>
+              <el-button type="primary" icon="el-icon-download" @click="downLoadCart()">打包下载</el-button>
               <el-button type="primary" icon="el-icon-share" @click="addDownLoadShare()">分享</el-button>
             </el-form-item>
           </el-row>
@@ -153,7 +155,7 @@
               </el-date-picker>
             </el-form-item>
             <el-form-item label="→">
-              <el-date-picker style="width:300px" v-model="shareForm.shareEndDateStr" type="datetime" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择结束时间（不填写无此限定）">
+              <el-date-picker style="width:300px" v-model="shareForm.shareEndDateStr" type="datetime" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" :picker-options="pickerOptions" placeholder="选择结束时间（不填写无此限定）">
               </el-date-picker>
             </el-form-item>
           </el-row>
@@ -276,7 +278,38 @@ export default {
         password: "",
         date: "",
         type: ""
-      }
+      },
+      pickerOptions: {
+        shortcuts: [{
+          text: '1天后',
+          onClick(picker) {
+            const date = new Date();
+            date.setTime(date.getTime() + 3600 * 1000 * 24);
+            picker.$emit('pick', date);
+          }
+        }, {
+          text: '3天后',
+          onClick(picker) {
+            const date = new Date();
+            date.setTime(date.getTime() + 3600 * 1000 * 24 * 3);
+            picker.$emit('pick', date);
+          }
+        }, {
+          text: '7天后',
+          onClick(picker) {
+            const date = new Date();
+            date.setTime(date.getTime() + 3600 * 1000 * 24 * 7);
+            picker.$emit('pick', date);
+          }
+        }, {
+          text: '30天后',
+          onClick(picker) {
+            const date = new Date();
+            date.setTime(date.getTime() + 3600 * 1000 * 24 * 30);
+            picker.$emit('pick', date);
+          }
+        }]
+      },
 
     }
   },
@@ -792,8 +825,89 @@ export default {
           });
         }
       )
-    }
+    },
+    downLoadCart() {
+      const loading = this.$loading(this.$store.state.loadingOption1);
+      let url = '/agreement/downLoadCart';
+      this.axios({
+        method: "get",
+        url: url,
+        responseType: "blob",
+        headers: { token: this.token }
+      }).then(data => {
+        console.log(data.headers)
+        if (data.headers["content-type"] == "application/json;charset=UTF-8") {
+          this.$alert("下载文件出错", "错误", {
+            confirmButtonText: "确定",
+            type: "error",
+            callback: action => {
+            }
+          });
+          loading.close();
+          return;
+        }
 
+        if (!data) {
+          loading.close();
+          return;
+        }
+        debugger;
+        let url = window.URL.createObjectURL(data.data);
+        let link = document.createElement("a");
+        link.style.display = "none";
+        link.href = url;
+        link.setAttribute("download", "合同文件.zip");
+        document.body.appendChild(link);
+        link.click();
+        loading.close();
+      });
+    },
+    clearCart(index, row) {
+      const loading = this.$loading(this.$store.state.loadingOption2);
+      this.axios.post("/agreement/clearCart", {
+        params: {
+        }
+      }, { headers: { token: this.token } }).then(res => {
+        if (res.data.code === 200) {
+          this.initCart();
+          this.$message({
+            showClose: true,
+            message: res.data.data,
+            type: "success"
+          });
+
+        } else if (res.data.code == 401) {
+          this.$message({
+            showClose: true,
+            message: res.data.data,
+            type: "error"
+          });
+          this.$router.push({ path: "/login" });
+        } else {
+          this.$alert(res.data.data, "错误", {
+            confirmButtonText: "确定",
+            type: "error",
+            callback: action => {
+            }
+          });
+        }
+        loading.close();
+      });
+    },
+    setEndDate() {
+      this.shareForm.shareEndDateStr = this.formatDate(new Date().getTime() + 3600 * 1000 * 24)
+    },
+    formatDate(time) {
+      var date = new Date(time);
+      var year = date.getFullYear(),
+        month = date.getMonth() + 1,//月份是从0开始的
+        day = date.getDate(),
+        hour = date.getHours(),
+        min = date.getMinutes(),
+        sec = date.getSeconds();
+      var newTime = year + '-' + (month < 10 ? '0' + month : month) + '-' + (day < 10 ? '0' + day : day) + ' ' + (hour < 10 ? '0' + hour : hour) + ':' + (min < 10 ? '0' + min : min) + ':' + (sec < 10 ? '0' + sec : sec);
+      return newTime;
+    }
 
     // handleInitTask(index, row) {
     //   this.projectChecked = row;

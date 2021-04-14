@@ -38,6 +38,9 @@ public class ShareServiceImpl implements ShareService {
     private DictionaryMapper dictionaryMapper;
 
     @Autowired
+    private AgreementMapper agreementMapper;
+
+    @Autowired
     private DataSourceTransactionManager dataSourceTransactionManager;
 
     @Autowired
@@ -46,6 +49,23 @@ public class ShareServiceImpl implements ShareService {
     @Override
     public Share getShareByIdHasPassword(String shareId) {
         return shareMapper.selectByPrimaryKeyHasPassword(shareId);
+    }
+
+    @Override
+    public Share getShareDetails(String shareId) {
+        Share share = shareMapper.selectByPrimaryKeyHasPassword(shareId);
+        List<ShareAgreement> shareAgreementList = shareAgreementMapper.selectByShare(shareId);
+        List<ShareAgreement> shareAgreementListUseful = new ArrayList<>();
+        for(ShareAgreement shareAgreement : shareAgreementList){
+            Agreement agreement = agreementMapper.selectByPrimaryKey(shareAgreement.getAgreementId());
+            if(!agreement.getAgreementDelete()){
+                shareAgreement.setAgreementName(agreement.getAgreementName());
+                shareAgreement.setAgreementExtend(agreement.getAgreementExtend());
+                shareAgreementListUseful.add(shareAgreement);
+            }
+        }
+        share.setShareAgreementList(shareAgreementListUseful);
+        return share;
     }
 
     @Override
@@ -68,6 +88,9 @@ public class ShareServiceImpl implements ShareService {
             }
             if(share.getShareBeginDate()!=null&&share.getShareEndDateStr()!=null&&!"".equals(share.getShareBeginDate())&&!"".equals(share.getShareEndDateStr())&&!share.getShareBeginDate().before(share.getShareEndDate())){
                 throw new Exception("开始时间不能早于结束时间");
+            }
+            if(!share.getShareHasPassword()){
+                share.setSharePassword("");
             }
             shareMapper.insertSelective(share);
 

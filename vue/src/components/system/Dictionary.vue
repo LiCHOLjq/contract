@@ -1,6 +1,6 @@
 <template>
   <div id="dictionary">
-    <el-button @click="excelForm.visible = true" type="success" style="margin-top:20px;margin-left:20px">Excel</el-button>
+    <el-button @click="excelForm.visible = true" type="primary" style="margin-top:20px;margin-left:20px">Excel</el-button>
     <el-row>
       <el-col class="main-col" style="height:40%" :span="9">
         <!-- @click=点击按钮时执行的代码或方法 -->
@@ -111,7 +111,7 @@
             </el-table-column>
             <el-table-column label="操作" width="120">
               <template slot-scope="scope">
-                <el-button size="mini" type="success" @click="downloadExcel(scope.$index, scope.row)">下载Excel</el-button>
+                <el-button size="mini" type="primary" @click="downloadExcel(scope.$index, scope.row)">下载Excel</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -121,7 +121,7 @@
             <h1>字典导入</h1>
             <el-upload class="upload-demo" ref="upload" :action="axios.defaults.baseURL + '/dictionary/importDictionaryExcel'" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList" :limit="1" :on-success="excelImportOver" :on-error="excelImportError" accept=".xlsx" :auto-upload="false" :headers="{'token': token}">
               <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-              <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+              <el-button style="margin-left: 10px;" size="small" type="primary" @click="submitUpload">上传到服务器</el-button>
               <div slot="tip" class="el-upload__tip">只能上传xlsx文件</div>、
               <div slot="tip" class="el-upload__tip">此导入功能为覆盖模式(仅对可编辑字典有效)</div>
             </el-upload>

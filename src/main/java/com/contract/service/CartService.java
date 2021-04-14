@@ -10,4 +10,5 @@ public interface CartService {
     void addToCart(String adminId, Agreement agreement);
     void delFromCart(String adminId, Agreement agreement);
     void delById(Cart cart);
+    void clearCart(String adminId);
 }

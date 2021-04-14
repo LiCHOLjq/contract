@@ -29,7 +29,7 @@
 
       <el-form-item>
         <el-button type="primary" @click="initLog()">查询</el-button>
-        <el-button @click="downloadExcel()" type="success">导出Excel</el-button>
+        <el-button @click="downloadExcel()" type="primary">导出Excel</el-button>
         <el-button type="danger" @click="delAllLog()">清空记录</el-button>
       </el-form-item>
     </el-form>

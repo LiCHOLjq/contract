@@ -110,6 +110,9 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     if(!(new Date().after(share.getShareBeginDate())&&new Date().before(share.getShareEndDate()))){
                         throw new BaseException("分享不在时效内",401);
                     }
+                    if(share.getShareDelete()){
+                        throw new BaseException("分享已删除",401);
+                    }
                     if(!TokenUtil.verifyPassword(token,share.getSharePassword())){
                         throw new BaseException("token已过期",401);
                     }

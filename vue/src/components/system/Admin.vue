@@ -26,7 +26,7 @@
           查询
         </el-button>
 
-        <el-button @click="excelForm.visible = true">Excel</el-button>
+        <el-button type="primary" @click="excelForm.visible = true">Excel</el-button>
       </el-form-item>
     </el-form>
     <el-row>

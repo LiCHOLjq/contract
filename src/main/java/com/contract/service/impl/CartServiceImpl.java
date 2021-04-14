@@ -53,4 +53,9 @@ public class CartServiceImpl implements CartService {
     public void delById(Cart cart) {
         cartMapper.deleteByPrimaryKey(cart.getCartId());
     }
+
+    @Override
+    public void clearCart(String adminId) {
+        cartMapper.deleteByAdminId(adminId);
+    }
 }
