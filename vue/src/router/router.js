@@ -21,6 +21,7 @@ import Share_Admin from '../components/agreement/Share.vue';
 
 import Share_Login from '../components/share/Login.vue';
 import Share_Error from '../components/share/Error.vue';
+import Share_Items from '../components/share/Share.vue';
 // import Role from '../components/Role.vue';
 // 
 // import Group from '../components/system/Group.vue';
@@ -67,7 +68,7 @@ const routes = [
 
     { path: '/login', component: Login, },   //登录页面路由
     { path: '/share/login/:shareId', component: Share_Login, },   //登录页面路由
-    { path: '/share/items/:shareId', component: Share_Login, },   //登录页面路由
+    { path: '/share/items/:shareId', component: Share_Items, },   //登录页面路由
     { path: '/share/error', component: Share_Error, },   //登录页面路由
     // { path: '/role', component: Role, },   //登录页面路由
     { path: '*', redirect: '/home' },   /*默认跳转路由*/

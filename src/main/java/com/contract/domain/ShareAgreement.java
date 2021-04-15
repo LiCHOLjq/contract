@@ -1,5 +1,7 @@
 package com.contract.domain;
 
+import java.util.Date;
+
 public class ShareAgreement {
     private String shareAgreementId;
 
@@ -9,7 +11,27 @@ public class ShareAgreement {
 
     private String agreementName;
 
+    private String agreementType;
+
+    private String agreementUploadDate;
+
     private String agreementExtend;
+
+    public String getAgreementType() {
+        return agreementType;
+    }
+
+    public void setAgreementType(String agreementType) {
+        this.agreementType = agreementType;
+    }
+
+    public String getAgreementUploadDate() {
+        return agreementUploadDate;
+    }
+
+    public void setAgreementUploadDate(String agreementUploadDate) {
+        this.agreementUploadDate = agreementUploadDate;
+    }
 
     public String getAgreementName() {
         return agreementName;

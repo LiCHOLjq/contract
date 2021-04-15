@@ -107,7 +107,10 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     if(shareId == null) {
                         throw new BaseException("用户不存在",401);
                     }
-                    if(!(new Date().after(share.getShareBeginDate())&&new Date().before(share.getShareEndDate()))){
+                    if(share.getShareBeginDate()!=null&&new Date().before(share.getShareBeginDate())){
+                        throw new BaseException("分享不在时效内",401);
+                    }
+                    if(share.getShareEndDate()!=null&&new Date().after(share.getShareEndDate())){
                         throw new BaseException("分享不在时效内",401);
                     }
                     if(share.getShareDelete()){

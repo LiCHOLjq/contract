@@ -45,9 +45,11 @@
               </el-select>
             </el-form-item>
 
-            <el-form-item label="客户名称: ">
+            <el-form-item label="合同乙方">
               <!-- 模糊 -->
-              <el-input style="width:220px" v-model="agreementSelectForm.agreementClient" autocomplete="off"></el-input>
+              <el-select style="width:220px" v-model="agreementSelectForm.agreementClient" placeholder="选择合同类型">
+                <el-option v-for="item in agreementClientSelectiveList" :key="item.dictionaryId" :label="item.dictionaryName" :value="item.dictionaryId"></el-option>
+              </el-select>
             </el-form-item>
 
             <el-form-item label="提供者: ">
@@ -149,9 +151,9 @@
                 <span style="margin-left: 10px">{{ scope.row.agreementInnovation == null ? '' : scope.row.agreementInnovation ? '是' : '否' }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="客户名称" width="100">
+            <el-table-column label="合同乙方" width="100">
               <template slot-scope="scope">
-                <span style="margin-left: 10px">{{ scope.row.agreementClient == null ? '' : scope.row.agreementClient }}</span>
+                <span style="margin-left: 10px">{{ scope.row.agreementClientObj == null ? '' : scope.row.agreementClientObj.dictionaryName }}</span>
               </template>
             </el-table-column>
             <el-table-column label="提供者" width="100">
@@ -343,6 +345,7 @@ export default {
       },
       agreementTypeSelectiveList: [],
       productTypeSelectiveList: [],
+      agreementClientSelectiveList: [],
       agreementTableData: [],
       agreementPage: {
         showCount: 10,
@@ -435,9 +438,6 @@ export default {
   },
   methods: {
     initAgreementList() {
-
-
-
       const loading = this.$loading(this.$store.state.loadingOption1);
       this.axios
         .post(
@@ -535,7 +535,37 @@ export default {
           loading.close();
         });
     },
+    initProductTypeStateList() {
+      const loading = this.$loading(this.$store.state.loadingOption1);
+      this.axios
+        .post("/dictionary/getDictionaryItems", {
+          params: {
+            dictionaryType: "PRODUCT_TYPE"
+          }
+        }, { headers: { token: this.token } })
+        .then(res => {
+          if (res.data.code === 200) {
+            this.productTypeSelectiveList = res.data.object;
 
+          } else if (res.data.code == 401) {
+            this.$message({
+              showClose: true,
+              message: res.data.data,
+              type: "error"
+            });
+            this.$router.push({ path: "/login" });
+          } else {
+            this.$alert(res.data.data, "错误", {
+              confirmButtonText: "确定",
+              type: "error",
+              callback: action => {
+
+              }
+            });
+          }
+          loading.close();
+        });
+    },
 
     handleAddAgreement() {
       this.savePage()

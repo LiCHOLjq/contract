@@ -40,15 +40,18 @@ public class UserController {
             if(accessShare==null){
                 throw new BaseException("连接不存在",500);
             }
-            if(share.getShareBeginDate()!=null&&new Date().before(share.getShareBeginDate())){
+            if(accessShare.getShareBeginDate()!=null&&new Date().before(accessShare.getShareBeginDate())){
                 throw new BaseException("连接不存在",500);
             }
-            if(share.getShareEndDate()!=null&&new Date().after(share.getShareEndDate())){
+            if(accessShare.getShareEndDate()!=null&&new Date().after(accessShare.getShareEndDate())){
                 throw new BaseException("连接不存在",500);
             }
-            if(share.getShareDelete()){
+            if(accessShare.getShareDelete()){
                 throw new BaseException("连接不存在",500);
             }
+            result.put("shareAdmin", accessShare.getShareAdminObj().getAdminName());
+            result.put("shareType", accessShare.getShareTypeObj().getDictionaryName());
+            result.put("shareDateStr", accessShare.getShareDateStr());
             result.put("code", 200);
             result.put("data", "验证成功");
             return result;
@@ -75,13 +78,13 @@ public class UserController {
             if(accessShare==null){
                 throw new BaseException("连接不存在",500);
             }
-            if(share.getShareBeginDate()!=null&&new Date().before(share.getShareBeginDate())){
+            if(accessShare.getShareBeginDate()!=null&&new Date().before(accessShare.getShareBeginDate())){
                 throw new BaseException("连接不存在",500);
             }
-            if(share.getShareEndDate()!=null&&new Date().after(share.getShareEndDate())){
+            if(accessShare.getShareEndDate()!=null&&new Date().after(accessShare.getShareEndDate())){
                 throw new BaseException("连接不存在",500);
             }
-            if(share.getShareDelete()){
+            if(accessShare.getShareDelete()){
                 throw new BaseException("连接不存在",500);
             }
             if(accessShare.getShareHasPassword()){

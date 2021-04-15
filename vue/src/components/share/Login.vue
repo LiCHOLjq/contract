@@ -3,7 +3,7 @@
     <v-header></v-header>
     <el-card class="login-wrap">
       <div slot="header" class="clearfix">
-        <span>邀请您下载文件</span>
+        <span>{{share.shareAdmin + "邀请您" + share.shareType}}</span>
         <!-- <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button> -->
       </div>
       <el-form style="padding-left: 20px;padding-right: 20px;" :model="form" :rules="rules" ref="ruleForm" label-width="0px">
@@ -87,7 +87,10 @@ export default {
     return {
       share: {
         shareId: "",
-        sharePassword: ""
+        sharePassword: "",
+        shareAdmin: "",
+        shareType: "",
+        shareDateStr: ""
       }
       // imgurl: "",
       // savePassword1: "",
@@ -139,7 +142,9 @@ export default {
         )
         .then(res => {
           if (res.data.code === 200) {
-
+            this.share.shareAdmin= res.data.shareAdmin;
+            this.share.shareType= res.data.shareType;
+            this.share.shareDateStr= res.data.shareDateStr;
           } else {
             this.$message({
               showClose: true,
@@ -163,7 +168,6 @@ export default {
         )
         .then(res => {
           if (res.data.code === 200) {
-            localStorage.setItem("admin", JSON.stringify(res.data.object.admin));
             localStorage.setItem("shaken", res.data.shaken);
             this.$router.push({ path: "/share/items/" + this.share.shareId });
           } else if (res.data.code === 401) {
@@ -339,7 +343,10 @@ export default {
     border-radius: 5px;
     -moz-border-radius: 5px;
     background-clip: padding-box;
-    margin: 340px auto;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -120px -230px auto;
     width: 460px;
 
     background: #fff;

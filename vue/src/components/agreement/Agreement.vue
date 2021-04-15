@@ -145,7 +145,7 @@
               </el-row>
               <el-row class="auto-table">
                 <el-form-item>
-                  <el-button v-if="agreement.submitState == 'Add'" icon="el-icon-upload2" type="primary" @click="submitUpload">确定添加</el-button>
+                  <el-button v-if="agreement.submitState == 'Add'" icon="el-icon-upload2" type="primary" @click="submitUpload">确定上传</el-button>
                   <el-button v-if="agreement.submitState == 'Upd'" icon="el-icon-upload2" @click="updAgreement" type="primary">确定修改</el-button>
                   <el-button v-if="agreement.submitState == 'Upd'" icon="el-icon-download" @click="handleDownload" type="primary">下载合同文件</el-button>
                 </el-form-item>

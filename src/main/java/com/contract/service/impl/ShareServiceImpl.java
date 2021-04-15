@@ -48,18 +48,54 @@ public class ShareServiceImpl implements ShareService {
 
     @Override
     public Share getShareByIdHasPassword(String shareId) {
-        return shareMapper.selectByPrimaryKeyHasPassword(shareId);
+        Share item = shareMapper.selectByPrimaryKeyHasPassword(shareId);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        item.setShareAdminObj(adminMapper.selectByPrimaryKey(item.getShareAdmin()));
+        item.setShareTypeObj(dictionaryMapper.selectByPrimaryKey(item.getShareType()));
+        if (item.getShareBeginDate() != null && item.getShareEndDate() != null) {
+            item.setShareDateStr(sdf.format(item.getShareBeginDate())+ " 至 " +sdf.format(item.getShareEndDate()));
+        }
+        if (item.getShareBeginDate() == null && item.getShareEndDate() != null) {
+            item.setShareDateStr( sdf.format(item.getShareEndDate()) + " 截止");
+        }
+        if (item.getShareBeginDate() != null && item.getShareEndDate() == null) {
+            item.setShareDateStr( sdf.format(item.getShareBeginDate()) + " 开始");
+        }
+        if (item.getShareBeginDate() == null && item.getShareEndDate() == null) {
+            item.setShareDateStr( "永久有效");
+        }
+        return item;
     }
 
     @Override
     public Share getShareDetails(String shareId) {
         Share share = shareMapper.selectByPrimaryKeyHasPassword(shareId);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        share.setShareAdmin(adminMapper.selectByPrimaryKey(share.getShareAdmin()).getAdminName());
+        share.setShareTypeObj(dictionaryMapper.selectByPrimaryKey(share.getShareType()));
+        if (share.getShareBeginDate() != null && share.getShareEndDate() != null) {
+            share.setShareDateStr(sdf.format(share.getShareBeginDate())+ " 至 " +sdf.format(share.getShareEndDate()));
+        }
+        if (share.getShareBeginDate() == null && share.getShareEndDate() != null) {
+            share.setShareDateStr( sdf.format(share.getShareEndDate()) + " 截止");
+        }
+        if (share.getShareBeginDate() != null && share.getShareEndDate() == null) {
+            share.setShareDateStr( sdf.format(share.getShareBeginDate()) + " 开始");
+        }
+        if (share.getShareBeginDate() == null && share.getShareEndDate() == null) {
+            share.setShareDateStr( "永久有效");
+        }
+
+
+
         List<ShareAgreement> shareAgreementList = shareAgreementMapper.selectByShare(shareId);
         List<ShareAgreement> shareAgreementListUseful = new ArrayList<>();
         for(ShareAgreement shareAgreement : shareAgreementList){
             Agreement agreement = agreementMapper.selectByPrimaryKey(shareAgreement.getAgreementId());
             if(!agreement.getAgreementDelete()){
                 shareAgreement.setAgreementName(agreement.getAgreementName());
+                shareAgreement.setAgreementUploadDate(sdf.format(agreement.getAgreementUploadDate()));
+                shareAgreement.setAgreementType(dictionaryMapper.selectByPrimaryKey(agreement.getAgreementType()).getDictionaryName());
                 shareAgreement.setAgreementExtend(agreement.getAgreementExtend());
                 shareAgreementListUseful.add(shareAgreement);
             }

@@ -292,7 +292,7 @@ public class AgreementController {
             Agreement agreement = JSONObject.parseObject(paramsJson.getString("agreement"), Agreement.class);
             String token = httpServletRequest.getHeader("token");
             String adminId = TokenUtil.getId(token);
-            cartService.addToCart(adminId,agreement);
+            cartService.delFromCart(adminId,agreement);
             result.put("data", "【合同】已从分享列表移除");
             result.put("code", 200);
 
