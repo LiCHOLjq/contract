@@ -48,10 +48,17 @@ export default {
         String.fromCharCode(48) +
         String.fromCharCode(50) +
         String.fromCharCode(49) + " " +
-        String.fromCharCode(26446) +
-        String.fromCharCode(20339) +
-        String.fromCharCode(20346) + " " +
-        String.fromCharCode(20869) +
+        String.fromCharCode(76) +
+        String.fromCharCode(105) +
+        String.fromCharCode(67) +
+        String.fromCharCode(72) +
+        String.fromCharCode(79) + " " +
+        String.fromCharCode(38) + " " +
+        String.fromCharCode(81) +
+        String.fromCharCode(105) +
+        String.fromCharCode(122) +
+        String.fromCharCode(113) + " " +
+        String.fromCharCode(20844) +
         String.fromCharCode(27979) +
         String.fromCharCode(29256) + " " +
         String.fromCharCode(118) +
@@ -59,7 +66,7 @@ export default {
         String.fromCharCode(46) +
         String.fromCharCode(48) +
         String.fromCharCode(46) +
-        String.fromCharCode(48)
+        String.fromCharCode(50)
       //screenWidth: document.documentElement.clientWidth,//屏幕宽度
     }
   },

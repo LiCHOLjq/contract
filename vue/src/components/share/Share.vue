@@ -9,16 +9,21 @@
       </div>
       <el-row>
         <el-col :span="share.shareType == 'share_type_download' ? 24 : share.shareType == 'share_type_upload' ? 17 : 24">
-          <el-button v-if="share.shareType == 'share_type_download'" style="margin-bottom:10px"  type="info" @click="handleDownload(scope.$index, scope.row)">下载全部</el-button>
+          <el-button v-if="share.shareType == 'share_type_download'" style="margin-bottom:10px" type="info" @click="downLoadAll()">下载全部</el-button>
           <el-table v-bind:data="share.shareAgreementList" border style="width: 100%">
             <el-table-column label="名称">
               <template slot-scope="scope">
-                <span style="margin-left: 10px">
-                  <el-button v-if="share.shareType == 'share_type_download'"  type="text" @click="handleDownload(scope.$index, scope.row)">{{ (scope.row.agreementName == null ? '' : scope.row.agreementName) + (scope.row.agreementExtend == null ? '' : scope.row.agreementExtend) }}</el-button>
+                <span v-if="share.shareType == 'share_type_download'" style="margin-left: 10px">
+                  <el-button type="text" @click="handleDownload(scope.$index, scope.row)">{{ (scope.row.agreementName == null ? '' : scope.row.agreementName) + (scope.row.agreementExtend == null ? '' : scope.row.agreementExtend) }}</el-button>
+
+                </span>
+                <span v-if="share.shareType != 'share_type_download'" style="margin-left: 10px">
+                  {{ (scope.row.agreementName == null ? '' : scope.row.agreementName) + (scope.row.agreementExtend == null ? '' : scope.row.agreementExtend) }}
+
                 </span>
               </template>
             </el-table-column>
-            <el-table-column  v-if="share.shareType == 'share_type_download'"  label="类型" width="180">
+            <el-table-column v-if="share.shareType == 'share_type_download'" label="类型" width="180">
               <template slot-scope="scope">
                 <span style="margin-left: 10px">{{ scope.row.agreementType == null ? '' : scope.row.agreementType == null ? '' : scope.row.agreementType }}</span>
               </template>
@@ -28,35 +33,35 @@
                 <span style="margin-left: 10px">{{ scope.row.agreementUploadDate == null ? '' :( scope.row.agreementUploadDate)}}</span>
               </template>
             </el-table-column>
-            <el-table-column  v-if="share.shareType == 'share_type_download'"  label="操作" width="120">
+            <el-table-column v-if="share.shareType == 'share_type_download'" label="操作" width="120">
               <template slot-scope="scope">
                 <el-button v-if="!scope.row.agreementDelete" size="mini" type="info" @click="handleDownload(scope.$index, scope.row)">下载</el-button>
               </template>
             </el-table-column>
           </el-table>
-          </el-col>
-          <el-col :span="7" style="padding-left:40px;">
-            <h2>上传合同</h2>
-            <el-form :inline="true" :model="agreementSelectForm" class="demo-form-inline">
-                  <el-form-item label="您的姓名">
-                    <el-input style="width:300px;" v-model="agreement.agreementUploadAdmin" :placeholder="'请填您的姓名'" autocomplete="off"></el-input>
-                  </el-form-item>
+        </el-col>
+        <el-col v-if="share.shareType == 'share_type_upload' " :span="7" style="padding-left:40px;">
+          <h2>上传合同</h2>
+          <el-form :inline="true" :model="agreementSelectForm" class="demo-form-inline">
+            <el-form-item label="您的姓名">
+              <el-input style="width:300px;" v-model="agreement.agreementUploadAdmin" :placeholder="'请填您的姓名'" autocomplete="off"></el-input>
+            </el-form-item>
 
-                  <el-form-item label="合同名称">
-                    <el-input style="width:300px;" v-model="agreement.agreementName" :placeholder="'请填写合同名称'" autocomplete="off"></el-input>
-                  </el-form-item>
-                  </el-form>
-                  <el-upload class="upload-demo" ref="upload" drag :action="axios.defaults.baseURL + '/agreement/addAgreement'" multiple :on-exceed="handleExceed" :on-preview="handlePreview" :on-remove="handleRemove" :on-change="onFileChange" :file-list="fileList" :limit="1" :on-success="excelImportOver" :on-error="excelImportError" :auto-upload="false" :headers="{'token': token}" :data="
+            <el-form-item label="合同名称">
+              <el-input style="width:300px;" v-model="agreement.agreementName" :placeholder="'请填写合同名称'" autocomplete="off"></el-input>
+            </el-form-item>
+          </el-form>
+          <el-upload class="upload-demo" ref="upload" drag :action="axios.defaults.baseURL + '/user/addAgreement'" multiple :on-exceed="handleExceed" :on-preview="handlePreview" :on-remove="handleRemove" :on-change="onFileChange" :file-list="fileList" :limit="1" :on-success="excelImportOver" :on-error="excelImportError" :auto-upload="false" :headers="{'token': shaken}" :data="
                   {params:JSON.stringify({
                     agreement:agreement
                   })
                   }">
-                    <i class="el-icon-upload"></i>
-                    <div class="el-upload__text">将文件拖到此处，或<em>点击选择文件</em></div>
-                  </el-upload>
-                  <el-button style="margin-left:120px" icon="el-icon-upload2" type="primary" @click="submitUpload">确定上传</el-button>
-          </el-col>
-          </el-row>
+            <i class="el-icon-upload"></i>
+            <div class="el-upload__text">将文件拖到此处，或<em>点击选择文件</em></div>
+          </el-upload>
+          <el-button style="margin-left:120px" icon="el-icon-upload2" type="primary" @click="submitUpload">确定上传</el-button>
+        </el-col>
+      </el-row>
     </el-card>
 
     <!-- <el-dialog title="注册新账号" :visible.sync="signForm.visible" width="1000px">
@@ -126,21 +131,23 @@ export default {
   store,
   data: function () {
     return {
-      shaken:"",
+      shaken: "",
       share: {
         shareId: "",
         sharePassword: "",
-        shareAdmin:"",
-        shareAdmin:"",
-        shareType:"",
-        shareTypeObj:null,
-        shareDateStr:"",
-        shareAgreementList:[],
+        shareAdmin: "",
+        shareAdmin: "",
+        shareType: "",
+        shareTypeObj: null,
+        shareDateStr: "",
+        shareAgreementList: [],
       },
-      agreement:{
-        agreementUploadAdmin:"",
-        agreementName:""
-      }
+      agreement: {
+        agreementUploadAdmin: "",
+        agreementName: ""
+      },
+      fileList: [],
+      fileNum: 0
       // imgurl: "",
       // savePassword1: "",
       // savePassword2: "",
@@ -180,7 +187,7 @@ export default {
     "v-header": Header
   },
   methods: {
-     getShareDetails() {
+    getShareDetails() {
       const loading = this.$loading(this.$store.state.loadingOption2);
       this.axios
         .post("/user/getShareDetails", {
@@ -191,12 +198,12 @@ export default {
         )
         .then(res => {
           if (res.data.code === 200) {
-            this.share= res.data.object;
-           
+            this.share = res.data.object;
+
           } else if (res.data.code === 401) {
 
-            this.$router.push({ path: "/share/login/"+this.share.shareId });
-          } else{
+            this.$router.push({ path: "/share/login/" + this.share.shareId });
+          } else {
             this.$message({
               showClose: true,
               message: res.data.data,
@@ -207,8 +214,161 @@ export default {
           loading.close();
         });
     },
+    handleDownload(index, row) {
+      const loading = this.$loading(this.$store.state.loadingOption1);
+      let url = '/user/download?type=agreement&id=' + row.agreementId;
+      this.axios({
+        method: "get",
+        url: url,
+        responseType: "blob",
+        headers: { token: this.shaken }
+      }).then(data => {
+        console.log(data.headers)
+        if (data.headers["content-type"] == "application/json;charset=UTF-8") {
+          this.$alert("下载文件出错", "错误", {
+            confirmButtonText: "确定",
+            type: "error",
+            callback: action => {
+            }
+          });
+          loading.close();
+          return;
+        }
+
+        if (!data) {
+          loading.close();
+          return;
+        }
+        debugger;
+        let url = window.URL.createObjectURL(data.data);
+        let link = document.createElement("a");
+        link.style.display = "none";
+        link.href = url;
+        link.setAttribute("download", row.agreementName + row.agreementExtend);
+        document.body.appendChild(link);
+        link.click();
+        loading.close();
+      });
+    },
+    downLoadAll() {
+      const loading = this.$loading(this.$store.state.loadingOption1);
+      let url = '/user/download?type=share';
+      this.axios({
+        method: "get",
+        url: url,
+        responseType: "blob",
+        headers: { token: this.shaken }
+      }).then(data => {
+        console.log(data.headers)
+        if (data.headers["content-type"] == "application/json;charset=UTF-8") {
+          this.$alert("下载文件出错", "错误", {
+            confirmButtonText: "确定",
+            type: "error",
+            callback: action => {
+            }
+          });
+          loading.close();
+          return;
+        }
+
+        if (!data) {
+          loading.close();
+          return;
+        }
+        debugger;
+        let url = window.URL.createObjectURL(data.data);
+        let link = document.createElement("a");
+        link.style.display = "none";
+        link.href = url;
+        link.setAttribute("download", "合同文件.zip");
+        document.body.appendChild(link);
+        link.click();
+        loading.close();
+      });
+    },
 
 
+    excelImportOver(response, file, fileList) {
+      if (response.code == 200) {
+        this.$message({
+          showClose: true,
+          message: response.data,
+          type: "success"
+        });
+        this.getShareDetails();
+        // this.$alert(response.data, "合同添加成功", {
+        //   confirmButtonText: "确定",
+        //   type: "success",
+        //   callback: action => {
+        //     this.back();
+        //     this.fileList = []
+        //   }
+        // });
+      } else if (res.data.code == 401) {
+        this.$message({
+          showClose: true,
+          message: res.data.data,
+          type: "error"
+        });
+        this.$router.push({ path: "/share/login/" + this.share.shareId });
+      } else {
+        this.$alert(response.data, "合同添加失败", {
+          confirmButtonText: "确定",
+          type: "error",
+          callback: action => {
+            this.fileList = []
+          }
+        });
+      }
+    },
+    excelImportError(error, response, file, fileList) {
+      this.$alert('服务器错误', '合同添加失败', {
+        confirmButtonText: '确定',
+        type: 'error',
+        callback: action => {
+          this.initDictionaryType();
+          this.fileList = []
+        }
+      });
+    },
+    onFileChange(file, fileList) {
+
+      this.fileNum = fileList.length;
+    },
+
+
+    submitUpload() {
+      //console.log(this.fileList)
+
+      if (this.fileNum == 1) {
+        this.$refs.upload.submit();
+      } else {
+        this.$alert('请选择文件', '合同添加失败', {
+          confirmButtonText: '确定',
+          type: 'error',
+          callback: action => {
+
+          }
+        });
+      }
+
+
+    },
+    handleRemove(file, fileList) {
+      this.fileNum = fileList.length;
+    },
+    handlePreview(file) {
+      console.log(file);
+    },
+    handleExceed() {
+      this.$alert('您只能添加一个文件', '文件添加失败', {
+        confirmButtonText: '确定',
+        type: 'error',
+        callback: action => {
+
+        }
+      });
+    },
   },
   created: function () {
     if (this.$route.params.shareId == null) {
@@ -219,7 +379,7 @@ export default {
     }
     this.shaken = localStorage.getItem("shaken");
     if (this.shaken == "" || this.shaken == null) {
-      this.$router.push({ path: "/share/login/"+this.share.shareId });
+      this.$router.push({ path: "/share/login/" + this.share.shareId });
     }
     this.getShareDetails();
 
@@ -246,19 +406,19 @@ export default {
     border-radius: 5px;
     -moz-border-radius: 5px;
     background-clip: padding-box;
-        position: absolute;
+    position: absolute;
     left: 50%;
     top: 80px;
-    margin-left:-800px;
+    margin-left: -800px;
     width: 1600px;
 
     background: #fff;
     border: 1px solid #eaeaea;
     box-shadow: 0 0 25px #cac6c6;
   }
-  .el-form-item{
-    margin-top:0px ;
-    margin-bottom:10px ;
+  .el-form-item {
+    margin-top: 0px;
+    margin-bottom: 10px;
   }
   .el-card__header {
     background-color: #e1140a;

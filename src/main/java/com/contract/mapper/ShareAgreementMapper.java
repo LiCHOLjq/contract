@@ -18,6 +18,8 @@ public interface ShareAgreementMapper {
 
     ShareAgreement selectByPrimaryKey(String shareAgreementId);
 
+    ShareAgreement selectByShareAgreement(String shareId,String agreementId);
+
     List<ShareAgreement> selectByShare(String shareId);
 
     int updateByPrimaryKeySelective(ShareAgreement record);

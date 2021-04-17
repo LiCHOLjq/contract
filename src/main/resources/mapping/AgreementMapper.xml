@@ -43,7 +43,7 @@
       and agreement_innovation = #{agreement.agreementInnovation,jdbcType=BIT}
     </if>
     <if test="agreement.agreementClient != null and agreement.agreementClient != '' ">
-      and agreement_client like concat('%',#{agreement.agreementClient ,jdbcType=VARCHAR},'%')
+      and agreement_client = #{agreement.agreementClient,jdbcType=VARCHAR}
     </if>
     <if test="agreement.agreementAmountBegin != null">
       and agreement_amount &gt;= #{agreement.agreementAmountBegin,jdbcType=DOUBLE}
@@ -66,6 +66,11 @@
     <if test="agreement.productTypeList != null">
       <foreach collection="agreement.productTypeList" item="item" separator=" or " open="and ( " close=")">
         product_type = #{item,jdbcType=VARCHAR}
+      </foreach>
+    </if>
+    <if test="agreement.productSeriesList != null">
+      <foreach collection="agreement.productSeriesList" item="item" separator=" or " open="and ( " close=")">
+        product_series = #{item,jdbcType=VARCHAR}
       </foreach>
     </if>
     <if test="agreement.productModel != null and agreement.productModel != '' ">

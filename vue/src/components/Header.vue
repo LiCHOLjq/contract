@@ -6,7 +6,7 @@
       <el-submenu index="1">
         <template slot="title">{{ this.adminName }}</template>
         <el-menu-item index="1-1">修改密码</el-menu-item>
-        <el-menu-item index="1-3">更换角色</el-menu-item>
+        <!-- <el-menu-item index="1-3">更换角色</el-menu-item> -->
         <el-menu-item index="1-2">退出登录</el-menu-item>
       </el-submenu>
       <div class="head-title">标案合同管理系统</div>
@@ -67,9 +67,9 @@ export default {
 
           this.$router.push({ path: "/login" });
         }
-        if (keyPath[1] == "1-3") {
-          this.$router.push({ path: "/role" });
-        }
+        // if (keyPath[1] == "1-3") {
+        //   this.$router.push({ path: "/role" });
+        // }
       }
     },
     Alter() {

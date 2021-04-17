@@ -7,6 +7,8 @@ public class Product {
 
     private String productType;
 
+    private String productSeries;
+
     private String productModel;
 
     private Double productNumber;
@@ -15,12 +17,30 @@ public class Product {
 
     private Dictionary productTypeObj;
 
+    private Dictionary productSeriesObj;
+
+    public Dictionary getProductSeriesObj() {
+        return productSeriesObj;
+    }
+
+    public void setProductSeriesObj(Dictionary productSeriesObj) {
+        this.productSeriesObj = productSeriesObj;
+    }
+
     public Dictionary getProductTypeObj() {
         return productTypeObj;
     }
 
     public void setProductTypeObj(Dictionary productTypeObj) {
         this.productTypeObj = productTypeObj;
+    }
+
+    public String getProductSeries() {
+        return productSeries;
+    }
+
+    public void setProductSeries(String productSeries) {
+        this.productSeries = productSeries == null ? null : productSeries.trim();;
     }
 
     public String getProductId() {

@@ -1,11 +1,13 @@
 package com.contract.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import com.contract.annotation.UserLoginToken;
 import com.contract.annotation.UserRoleToken;
 import com.contract.domain.Dictionary;
 import com.contract.domain.DictionaryType;
+import com.contract.domain.Product;
 import com.contract.exception.AddException;
 import com.contract.service.DictionaryService;
 import com.contract.util.ExcelUtils;
@@ -244,30 +246,49 @@ public class DictionaryController {
         }
         return result;
     }
+    //根据Dictionary表dictionaryType属性查询
+    @RequestMapping(value = "/getDictionaryItemsByFather", method = RequestMethod.POST)
+//    @UserLoginToken
+    public JSONObject getDictionaryItemsByFather(@RequestBody String params) {
+        JSONObject result = new JSONObject();
+        try {
+            JSONObject paramsJson = JSONObject.parseObject(JSONObject.parseObject(params).getString("params"));
+            String dictionaryType = paramsJson.getString("dictionaryType");
+            String dictionaryFather = paramsJson.getString("dictionaryFather");
+            List<Dictionary> dictionaryList;
+            dictionaryList = dictionaryService.getDictionaryByTypeAndFather(dictionaryType,dictionaryFather);
+            result.put("object", dictionaryList);
+            result.put("code", 200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("data", e.getMessage());
+            result.put("code", 500);
+        }
+        return result;
+    }
 
     //根据Dictionary表dictionaryType属性查询
-//    @RequestMapping(value = "/getDictionaryItemsTree", method = RequestMethod.POST)
-//    @UserLoginToken
-//    public JSONObject getDictionaryItemsTree(@RequestBody String params) {
-//        JSONObject result = new JSONObject();
-//        try {
-//            JSONObject paramsJson = JSONObject.parseObject(JSONObject.parseObject(params).getString("params"));
-//            String dictionaryType = paramsJson.getString("dictionaryType");
-//            List<Dictionary> dictionaryList;
-//            dictionaryList = dictionaryService.getDictionaryByTypeTree(dictionaryType);
-//            result.put("object", dictionaryList);
-//            result.put("code", 200);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            result.put("data", e.getMessage());
-//            result.put("code", 500);
-//        }
-//        return result;
-//    }
+    @RequestMapping(value = "/getDictionaryItemsTree", method = RequestMethod.POST)
+    public JSONObject getDictionaryItemsTree(@RequestBody String params) {
+        JSONObject result = new JSONObject();
+        try {
+            JSONObject paramsJson = JSONObject.parseObject(JSONObject.parseObject(params).getString("params"));
+            String dictionaryType = paramsJson.getString("dictionaryType");
+            List<String> productTypeList = JSONArray.parseArray(paramsJson.getString("fatherList"), String.class);
+            List<Dictionary> dictionaryList = dictionaryService.getDictionaryByTypeAndFatherToTree(dictionaryType,productTypeList);
+            result.put("object", dictionaryList);
+            result.put("code", 200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("data", e.getMessage());
+            result.put("code", 500);
+        }
+        return result;
+    }
 
     @GetMapping("/exportDictionaryNullExcel")
     @UserLoginToken
-    @UserRoleToken(passRoleList = {"role_admin","role_director","role_director","role_deputy_director","role_office"})
+    @UserRoleToken(passRoleList = {"admin_role_master"})
     public void exportDictionaryNullExcel(HttpServletResponse response) {
 
         // 导出操作
@@ -282,7 +303,7 @@ public class DictionaryController {
 
     @GetMapping("/exportDictionaryExcel")
     @UserLoginToken
-    @UserRoleToken(passRoleList = {"role_admin","role_director","role_director","role_deputy_director","role_office"})
+    @UserRoleToken(passRoleList = {"admin_role_master"})
     public void exportDictionaryExcel(HttpServletResponse response) {
         // 导出操作
         List<Sheet> sheetList = new ArrayList<>();
@@ -293,7 +314,7 @@ public class DictionaryController {
 
     @GetMapping("/exportDictionaryEditExcel")
     @UserLoginToken
-    @UserRoleToken(passRoleList = {"role_admin","role_director","role_director","role_deputy_director","role_office"})
+    @UserRoleToken(passRoleList = {"admin_role_master"})
     public void exportDictionaryEditExcel(HttpServletResponse response) {
         // 导出操作
         List<Sheet> sheetList = new ArrayList<>();
@@ -304,7 +325,7 @@ public class DictionaryController {
 
     @PostMapping("/importDictionaryExcel")
     @UserLoginToken
-    @UserRoleToken(passRoleList = {"role_admin","role_director","role_director","role_deputy_director","role_office"})
+    @UserRoleToken(passRoleList = {"admin_role_master"})
     public JSONObject importDictionaryExcel(@RequestParam("file") MultipartFile file) {
         JSONObject result = new JSONObject();
         //导入操作

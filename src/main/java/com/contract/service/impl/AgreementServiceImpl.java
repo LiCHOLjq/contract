@@ -65,7 +65,13 @@ public class AgreementServiceImpl implements AgreementService {
         List<Agreement> agreementList = agreementMapper.selectBySearch(agreement,sort);
         for (Agreement item : agreementList){
             item.setAgreementTypeObj(dictionaryMapper.selectByPrimaryKey(item.getAgreementType()));
-            item.setAgreementSignDateStr(sdf2.format(item.getAgreementSignDate()));
+
+            item.setAgreementClientObj(dictionaryMapper.selectByPrimaryKey(item.getAgreementClient()));
+            if(item.getAgreementSignDate()!=null){
+                item.setAgreementSignDateStr(sdf2.format(item.getAgreementSignDate()));
+            }
+
+
             if(item.getAgreementUploadType().equals("agreement_upload_type_admin")){
                 Admin admin = adminMapper.selectByPrimaryKey(item.getAgreementUploadAdmin());
                 item.setAgreementUploadAdmin(admin.getAdminName()+"(管理员)");
@@ -74,6 +80,7 @@ public class AgreementServiceImpl implements AgreementService {
             List<Product> productList = productMapper.selectByAgreement(item.getAgreementId());
             for(Product product : productList){
                 product.setProductTypeObj(dictionaryMapper.selectByPrimaryKey(product.getProductType()));
+                product.setProductSeriesObj(dictionaryMapper.selectByPrimaryKey(product.getProductSeries()));
             }
             item.setProductList(productList);
             Cart cart = cartMapper.selectByAdminAgreement(adminId,item.getAgreementId());
@@ -94,6 +101,7 @@ public class AgreementServiceImpl implements AgreementService {
         List<Agreement> agreementList = agreementMapper.selectBySearch(agreement,sort);
         for (Agreement item : agreementList){
             item.setAgreementTypeObj(dictionaryMapper.selectByPrimaryKey(item.getAgreementType()));
+            item.setAgreementClientObj(dictionaryMapper.selectByPrimaryKey(item.getAgreementClient()));
             item.setAgreementSignDateStr(sdf2.format(item.getAgreementSignDate()));
             if(item.getAgreementUploadType().equals("agreement_upload_type_admin")){
                 Admin admin = adminMapper.selectByPrimaryKey(item.getAgreementUploadAdmin());
@@ -103,6 +111,7 @@ public class AgreementServiceImpl implements AgreementService {
             List<Product> productList = productMapper.selectByAgreement(item.getAgreementId());
             for(Product product : productList){
                 product.setProductTypeObj(dictionaryMapper.selectByPrimaryKey(product.getProductType()));
+                product.setProductSeriesObj(dictionaryMapper.selectByPrimaryKey(product.getProductSeries()));
             }
             item.setProductList(productList);
         }
@@ -209,17 +218,64 @@ public class AgreementServiceImpl implements AgreementService {
     }
 
     @Override
+    public void addAgreement(Agreement agreement, String shareId, MultipartFile file) throws ParseException, IOException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
+        try {
+            //处理agreement productList
+            agreement.setAgreementId(UUIDUtil.getUUID());
+            agreement.setAgreementUploadType("agreement_upload_type_user");
+            agreement.setAgreementUploadDate(new Date());
+            agreement.setAgreementDelete(false);
+            int sort = 1;
+
+            String fileName = file.getOriginalFilename();
+            String suffixName = fileName.substring(fileName.lastIndexOf("."));
+            agreement.setAgreementExtend(suffixName);
+            File dest = new File(FileSaveConfig.AGREEMENT + agreement.getAgreementId() + suffixName);
+            // 检测是否存在目录
+            if (!dest.getParentFile().exists()) {
+                dest.getParentFile().mkdirs();
+            }
+            try {
+                file.transferTo(dest);
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+                throw e;
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw e;
+            }
+            agreementMapper.insertSelective(agreement);
+            ShareAgreement shareAgreement = new ShareAgreement();
+            shareAgreement.setShareAgreementId(UUIDUtil.getUUID());
+            shareAgreement.setAgreementId(agreement.getAgreementId());
+            shareAgreement.setShareId(shareId);
+            shareAgreementMapper.insertSelective(shareAgreement);
+            dataSourceTransactionManager.commit(transactionStatus);     //手动提交
+        }catch (Exception e){
+            dataSourceTransactionManager.rollback(transactionStatus);       //事务回滚
+            throw e;
+        }
+    }
+
+    @Override
     public Agreement getAgreementDetails(String agreementId) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
         Agreement item = agreementMapper.selectByPrimaryKey(agreementId);
         item.setAgreementTypeObj(dictionaryMapper.selectByPrimaryKey(item.getAgreementType()));
-        item.setAgreementSignDateStr(sdf2.format(item.getAgreementSignDate()));
+        item.setAgreementClientObj(dictionaryMapper.selectByPrimaryKey(item.getAgreementClient()));
+        if(item.getAgreementSignDate()!=null){
+            item.setAgreementSignDateStr(sdf2.format(item.getAgreementSignDate()));
+        }
+
 
         item.setAgreementUploadDateStr(sdf.format(item.getAgreementUploadDate()));
         List<Product> productList = productMapper.selectByAgreement(item.getAgreementId());
         for(Product product : productList){
             product.setProductTypeObj(dictionaryMapper.selectByPrimaryKey(product.getProductType()));
+            product.setProductSeriesObj(dictionaryMapper.selectByPrimaryKey(product.getProductSeries()));
         }
         item.setProductList(productList);
         return item;

@@ -28,5 +28,5 @@ public interface AdminService {
     void importAdminExcel(List<Admin> adminList) throws ExcelImportException;
 
 
-
+    void changePassword(String adminId,String oldPassword,String newPassword) throws BaseException;
 }

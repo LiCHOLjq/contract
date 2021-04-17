@@ -1,6 +1,7 @@
 package com.contract.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.contract.annotation.UserLoginToken;
 import com.contract.domain.Admin;
 import com.contract.exception.BaseException;
 import com.contract.service.AdminService;
@@ -60,5 +61,28 @@ public class AdminLoginController {
             result.put("code", 301);
             return result;
         }
+    }
+
+    @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
+    @UserLoginToken
+    public JSONObject changePassword(@RequestBody String params, HttpServletRequest httpServletRequest) {
+        JSONObject result = new JSONObject();
+        try {
+            JSONObject paramsJson = JSONObject.parseObject(JSONObject.parseObject(params).getString("params"));
+            String token = httpServletRequest.getHeader("token");
+
+            String adminId = TokenUtil.getId(token);
+
+            String passwordOld = paramsJson.getString("passwordOld");
+            String passwordNew = paramsJson.getString("passwordNew");
+            adminService.changePassword(adminId,passwordOld,passwordNew);
+            result.put("data","修改成功");
+            result.put("code", 200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("data", e.getMessage());
+            result.put("code", 500);
+        }
+        return result;
     }
 }

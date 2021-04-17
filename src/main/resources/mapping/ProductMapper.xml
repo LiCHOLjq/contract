@@ -5,12 +5,13 @@
     <id column="product_id" jdbcType="VARCHAR" property="productId" />
     <result column="product_agreement" jdbcType="VARCHAR" property="productAgreement" />
     <result column="product_type" jdbcType="VARCHAR" property="productType" />
+    <result column="product_series" jdbcType="VARCHAR" property="productSeries" />
     <result column="product_model" jdbcType="VARCHAR" property="productModel" />
     <result column="product_number" jdbcType="DOUBLE" property="productNumber" />
     <result column="product_sort" jdbcType="INTEGER" property="productSort" />
   </resultMap>
   <sql id="Base_Column_List">
-    product_id, product_agreement, product_type, product_model, product_number, product_sort
+    product_id, product_agreement, product_type, product_series, product_model, product_number, product_sort
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -35,15 +36,14 @@
   </delete>
 
   <insert id="insert" parameterType="com.contract.domain.Product">
-    insert into product (product_id, product_agreement, product_type, 
-      product_model, product_number,product_sort)
-    values (#{productId,jdbcType=VARCHAR}, #{productAgreement,jdbcType=VARCHAR}, #{productType,jdbcType=VARCHAR}, 
+    insert into product (product_id, product_agreement, product_type, product_series, product_model, product_number,product_sort)
+    values (#{productId,jdbcType=VARCHAR}, #{productAgreement,jdbcType=VARCHAR}, #{productType,jdbcType=VARCHAR}, #{productSeries,jdbcType=VARCHAR},
       #{productModel,jdbcType=VARCHAR}, #{productNumber,jdbcType=DOUBLE}, #{productSort,jdbcType=INTEGER})
   </insert>
   <insert id="insertList" parameterType="java.util.List">
-    insert into product (product_id, product_agreement, product_type, product_model, product_number,product_sort) values
+    insert into product (product_id, product_agreement, product_type, product_series, product_model, product_number,product_sort) values
     <foreach collection="list" item="item" separator="," close=";">
-    (#{item.productId,jdbcType=VARCHAR}, #{item.productAgreement,jdbcType=VARCHAR}, #{item.productType,jdbcType=VARCHAR}, #{item.productModel,jdbcType=VARCHAR}, #{item.productNumber,jdbcType=DOUBLE}, #{item.productSort,jdbcType=INTEGER})
+    (#{item.productId,jdbcType=VARCHAR}, #{item.productAgreement,jdbcType=VARCHAR}, #{item.productType,jdbcType=VARCHAR},#{item.productSeries,jdbcType=VARCHAR},  #{item.productModel,jdbcType=VARCHAR}, #{item.productNumber,jdbcType=DOUBLE}, #{item.productSort,jdbcType=INTEGER})
     </foreach>
   </insert>
   <insert id="insertSelective" parameterType="com.contract.domain.Product">
@@ -58,10 +58,13 @@
       <if test="productType != null">
         product_type,
       </if>
+
+      <if test="productSeries != null">
+        product_series,
+      </if>
       <if test="productModel != null">
         product_model,
       </if>
-
       <if test="productNumber != null">
         product_number,
       </if>
@@ -76,8 +79,12 @@
       <if test="productAgreement != null">
         #{productAgreement,jdbcType=VARCHAR},
       </if>
+
       <if test="productType != null">
         #{productType,jdbcType=VARCHAR},
+      </if>
+      <if test="productSeries != null">
+        #{productSeries,jdbcType=VARCHAR},
       </if>
       <if test="productModel != null">
         #{productModel,jdbcType=VARCHAR},
@@ -97,8 +104,12 @@
       <if test="productAgreement != null">
         product_agreement = #{productAgreement,jdbcType=VARCHAR},
       </if>
+
       <if test="productType != null">
         product_type = #{productType,jdbcType=VARCHAR},
+      </if>
+      <if test="productSeries != null">
+        product_series = #{productSeries,jdbcType=VARCHAR},
       </if>
       <if test="productModel != null">
         product_model = #{productModel,jdbcType=VARCHAR},
@@ -117,6 +128,7 @@
     update product
     set product_agreement = #{productAgreement,jdbcType=VARCHAR},
       product_type = #{productType,jdbcType=VARCHAR},
+      product_series = #{productSeries,jdbcType=VARCHAR},
       product_model = #{productModel,jdbcType=VARCHAR},
       product_number = #{productNumber,jdbcType=DOUBLE},
     product_sort = #{productSort,jdbcType=INTEGER}

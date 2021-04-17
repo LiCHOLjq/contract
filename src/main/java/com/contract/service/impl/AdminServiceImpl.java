@@ -3,6 +3,7 @@ package com.contract.service.impl;
 import com.contract.domain.Admin;
 import com.contract.domain.Agreement;
 import com.contract.domain.Dictionary;
+import com.contract.exception.BaseException;
 import com.contract.exception.ExcelIdNameRepeatException;
 import com.contract.exception.ExcelImportException;
 import com.contract.mapper.AdminMapper;
@@ -152,6 +153,27 @@ public class AdminServiceImpl implements AdminService {
         }catch (Exception e){
             dataSourceTransactionManager.rollback(transactionStatus);       //事务回滚
             throw e;
+        }
+    }
+    @Override
+    public void changePassword(String adminId, String oldPassword, String newPassword) throws BaseException {
+        Admin admin = adminMapper.selectByPrimaryKeyHasPassword(adminId);
+        if("d41d8cd98f00b204e9800998ecf8427e".equals(newPassword)){
+            throw new BaseException("密码不能为空",501);
+        }
+
+        if(admin!=null){
+            if(admin.getAdminPassword().equals(oldPassword)){
+                if(admin.getAdminPassword().equals(newPassword)){
+                    throw new BaseException("密码和原密码一致",501);
+                }
+                admin.setAdminPassword(newPassword);
+                adminMapper.updateByPrimaryKeySelective(admin);
+            }else{
+                throw new BaseException("原密码不正确",501);
+            }
+        }else{
+            throw new BaseException("用户不存在",502);
         }
     }
 }

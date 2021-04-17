@@ -97,7 +97,7 @@
         </el-col>
       </el-row>
     </el-card>
-    <el-drawer title="添加下载合同分享" :visible.sync="shareForm.visible" direction="rtl" size="770px">
+    <el-drawer title="分享合同" :visible.sync="shareForm.visible" direction="rtl" size="770px">
       <el-row style="padding:10px">
         <el-table v-bind:data="cartTableData" border style="width: 100%">
           <el-table-column label="名称">
@@ -117,11 +117,11 @@
       <el-row>
         <el-form v-if="cartNum>0" :inline="true" :model="shareForm" class="demo-form-inline">
           <el-row>
-            <el-form-item label="有效期：">
+            <!-- <el-form-item label="有效期：">
               <el-date-picker style="width:300px" v-model="shareForm.shareBeginDateStr" type="datetime" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择开始时间（不填写无此限定）">
               </el-date-picker>
-            </el-form-item>
-            <el-form-item label="→">
+            </el-form-item> -->
+            <el-form-item label="有效期：">
               <el-date-picker style="width:300px" v-model="shareForm.shareEndDateStr" type="datetime" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" :picker-options="pickerOptions" placeholder="选择结束时间（不填写无此限定）">
               </el-date-picker>
             </el-form-item>
@@ -145,16 +145,16 @@
         </el-form>
       </el-row>
     </el-drawer>
-    <el-drawer title="添加上传合同分享" :visible.sync="shareForm.visible2" direction="rtl" size="770px">
+    <el-drawer title="邀请上传合同" :visible.sync="shareForm.visible2" direction="rtl" size="770px">
 
       <el-row>
         <el-form :inline="true" :model="shareForm" class="demo-form-inline">
           <el-row>
-            <el-form-item label="有效期：">
+            <!-- <el-form-item label="有效期：">
               <el-date-picker style="width:300px" v-model="shareForm.shareBeginDateStr" type="datetime" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择开始时间（不填写无此限定）">
               </el-date-picker>
-            </el-form-item>
-            <el-form-item label="→">
+            </el-form-item> -->
+            <el-form-item label="有效期：">
               <el-date-picker style="width:300px" v-model="shareForm.shareEndDateStr" type="datetime" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" :picker-options="pickerOptions" placeholder="选择结束时间（不填写无此限定）">
               </el-date-picker>
             </el-form-item>

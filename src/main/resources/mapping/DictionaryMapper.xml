@@ -45,6 +45,14 @@
     where dictionary_type = #{dictionaryType,jdbcType=VARCHAR}
     order by dictionary_sort
   </select>
+
+  <select id="selectByTypeAndFather" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from dictionary
+    where dictionary_type = #{dictionaryType,jdbcType=VARCHAR} and dictionary_father = #{dictionaryFather,jdbcType=VARCHAR}
+    order by dictionary_sort
+  </select>
   <select id="selectBySearch" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />

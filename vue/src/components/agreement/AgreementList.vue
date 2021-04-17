@@ -79,8 +79,15 @@
             </el-form-item>
 
             <el-form-item label="产品类型：">
-              <el-select style="width:560px" multiple v-model="agreementSelectForm.productTypeList" placeholder="选择合同类型">
+              <el-select @change="initProductSeriesSelectiveList" style="width:560px" multiple v-model="agreementSelectForm.productTypeList" placeholder="选择产品类型">
                 <el-option v-for="item in productTypeSelectiveList" :key="item.dictionaryId" :label="item.dictionaryName" :value="item.dictionaryId"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="产品系列：">
+              <el-select style="width:560px" multiple v-model="agreementSelectForm.productSeriesList" placeholder="选择产品系列">
+                <el-option-group v-for="item in productSeriesSelectiveList" :key="item.dictionaryId" :label="item.dictionaryName">
+                  <el-option v-for="children in item.childrenList" :key="children.dictionaryId" :label="children.dictionaryName" :value="children.dictionaryId"></el-option>
+                </el-option-group>
               </el-select>
             </el-form-item>
             <el-form-item label="产品型号：">
@@ -151,12 +158,12 @@
                 <span style="margin-left: 10px">{{ scope.row.agreementInnovation == null ? '' : scope.row.agreementInnovation ? '是' : '否' }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="合同乙方" width="100">
+            <el-table-column label="合同乙方" width="180">
               <template slot-scope="scope">
                 <span style="margin-left: 10px">{{ scope.row.agreementClientObj == null ? '' : scope.row.agreementClientObj.dictionaryName }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="提供者" width="100">
+            <el-table-column label="客户名称" width="100">
               <template slot-scope="scope">
                 <span style="margin-left: 10px">{{ scope.row.agreementProvider == null ? '' : scope.row.agreementProvider }}</span>
               </template>
@@ -180,6 +187,7 @@
             <el-table-column label="产品类型" width="150">
               <template slot-scope="scope">
                 <el-popover v-for="item in scope.row.productList" :key="item.productId" trigger="hover">
+                  <p>{{ item.productSeriesObj == null ? '' : item.productSeriesObj.dictionaryName == null ? '' : ("系列：" + item.productSeriesObj.dictionaryName)}}</p>
                   <p>{{ item.productModel == null ? '' : ("型号：" + item.productModel)}}</p>
                   <p>{{ item.productNumber == null ? '' : ("数量：" + item.productNumber)}}</p>
                   <div slot="reference" class="name-wrapper">
@@ -217,7 +225,7 @@
         </el-col>
       </el-row>
     </el-card>
-    <el-drawer title="待分享列表" :visible.sync="shareForm.visible" direction="rtl" size="770px" @closed="initAgreementList">
+    <el-drawer title="分享合同" :visible.sync="shareForm.visible" direction="rtl" size="770px" @closed="initAgreementList">
       <el-row style="padding:10px">
         <el-table v-bind:data="cartTableData" border style="width: 100%">
           <el-table-column label="名称">
@@ -237,11 +245,11 @@
       <el-row>
         <el-form v-if="cartNum>0" :inline="true" :model="shareForm" class="demo-form-inline">
           <el-row>
-            <el-form-item label="有效期：">
+            <!-- <el-form-item label="有效期：">
               <el-date-picker style="width:300px" v-model="shareForm.shareBeginDateStr" type="datetime" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择开始时间（不填写无此限定）">
               </el-date-picker>
-            </el-form-item>
-            <el-form-item label="→">
+            </el-form-item> -->
+            <el-form-item label="有效期：">
               <el-date-picker style="width:300px" v-model="shareForm.shareEndDateStr" type="datetime" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" :picker-options="pickerOptions" placeholder="选择结束时间（不填写无此限定）">
               </el-date-picker>
             </el-form-item>
@@ -265,15 +273,15 @@
         </el-form>
       </el-row>
     </el-drawer>
-    <el-drawer title="添加上传合同分享" :visible.sync="shareForm.visible2" direction="rtl" size="770px">
+    <el-drawer title="邀请上传合同" :visible.sync="shareForm.visible2" direction="rtl" size="770px">
       <el-row>
         <el-form :inline="true" :model="shareForm" class="demo-form-inline">
           <el-row>
-            <el-form-item label="有效期：">
+            <!-- <el-form-item label="有效期：">
               <el-date-picker style="width:300px" v-model="shareForm.shareBeginDateStr" type="datetime" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择开始时间（不填写无此限定）">
               </el-date-picker>
-            </el-form-item>
-            <el-form-item label="→">
+            </el-form-item> -->
+            <el-form-item label="有效期：">
               <el-date-picker style="width:300px" v-model="shareForm.shareEndDateStr" type="datetime" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" :picker-options="pickerOptions" placeholder="选择结束时间（不填写无此限定）">
               </el-date-picker>
             </el-form-item>
@@ -339,6 +347,7 @@ export default {
         agreementProvider: "",
         agreementText: "",
         productTypeList: [],
+        productSeriesList: [],
         productModel: "",
         productNumberBegin: undefined,
         productNumberEnd: undefined,
@@ -346,6 +355,7 @@ export default {
       agreementTypeSelectiveList: [],
       productTypeSelectiveList: [],
       agreementClientSelectiveList: [],
+      productSeriesSelectiveList: [],
       agreementTableData: [],
       agreementPage: {
         showCount: 10,
@@ -366,10 +376,10 @@ export default {
         { name: '名称', field: 'agreement_name' },
         { name: '类型', field: 'agreement_type' },
         { name: '是否信创', field: 'agreement_innovation' },
-        { name: '客户名称', field: 'agreement_client' },
+        { name: '合同乙方', field: 'agreement_client' },
         { name: '总金额', field: 'agreement_amount' },
         { name: '签约日期', field: 'agreement_sign_date' },
-        { name: '提供者', field: 'agreement_provider' },
+        { name: '客户名称', field: 'agreement_provider' },
         { name: '上传时间', field: 'agreement_upload_date' },
       ],
       typeDic: [
@@ -504,6 +514,39 @@ export default {
           loading.close();
         });
     },
+    initProductSeriesSelectiveList() {
+      const loading = this.$loading(this.$store.state.loadingOption1);
+      this.axios
+        .post("/dictionary/getDictionaryItemsTree", {
+          params: {
+            dictionaryType: "PRODUCT_SERIES",
+            fatherList: this.agreementSelectForm.productTypeList
+          }
+        }, { headers: { token: this.token } })
+        .then(res => {
+          if (res.data.code === 200) {
+            this.productSeriesSelectiveList = res.data.object;
+
+          } else if (res.data.code == 401) {
+            this.$message({
+              showClose: true,
+              message: res.data.data,
+              type: "error"
+            });
+            this.$router.push({ path: "/login" });
+          } else {
+            this.$alert(res.data.data, "错误", {
+              confirmButtonText: "确定",
+              type: "error",
+              callback: action => {
+
+              }
+            });
+          }
+          loading.close();
+        });
+    },
+
     initProductTypeStateList() {
       const loading = this.$loading(this.$store.state.loadingOption1);
       this.axios
@@ -535,17 +578,17 @@ export default {
           loading.close();
         });
     },
-    initProductTypeStateList() {
+    initAgreementClientList() {
       const loading = this.$loading(this.$store.state.loadingOption1);
       this.axios
         .post("/dictionary/getDictionaryItems", {
           params: {
-            dictionaryType: "PRODUCT_TYPE"
+            dictionaryType: "AGREEMENT_CLIENT"
           }
         }, { headers: { token: this.token } })
         .then(res => {
           if (res.data.code === 200) {
-            this.productTypeSelectiveList = res.data.object;
+            this.agreementClientSelectiveList = res.data.object;
 
           } else if (res.data.code == 401) {
             this.$message({
@@ -1161,6 +1204,8 @@ export default {
     this.initProductTypeStateList();
 
     this.initAgreementList();
+
+    this.initAgreementClientList();
 
     this.initCart();
 

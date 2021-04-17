@@ -95,7 +95,10 @@ public class ShareServiceImpl implements ShareService {
             if(!agreement.getAgreementDelete()){
                 shareAgreement.setAgreementName(agreement.getAgreementName());
                 shareAgreement.setAgreementUploadDate(sdf.format(agreement.getAgreementUploadDate()));
-                shareAgreement.setAgreementType(dictionaryMapper.selectByPrimaryKey(agreement.getAgreementType()).getDictionaryName());
+                Dictionary dictionary = dictionaryMapper.selectByPrimaryKey(agreement.getAgreementType());
+                if(dictionary!=null){
+                    shareAgreement.setAgreementType(dictionary.getDictionaryName());
+                }
                 shareAgreement.setAgreementExtend(agreement.getAgreementExtend());
                 shareAgreementListUseful.add(shareAgreement);
             }
@@ -210,5 +213,15 @@ public class ShareServiceImpl implements ShareService {
             dataSourceTransactionManager.rollback(transactionStatus);       //事务回滚
             throw e;
         }
+    }
+
+    @Override
+    public ShareAgreement getShareAgreement(String shareId, String agreementId) {
+        return shareAgreementMapper.selectByShareAgreement(shareId,agreementId);
+    }
+
+    @Override
+    public List<ShareAgreement> getShareAgreementByShareId(String shareId) {
+        return shareAgreementMapper.selectByShare(shareId);
     }
 }

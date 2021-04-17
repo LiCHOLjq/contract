@@ -16,13 +16,15 @@ public class FileUtil {
         } catch (UnsupportedEncodingException e2) {
             e2.printStackTrace();
         }
-        byte[] buff = new byte[1024];
+
+        byte[] buff;
         BufferedInputStream bis = null;
         OutputStream os = null;
         try {
 
             os = response.getOutputStream();
             bis = new BufferedInputStream(new FileInputStream(new File(path + fileName)));
+            buff = new byte[bis.available()];
             int i = bis.read(buff);
             while (i != -1) {
                 os.write(buff, 0, buff.length);
@@ -45,6 +47,37 @@ public class FileUtil {
         }
         return "success";
     }
+
+//    public static String downloadFile(HttpServletResponse response, String path, String fileName) {
+//
+//        try {
+//            // path是指欲下载的文件的路径。
+//            File file = new File(path + fileName);
+//            // 取得文件名。
+//            String filename = file.getName();
+//            // 取得文件的后缀名。
+//            String ext = filename.substring(filename.lastIndexOf(".") + 1).toUpperCase();
+//
+//            // 以流的形式下载文件。
+//            InputStream fis = new BufferedInputStream(new FileInputStream(path + fileName));
+//            byte[] buffer = new byte[fis.available()];
+//            fis.read(buffer);
+//            fis.close();
+//            // 清空response
+//            response.reset();
+//            // 设置response的Header
+//            response.addHeader("Content-Disposition", "attachment;filename=" + new String(filename.getBytes()));
+//            response.addHeader("Content-Length", "" + file.length());
+//            OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
+//            response.setContentType("application/octet-stream");
+//            toClient.write(buffer);
+//            toClient.flush();
+//            toClient.close();
+//        } catch (IOException ex) {
+//            ex.printStackTrace();
+//        }
+//        return "success";
+//    }
 
     public static String downloadFile(HttpServletResponse response, String fileName, byte[] buffs) {
 

@@ -29,10 +29,10 @@ if (window.location.port != "") {
   baseURLStr = baseURLStr + ":" + window.location.port;
 }
 baseURLStr = baseURLStr + "/contract/";
-//baseURLStr = "https://apps.neu.edu.qizhiqiang.com/promotion/"
+//baseURLStr = "https://apps.neu.edu.qizhiqiang.com/contract/"
 //baseURLStr = "http://192.168.3.3/promotion/"
 //baseURLStr = "http://192.168.0.2/promotion/"
-baseURLStr = "http://localhost/contract/"
+//baseURLStr = "http://localhost/contract/"
 axios.defaults.baseURL = process.env.NODE_ENV === 'development' ? baseURLStr : baseURLStr
 
 

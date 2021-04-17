@@ -46,6 +46,8 @@ public class Agreement {
 
     private List<String> productTypeList;
 
+    private List<String> productSeriesList;
+
     private String productModel;
 
     private Double agreementAmountBegin;
@@ -58,6 +60,8 @@ public class Agreement {
     //注入
     private Dictionary agreementTypeObj;
 
+    private Dictionary agreementClientObj;
+
     private String agreementSignDateStr;
 
     private String  agreementUploadDateStr;
@@ -65,6 +69,22 @@ public class Agreement {
     private List<Product> productList;
 
     private Boolean shareState;
+
+    public List<String> getProductSeriesList() {
+        return productSeriesList;
+    }
+
+    public void setProductSeriesList(List<String> productSeriesList) {
+        this.productSeriesList = productSeriesList;
+    }
+
+    public Dictionary getAgreementClientObj() {
+        return agreementClientObj;
+    }
+
+    public void setAgreementClientObj(Dictionary agreementClientObj) {
+        this.agreementClientObj = agreementClientObj;
+    }
 
     public String getAgreementId() {
         return agreementId;

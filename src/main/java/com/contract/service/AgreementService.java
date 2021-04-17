@@ -2,6 +2,7 @@ package com.contract.service;
 
 import com.contract.domain.Agreement;
 import com.contract.domain.Product;
+import com.contract.domain.Share;
 import com.contract.util.PageBean;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,6 +22,8 @@ public interface AgreementService {
     void relDelAgreement(Agreement agreement);
 
     void addAgreement(Agreement agreement, List<Product> productList, MultipartFile file,String adminId) throws ParseException, IOException;
+
+    void addAgreement(Agreement agreement, String shareId, MultipartFile file) throws ParseException, IOException;
 
     Agreement getAgreementDetails(String agreementId);
 

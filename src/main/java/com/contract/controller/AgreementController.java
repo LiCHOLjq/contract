@@ -93,7 +93,7 @@ public class AgreementController {
             titleList.add("类型");
             titleList.add("信创");
             titleList.add("客户名称");
-            titleList.add("提供者");
+            titleList.add("合同乙方");
             titleList.add("总金额");
             titleList.add("签约日期");
             titleList.add("备注");
@@ -109,8 +109,8 @@ public class AgreementController {
                 map.put("名称",item.getAgreementName());
                 map.put("类型",item.getAgreementTypeObj().getDictionaryName());
                 map.put("信创",item.getAgreementInnovation() ? "是" : "否");
-                map.put("客户名称",item.getAgreementClient());
-                map.put("提供者",item.getAgreementProvider());
+                map.put("客户名称",item.getAgreementProvider());
+                map.put("合同乙方",item.getAgreementClientObj().getDictionaryName());
                 map.put("总金额",item.getAgreementAmount().toString());
                 map.put("签约日期",item.getAgreementSignDateStr());
                 map.put("备注",item.getAgreementText());
@@ -125,6 +125,8 @@ public class AgreementController {
                     map.put(product.getProductTypeObj().getDictionaryName(),((Integer)map.get(product.getProductTypeObj().getDictionaryName())+1));
                     titleList.add("产品类型"+i);
                     map.put("产品类型"+i,product.getProductTypeObj().getDictionaryName());
+                    titleList.add("产品系列"+i);
+                    map.put("产品系列"+i,product.getProductSeriesObj().getDictionaryName());
                     titleList.add("产品型号"+i);
                     map.put("产品型号"+i,product.getProductModel());
                     titleList.add("产品数量"+i);
@@ -382,11 +384,11 @@ public JSONObject updAgreement(@RequestBody String params, HttpServletRequest ht
     @GetMapping("/admin/download")
     @UserLoginToken
     @UserRoleToken(passRoleList = {"admin_role_master"})
-    public void exportAdminNullExcel(HttpServletResponse response,String type,String id) throws IOException {
+    public void download(HttpServletResponse response,String type,String id) throws IOException {
         // 导出操作
         try {
             if(type!=null&&type.equals("agreement")){
-                Agreement agreement = agreementService.getAgreementDetails(id);
+                Agreement agreement = agreementService.getAgreementById(id);
                 if(agreement==null||agreement.getAgreementDelete()){
                     throw new Exception("合同不存在");
                 }

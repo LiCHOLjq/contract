@@ -18,6 +18,8 @@ public interface DictionaryService {
 
     PageBean<Dictionary> getDictionaryBySearch(Dictionary dictionary, int currentPage, int pageSize);
     List<Dictionary> getDictionaryByType(String dictionaryType);
+    List<Dictionary> getDictionaryByTypeAndFather(String dictionaryType,String dictionaryFather);
+    List<Dictionary> getDictionaryByTypeAndFatherToTree(String dictionaryType,List<String> dictionaryFather);
     List<Dictionary> getDictionaryByTypeTree(String dictionaryType);
     Dictionary getDictionaryById(String dictionaryId);
     Dictionary getDictionaryByName(Dictionary dictionary);

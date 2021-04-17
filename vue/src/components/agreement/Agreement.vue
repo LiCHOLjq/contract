@@ -8,24 +8,24 @@
             <el-form :model="form" :rules="rules" ref="ruleForm" label-width="0px" class="demo-ruleForm">
               <div class="ms-title">{{agreement.submitState == "Add" ? "添加新合同" : agreement.submitState == "Upd" ? "修改合同信息" : ""}}</div>
               <el-row>
-                <el-col :span="16">
+                <el-col :span="12">
                   <h1>合同名称</h1>
-                  <el-form-item>
-                    <el-input v-model="agreement.agreementName" :placeholder="'请填写合同名称'" autocomplete="off"></el-input>
+                  <el-form-item style="width:650px">
+                    <el-input style="width:650px" v-model="agreement.agreementName" :placeholder="'请填写合同名称'" autocomplete="off"></el-input>
                   </el-form-item>
                 </el-col>
-                <el-col :span="4">
-                  <h1 style="padding-left:15px">合同类型</h1>
-                  <el-form-item>
-                    <el-select v-model="agreement.agreementType" placeholder="选择合同类型">
+                <el-col :span="6">
+                  <h1>合同类型</h1>
+                  <el-form-item style="width:300px">
+                    <el-select style="width:300px" v-model="agreement.agreementType" placeholder="选择合同类型">
                       <el-option v-for="item in agreementTypeSelectiveList" :key="item.dictionaryId" :label="item.dictionaryName" :value="item.dictionaryId"></el-option>
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <el-col :span="4">
-                  <h1 style="padding-left:15px">是否信创</h1>
-                  <el-form-item>
-                    <el-select v-model="agreement.agreementInnovation" placeholder="选择是否信创">
+                <el-col :span="6">
+                  <h1>是否信创</h1>
+                  <el-form-item style="width:300px">
+                    <el-select style="width:300px" v-model="agreement.agreementInnovation" placeholder="选择是否信创">
                       <el-option label="是" :value="true"></el-option>
                       <el-option label="否" :value="false"></el-option>
                     </el-select>
@@ -34,16 +34,19 @@
               </el-row>
 
               <el-row>
+
                 <el-col :span="6">
                   <h1>客户名称</h1>
-                  <el-form-item :placeholder="'请填写客户名称'" style="width:300px">
-                    <el-input v-model="agreement.agreementClient" autocomplete="off"></el-input>
+                  <el-form-item style="width:300px">
+                    <el-input :placeholder="'请填写客户名称'" v-model="agreement.agreementProvider" autocomplete="off"></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
-                  <h1>提供者</h1>
-                  <el-form-item :placeholder="'请填写提供者'" style="width:300px">
-                    <el-input v-model="agreement.agreementProvider" autocomplete="off"></el-input>
+                  <h1>合同乙方</h1>
+                  <el-form-item style="width:300px">
+                    <el-select style="width:300px" v-model="agreement.agreementClient" placeholder="请选择合同乙方">
+                      <el-option v-for="item in agreementClientSelectiveList" :key="item.dictionaryId" :label="item.dictionaryName" :value="item.dictionaryId"></el-option>
+                    </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -63,13 +66,16 @@
               <h1>合同产品</h1>
               <el-button icon="el-icon-plus" type="primary" circle @click="handleAddProduct()" style="margin-top:10px;"></el-button>
               <el-row class="auto-table" v-if="productList.length > 0">
-                <el-col :span="6">
+                <el-col :span="5">
                   <p>产品类型</p>
                 </el-col>
-                <el-col :span="9">
-                  <p>产品型号</p>
+                <el-col :span="5">
+                  <p>产品系列</p>
                 </el-col>
                 <el-col :span="6">
+                  <p>产品型号</p>
+                </el-col>
+                <el-col :span="5">
                   <p>产品数量</p>
                 </el-col>
                 <el-col :span="3">
@@ -77,19 +83,26 @@
                 </el-col>
               </el-row>
               <el-row v-for="(item,index) in productList" :key="index" class="auto-table">
-                <el-col :span="6">
+                <el-col :span="5">
                   <el-form-item>
-                    <el-select v-model="item.productType" @change="checkdeGroup" placeholder="选择产品类型">
+                    <el-select v-model="item.productType" @change="initProductSeriesSelectiveList(index)" placeholder="选择产品类型">
                       <el-option v-for="items in productTypeSelectiveList" :key="items.dictionaryId" :label="items.dictionaryName" :value="items.dictionaryId"></el-option>
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <el-col :span="9">
+                <el-col :span="5">
+                  <el-form-item>
+                    <el-select v-model="item.productSeries" placeholder="选择产品系列">
+                      <el-option v-for="items in item.productSeriesSelectiveList" :key="items.dictionaryId" :label="items.dictionaryName" :value="items.dictionaryId"></el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
                   <el-form-item>
                     <el-input v-model="item.productModel" autocomplete="off" :placeholder="'请填写产品型号'"></el-input>
                   </el-form-item>
                 </el-col>
-                <el-col :span="6">
+                <el-col :span="5">
                   <el-form-item>
                     <el-input-number style="width: 150px;" v-model="item.productNumber"></el-input-number>
                   </el-form-item>
@@ -175,7 +188,7 @@ export default {
         agreementName: "",
         agreementType: "agreement_type_1",
         agreementInnovation: true,
-        agreementClient: "",
+        agreementClient: "agreement_client_1",
         agreementProvider: "",
         agreementSignDateStr: "",
         agreementAmount: 0,
@@ -183,6 +196,7 @@ export default {
       },
       agreementTypeSelectiveList: [],
       productTypeSelectiveList: [],
+      agreementClientSelectiveList: [],
       productList: [],
       fileList: [],
       fileNum: 0
@@ -225,11 +239,17 @@ export default {
       this.$router.push({ path: "/home/agreement/list" });
     },
     handleAddProduct() {
+
+
+
       this.productList.push({
         productType: "product_type_1",
         productModel: "",
+        productSeriesSelectiveList: [],
         productNumber: 0,
       })
+
+      this.initProductSeriesSelectiveList(this.productList.length - 1)
     },
 
     handleDeleteProduct(index) {
@@ -257,6 +277,38 @@ export default {
         .then(res => {
           if (res.data.code === 200) {
             this.agreementTypeSelectiveList = res.data.object;
+
+          } else if (res.data.code == 401) {
+            this.$message({
+              showClose: true,
+              message: res.data.data,
+              type: "error"
+            });
+            this.$router.push({ path: "/login" });
+          } else {
+            this.$alert(res.data.data, "错误", {
+              confirmButtonText: "确定",
+              type: "error",
+              callback: action => {
+
+              }
+            });
+          }
+          loading.close();
+        });
+    },
+    initProductSeriesSelectiveList(index) {
+      const loading = this.$loading(this.$store.state.loadingOption1);
+      this.axios
+        .post("/dictionary/getDictionaryItemsByFather", {
+          params: {
+            dictionaryType: "PRODUCT_SERIES",
+            dictionaryFather: this.productList[index].productType
+          }
+        }, { headers: { token: this.token } })
+        .then(res => {
+          if (res.data.code === 200) {
+            this.productList[index].productSeriesSelectiveList = res.data.object;
 
           } else if (res.data.code == 401) {
             this.$message({
@@ -325,7 +377,7 @@ export default {
         //     this.fileList = []
         //   }
         // });
-      } else if (res.data.code == 401) {
+      } else if (response.code == 401) {
         this.$message({
           showClose: true,
           message: res.data.data,
@@ -519,6 +571,37 @@ export default {
         link.click();
         loading.close();
       });
+    },
+    initAgreementClientList() {
+      const loading = this.$loading(this.$store.state.loadingOption1);
+      this.axios
+        .post("/dictionary/getDictionaryItems", {
+          params: {
+            dictionaryType: "AGREEMENT_CLIENT"
+          }
+        }, { headers: { token: this.token } })
+        .then(res => {
+          if (res.data.code === 200) {
+            this.agreementClientSelectiveList = res.data.object;
+
+          } else if (res.data.code == 401) {
+            this.$message({
+              showClose: true,
+              message: res.data.data,
+              type: "error"
+            });
+            this.$router.push({ path: "/login" });
+          } else {
+            this.$alert(res.data.data, "错误", {
+              confirmButtonText: "确定",
+              type: "error",
+              callback: action => {
+
+              }
+            });
+          }
+          loading.close();
+        });
     },
     // sumBudget() {
     //   var sum = 0.0;
@@ -1024,7 +1107,7 @@ export default {
 
     this.initAgreementTypeList();
     this.initProductTypeStateList();
-
+    this.initAgreementClientList();
     // this.initGroupList();
     // this.initCitySelectiveList();
     if (this.$route.params.agreementId == null) {
@@ -1130,6 +1213,10 @@ export default {
     padding-left: 15px;
     padding-right: 15px;
     text-align: left;
+  }
+  .el-upload-list__item-name {
+    color: #000;
+    font-weight: 700;
   }
 }
 </style>

@@ -93,6 +93,22 @@ public class DictionaryServiceImpl implements DictionaryService {
     }
 
     @Override
+    public List<Dictionary> getDictionaryByTypeAndFather(String dictionaryType, String dictionaryFather) {
+        return dictionaryMapper.selectByTypeAndFather(dictionaryType,dictionaryFather);
+    }
+
+    @Override
+    public List<Dictionary> getDictionaryByTypeAndFatherToTree(String dictionaryType, List<String> dictionaryFather) {
+        List<Dictionary> result = new ArrayList<>();
+        for(String father : dictionaryFather){
+            Dictionary dictionary = dictionaryMapper.selectByPrimaryKey(father);
+            dictionary.setChildrenList(dictionaryMapper.selectByTypeAndFather(dictionaryType,father));
+            result.add(dictionary);
+        }
+        return result;
+    }
+
+    @Override
     public List<Dictionary> getDictionaryByTypeTree(String dictionaryType) {
         List<Dictionary> dictionaryList = dictionaryMapper.selectByType(dictionaryType);
         List<Dictionary> fatherList = new ArrayList<>();

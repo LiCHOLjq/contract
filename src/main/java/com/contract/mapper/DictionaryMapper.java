@@ -27,6 +27,8 @@ public interface DictionaryMapper {
 
     List<Dictionary> selectByType(String dictionaryType);
 
+    List<Dictionary> selectByTypeAndFather(String dictionaryType, String dictionaryFather);
+
     int updateByPrimaryKeySelective(Dictionary record);
 
     int updateByPrimaryKey(Dictionary record);
