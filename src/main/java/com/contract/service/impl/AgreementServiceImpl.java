@@ -5,6 +5,7 @@ import com.contract.domain.*;
 import com.contract.mapper.*;
 import com.contract.service.AgreementService;
 import com.contract.service.LogService;
+import com.contract.util.BigDecimalUtil;
 import com.contract.util.PageBean;
 import com.contract.util.UUIDUtil;
 import com.github.pagehelper.PageHelper;
@@ -60,7 +61,12 @@ public class AgreementServiceImpl implements AgreementService {
         } catch (ParseException e) {
             agreement.setAgreementSignDateEnd(null);
         }
-
+        if(agreement.getAgreementAmountBegin()!=null){
+            agreement.setAgreementAmountBegin(BigDecimalUtil.mul(agreement.getAgreementAmountBegin(),10000.0));
+        }
+        if(agreement.getAgreementAmountEnd()!=null){
+            agreement.setAgreementAmountEnd(BigDecimalUtil.mul(agreement.getAgreementAmountEnd(),10000.0));
+        }
         PageHelper.startPage(currentPage,pageSize);
         List<Agreement> agreementList = agreementMapper.selectBySearch(agreement,sort);
         for (Agreement item : agreementList){
@@ -74,7 +80,7 @@ public class AgreementServiceImpl implements AgreementService {
 
             if(item.getAgreementUploadType().equals("agreement_upload_type_admin")){
                 Admin admin = adminMapper.selectByPrimaryKey(item.getAgreementUploadAdmin());
-                item.setAgreementUploadAdmin(admin.getAdminName()+"(管理员)");
+                item.setAgreementUploadAdmin(admin.getAdminName());
             }
             item.setAgreementUploadDateStr(sdf.format(item.getAgreementUploadDate()));
             List<Product> productList = productMapper.selectByAgreement(item.getAgreementId());
@@ -95,9 +101,39 @@ public class AgreementServiceImpl implements AgreementService {
     }
 
     @Override
+    public PageBean<Agreement> getAgreementUserBySearch(String adminId, Agreement agreement, int currentPage, int pageSize, String sort) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        PageHelper.startPage(currentPage,pageSize);
+        List<Agreement> agreementList = agreementMapper.selectBySearchUser(agreement,sort);
+        for (Agreement item : agreementList){
+            item.setAgreementUploadDateStr(sdf.format(item.getAgreementUploadDate()));
+        }
+        int countNums = agreementMapper.selectBySearchUserCount(agreement);
+        PageBean<Agreement> pageData = new PageBean<>(currentPage,pageSize,countNums);
+        pageData.setItems(agreementList);
+        return pageData;
+    }
+
+    @Override
     public List<Agreement> getAgreementBySearch(Agreement agreement,String sort) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            agreement.setAgreementSignDateBegin(sdf.parse(agreement.getAgreementSignDateBeginStr()+" 00:00:00"));
+        } catch (ParseException e) {
+            agreement.setAgreementSignDateBegin(null);
+        }
+        try {
+            agreement.setAgreementSignDateEnd(sdf.parse(agreement.getAgreementSignDateEndStr()+" 23:59:59"));
+        } catch (ParseException e) {
+            agreement.setAgreementSignDateEnd(null);
+        }
+        if(agreement.getAgreementAmountBegin()!=null){
+            agreement.setAgreementAmountBegin(BigDecimalUtil.mul(agreement.getAgreementAmountBegin(),10000.0));
+        }
+        if(agreement.getAgreementAmountEnd()!=null){
+            agreement.setAgreementAmountEnd(BigDecimalUtil.mul(agreement.getAgreementAmountEnd(),10000.0));
+        }
         List<Agreement> agreementList = agreementMapper.selectBySearch(agreement,sort);
         for (Agreement item : agreementList){
             item.setAgreementTypeObj(dictionaryMapper.selectByPrimaryKey(item.getAgreementType()));
@@ -105,7 +141,7 @@ public class AgreementServiceImpl implements AgreementService {
             item.setAgreementSignDateStr(sdf2.format(item.getAgreementSignDate()));
             if(item.getAgreementUploadType().equals("agreement_upload_type_admin")){
                 Admin admin = adminMapper.selectByPrimaryKey(item.getAgreementUploadAdmin());
-                item.setAgreementUploadAdmin(admin.getAdminName()+"(管理员)");
+                item.setAgreementUploadAdmin(admin.getAdminName());
             }
             item.setAgreementUploadDateStr(sdf.format(item.getAgreementUploadDate()));
             List<Product> productList = productMapper.selectByAgreement(item.getAgreementId());
@@ -170,12 +206,22 @@ public class AgreementServiceImpl implements AgreementService {
     }
 
     @Override
-    public void addAgreement(Agreement agreement, List<Product> productList, MultipartFile file, String adminId) throws ParseException, IOException {
+    public void addAgreement(Agreement agreement, List<Product> productList, MultipartFile file, String adminId) throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
         try {
             //处理agreement productList
             agreement.setAgreementId(UUIDUtil.getUUID());
+
+            if(agreement.getAgreementName()==null||"".equals(agreement.getAgreementName())) {
+                throw new Exception("合同名称不能为空");
+            }
+            if(agreement.getAgreementProvider()==null||"".equals(agreement.getAgreementProvider())){
+                throw new Exception("客户名称不能为空");
+            }
+            if(agreement.getAgreementSignDateStr()==null||"".equals(agreement.getAgreementSignDateStr())){
+                throw new Exception("签约日期不能为空");
+            }
             agreement.setAgreementSignDate(sdf.parse(agreement.getAgreementSignDateStr()));
             agreement.setAgreementUploadType("agreement_upload_type_admin");
             agreement.setAgreementUploadAdmin(adminId);
@@ -184,6 +230,12 @@ public class AgreementServiceImpl implements AgreementService {
             int sort = 1;
             for (Product product : productList){
                 product.setProductId(UUIDUtil.getUUID());
+                if(product.getProductModel()==null||"".equals(product.getProductModel())){
+                    throw new Exception("合同产品第"+sort+"行产品型号不能为空");
+                }
+                if(product.getProductSeries()==null||"".equals(product.getProductSeries())){
+                    throw new Exception("合同产品第"+sort+"行产品系列不能为空");
+                }
                 product.setProductAgreement(agreement.getAgreementId());
                 product.setProductSort(sort);
                 sort++;
@@ -211,6 +263,9 @@ public class AgreementServiceImpl implements AgreementService {
                 productMapper.insertList(productList);
             }
             dataSourceTransactionManager.commit(transactionStatus);     //手动提交
+        }catch (ParseException e){
+            dataSourceTransactionManager.rollback(transactionStatus);       //事务回滚
+            throw new Exception("日期转换错误");
         }catch (Exception e){
             dataSourceTransactionManager.rollback(transactionStatus);       //事务回滚
             throw e;
@@ -269,8 +324,10 @@ public class AgreementServiceImpl implements AgreementService {
         if(item.getAgreementSignDate()!=null){
             item.setAgreementSignDateStr(sdf2.format(item.getAgreementSignDate()));
         }
-
-
+        if(item.getAgreementUploadType().equals("agreement_upload_type_admin")){
+            Admin admin = adminMapper.selectByPrimaryKey(item.getAgreementUploadAdmin());
+            item.setAgreementUploadAdminStr(admin.getAdminName());
+        }
         item.setAgreementUploadDateStr(sdf.format(item.getAgreementUploadDate()));
         List<Product> productList = productMapper.selectByAgreement(item.getAgreementId());
         for(Product product : productList){

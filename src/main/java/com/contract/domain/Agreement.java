@@ -70,6 +70,16 @@ public class Agreement {
 
     private Boolean shareState;
 
+    private String agreementUploadAdminStr;
+
+    public String getAgreementUploadAdminStr() {
+        return agreementUploadAdminStr;
+    }
+
+    public void setAgreementUploadAdminStr(String agreementUploadAdminStr) {
+        this.agreementUploadAdminStr = agreementUploadAdminStr;
+    }
+
     public List<String> getProductSeriesList() {
         return productSeriesList;
     }

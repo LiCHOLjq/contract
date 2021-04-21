@@ -17,6 +17,7 @@ public interface DictionaryService {
     void delDictionaryType(DictionaryType dictionaryType);
 
     PageBean<Dictionary> getDictionaryBySearch(Dictionary dictionary, int currentPage, int pageSize);
+    List<Dictionary> getAllDictionary();
     List<Dictionary> getDictionaryByType(String dictionaryType);
     List<Dictionary> getDictionaryByTypeAndFather(String dictionaryType,String dictionaryFather);
     List<Dictionary> getDictionaryByTypeAndFatherToTree(String dictionaryType,List<String> dictionaryFather);

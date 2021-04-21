@@ -12,6 +12,8 @@ import java.util.List;
 
 public interface AgreementService {
     PageBean<Agreement> getAgreementBySearch(String adminId,Agreement agreement,int currentPage, int pageSize,String sort);
+    PageBean<Agreement> getAgreementUserBySearch(String adminId,Agreement agreement,int currentPage, int pageSize,String sort);
+
 
     List<Agreement> getAgreementBySearch(Agreement agreement,String sort);
 
@@ -21,7 +23,7 @@ public interface AgreementService {
 
     void relDelAgreement(Agreement agreement);
 
-    void addAgreement(Agreement agreement, List<Product> productList, MultipartFile file,String adminId) throws ParseException, IOException;
+    void addAgreement(Agreement agreement, List<Product> productList, MultipartFile file,String adminId) throws Exception;
 
     void addAgreement(Agreement agreement, String shareId, MultipartFile file) throws ParseException, IOException;
 

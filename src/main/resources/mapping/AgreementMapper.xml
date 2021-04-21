@@ -27,10 +27,16 @@
   <sql id="Blob_Column_List">
     agreement_text
   </sql>
+  <sql id="Admin_Where_List">
+      left join product on product_agreement = agreement_id
+      where agreement_upload_type = 'agreement_upload_type_admin'
+  </sql>
+  <sql id="User_Where_List">
+      left join product on product_agreement = agreement_id
+      where agreement_upload_type = 'agreement_upload_type_user'
+  </sql>
 
   <sql id="Search_Where_List">
-    left join product on product_agreement = agreement_id
-    where 1=1
     <if test="agreement.agreementName != null and agreement.agreementName != '' ">
       and agreement_name like concat('%',#{agreement.agreementName ,jdbcType=VARCHAR},'%')
     </if>
@@ -110,11 +116,28 @@
     ,
     <include refid="Blob_Column_List" />
     from agreement
+    <include refid="Admin_Where_List" />
     <include refid="Search_Where_List" />
     order by ${sort}
   </select>
   <select id="selectBySearchCount" resultType="int">
-    select count(agreement_id) from agreement
+    select count(DISTINCT  agreement_id) from agreement
+    <include refid="Admin_Where_List" />
+    <include refid="Search_Where_List" />
+  </select>
+  <select id="selectBySearchUser" resultMap="ResultMapWithBLOBs">
+    select distinct
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from agreement
+    <include refid="User_Where_List" />
+    <include refid="Search_Where_List" />
+    order by ${sort}
+  </select>
+  <select id="selectBySearchUserCount" resultType="int">
+    select count(DISTINCT  agreement_id) from agreement
+    <include refid="User_Where_List" />
     <include refid="Search_Where_List" />
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">

@@ -17,6 +17,26 @@ public class ShareAgreement {
 
     private String agreementExtend;
 
+    private String agreementProvider;
+
+    private String agreementSignDateStr;
+
+    public String getAgreementProvider() {
+        return agreementProvider;
+    }
+
+    public void setAgreementProvider(String agreementProvider) {
+        this.agreementProvider = agreementProvider;
+    }
+
+    public String getAgreementSignDateStr() {
+        return agreementSignDateStr;
+    }
+
+    public void setAgreementSignDateStr(String agreementSignDateStr) {
+        this.agreementSignDateStr = agreementSignDateStr;
+    }
+
     public String getAgreementType() {
         return agreementType;
     }

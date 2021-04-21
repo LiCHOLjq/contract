@@ -78,9 +78,49 @@ public class AgreementController {
         }
         return result;
     }
+
+    @RequestMapping(value = "/getAgreementUserBySearch", method = RequestMethod.POST)
+    @UserLoginToken
+    @UserRoleToken(passRoleList = {"admin_role_master","admin_role_normal"})
+    public JSONObject getAgreementUserBySearch(@RequestBody String params, HttpServletRequest httpServletRequest) {
+        JSONObject result = new JSONObject();
+        try {
+            JSONObject paramsJson = JSONObject.parseObject(JSONObject.parseObject(params).getString("params"));
+            Integer currentPage = 1;
+            String currentPageStr = paramsJson.getString("currentPage");
+            if (currentPageStr != null && !"".equals(currentPageStr)) {
+                currentPage = Integer.parseInt(currentPageStr);
+            }
+            Integer showCount = 10;
+            String showCountStr = paramsJson.getString("showCount");
+            if (showCountStr != null && !"".equals(showCountStr)) {
+                showCount = Integer.parseInt(showCountStr);
+            }
+            String sort = paramsJson.getString("sort");
+            Agreement agreement = JSONObject.parseObject(paramsJson.getString("agreement"), Agreement.class);
+            String token = httpServletRequest.getHeader("token");
+            String adminId = TokenUtil.getId(token);
+            Admin admin = adminService.getAdminById(adminId);
+            if(admin.getAdminRole().equals("admin_role_normal")){
+                agreement.setAgreementDelete(false);
+            }
+            PageBean<Agreement> pageData;
+            pageData = agreementService.getAgreementUserBySearch(adminId,agreement,currentPage, showCount,sort);
+            result.put("object", pageData);
+            result.put("code", 200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("data", e.getMessage());
+            result.put("code", 500);
+
+        }
+        return result;
+    }
+
+
     @RequestMapping("/exportAgreement")
     @UserLoginToken
-    @UserRoleToken(passRoleList = {"admin_role_master"})
+    @UserRoleToken(passRoleList = {"admin_role_master","admin_role_normal"})
     public void exportAgreement(HttpServletResponse response, HttpServletRequest httpServletRequest,@RequestBody String params) throws IOException {
         try {
             JSONObject paramsJson = JSONObject.parseObject(JSONObject.parseObject(params).getString("params"));
@@ -383,7 +423,7 @@ public JSONObject updAgreement(@RequestBody String params, HttpServletRequest ht
 }
     @GetMapping("/admin/download")
     @UserLoginToken
-    @UserRoleToken(passRoleList = {"admin_role_master"})
+    @UserRoleToken(passRoleList = {"admin_role_master","admin_role_normal"})
     public void download(HttpServletResponse response,String type,String id) throws IOException {
         // 导出操作
         try {
@@ -411,7 +451,7 @@ public JSONObject updAgreement(@RequestBody String params, HttpServletRequest ht
     }
     @GetMapping("/downLoadCart")
     @UserLoginToken
-    @UserRoleToken(passRoleList = {"admin_role_master"})
+    @UserRoleToken(passRoleList = {"admin_role_master","admin_role_normal"})
     public void downLoadCart(HttpServletRequest httpServletRequest,HttpServletResponse response) throws IOException {
         // 导出操作
         try {
@@ -421,8 +461,8 @@ public JSONObject updAgreement(@RequestBody String params, HttpServletRequest ht
             List<ZipFile> zipFileList = new ArrayList<>();
             int i=1;
             for(Cart cart : cartList){
-                Agreement agreement = agreementService.getAgreementById(cart.getCartAgreement());
-                zipFileList.add(new ZipFile(new File(FileSaveConfig.AGREEMENT+agreement.getAgreementId()+agreement.getAgreementExtend()),i+"."+agreement.getAgreementName()+agreement.getAgreementExtend()));
+                Agreement agreement = agreementService.getAgreementDetails(cart.getCartAgreement());
+                zipFileList.add(new ZipFile(new File(FileSaveConfig.AGREEMENT+agreement.getAgreementId()+agreement.getAgreementExtend()),getFileName(agreement,i)));
                 i++;
             }
             ZipUtils.downloadZip(zipFileList,response);
@@ -437,6 +477,25 @@ public JSONObject updAgreement(@RequestBody String params, HttpServletRequest ht
             result.put("code", 500);
             out.write(result.toJSONString());
         }
+    }
+    public String getFileName(Agreement agreement,int index) {
+        String filename = index + ".";
+        filename = filename + (agreement.getAgreementProvider() == null ? "" : agreement.getAgreementProvider()) + "-";
+        filename = filename + (agreement.getAgreementName() == null ? "" : agreement.getAgreementName()) + "-";
+        filename = filename + (agreement.getAgreementSignDateStr() == null ? "" : agreement.getAgreementSignDateStr()) + "-";
+        filename = filename + (agreement.getAgreementAmount() == 0 ? "0" : (agreement.getAgreementAmount() + "万")) + "-";
+        int i = 0;
+        for (Product product : agreement.getProductList()) {
+            filename = filename + (product.getProductSeriesObj() == null ? "" : product.getProductSeriesObj().getDictionaryName() == null ? "" : product.getProductSeriesObj().getDictionaryName());
+            filename = filename + "(" + (product.getProductNumber() == null ? "" : product.getProductNumber()) + ")";
+            if (i < agreement.getProductList().size() - 1) {
+                filename = filename + ",";
+            }
+            i++;
+        }
+        filename = filename + "-" + (agreement.getAgreementClientObj() == null ? "" : agreement.getAgreementClientObj().getDictionaryName() == null ? "" : agreement.getAgreementClientObj().getDictionaryName());
+        filename = filename + agreement.getAgreementExtend();
+        return filename;
     }
     @RequestMapping("/clearCart")
     @UserLoginToken

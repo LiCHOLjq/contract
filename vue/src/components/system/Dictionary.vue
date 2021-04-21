@@ -741,7 +741,7 @@ export default {
 
     },
     handleAddDictionary() {
-      this.initDictionaryFatherList();
+
       this.dictionaryAddUpdForm.title = "添加字典信息";
       this.dictionaryAddUpdForm.visible = true;
       this.dictionaryAddUpdForm.dictionaryId = "";
@@ -754,7 +754,7 @@ export default {
       this.dictionaryAddUpdForm.submitState = "Add";
     },
     handleUpdDictionary(index, row) {
-      this.initDictionaryFatherList();
+
       this.dictionaryAddUpdForm.title = "添加字典信息";
       this.dictionaryAddUpdForm.visible = true;
       this.dictionaryAddUpdForm.dictionaryId = row.dictionaryId;
@@ -976,10 +976,10 @@ export default {
       const loading = this.$loading(this.$store.state.loadingOption1);
       this.axios
         .post(
-          "/dictionary/getDictionaryItems",
+          "/dictionary/getAllDictionaryItems",
           {
             params: {
-              dictionaryType: this.dictionarySelectForm.typeId
+
             }
           },
           { headers: { token: this.token } }
@@ -1051,6 +1051,7 @@ export default {
       return;
     }
     this.initDictionaryType();
+    this.initDictionaryFatherList();
     //this.initAliasProvinceSelective();
     //this.initAliasMethodSelective();
   }

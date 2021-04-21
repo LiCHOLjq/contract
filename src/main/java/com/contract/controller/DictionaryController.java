@@ -246,6 +246,27 @@ public class DictionaryController {
         }
         return result;
     }
+    @RequestMapping(value = "/getAllDictionaryItems", method = RequestMethod.POST)
+//    @UserLoginToken
+    public JSONObject getAllDictionaryItems(@RequestBody String params) {
+        JSONObject result = new JSONObject();
+        try {
+            JSONObject paramsJson = JSONObject.parseObject(JSONObject.parseObject(params).getString("params"));
+
+            List<Dictionary> dictionaryList;
+            dictionaryList = dictionaryService.getAllDictionary();
+            result.put("object", dictionaryList);
+            result.put("code", 200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("data", e.getMessage());
+            result.put("code", 500);
+        }
+        return result;
+    }
+
+
+
     //根据Dictionary表dictionaryType属性查询
     @RequestMapping(value = "/getDictionaryItemsByFather", method = RequestMethod.POST)
 //    @UserLoginToken

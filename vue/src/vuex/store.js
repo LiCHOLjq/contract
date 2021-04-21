@@ -43,16 +43,22 @@ var state = {
     text: '数据提交中...',
     spinner: 'el-icon-loading',
     background: 'rgba(0, 0, 0, 0.5)'
+  },
+  loadingOption3: {
+    lock: true,
+    text: '文件正在下载，请稍候...',
+    spinner: 'el-icon-loading',
+    background: 'rgba(0, 0, 0, 0.5)'
   }
 }
 var mutations = {
-  setfitting_list_formselect (state, data) {
+  setfitting_list_formselect(state, data) {
     state.fitting_list_formselect = data;
   },
-  setcomputer_list_formselect (state, data) {
+  setcomputer_list_formselect(state, data) {
     state.compuer_list_formselect = data;
   },
-  setadmin (state, data) {
+  setadmin(state, data) {
     state.admin = data;
   },
 }

@@ -187,6 +187,16 @@ export default {
     "v-header": Header
   },
   methods: {
+    getFileName(row) {
+      var filename = "";
+      filename = filename + (row.agreementProvider == null ? '' : row.agreementProvider) + "-";
+      filename = filename + (row.agreementName == null ? '' : row.agreementName) + "-";
+      filename = filename + (row.agreementSignDateStr == null ? '' : row.agreementSignDateStr);
+      filename = filename + row.agreementExtend;
+      return filename;
+    },
+
+
     getShareDetails() {
       const loading = this.$loading(this.$store.state.loadingOption2);
       this.axios
@@ -244,7 +254,7 @@ export default {
         let link = document.createElement("a");
         link.style.display = "none";
         link.href = url;
-        link.setAttribute("download", row.agreementName + row.agreementExtend);
+        link.setAttribute("download", this.getFileName(row));
         document.body.appendChild(link);
         link.click();
         loading.close();

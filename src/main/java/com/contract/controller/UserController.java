@@ -165,8 +165,8 @@ public class UserController {
                 List<ZipFile> zipFileList = new ArrayList<>();
                 int i=1;
                 for(ShareAgreement shareAgreement : shareAgreementList){
-                    Agreement agreement = agreementService.getAgreementById(shareAgreement.getAgreementId());
-                    zipFileList.add(new ZipFile(new File(FileSaveConfig.AGREEMENT+agreement.getAgreementId()+agreement.getAgreementExtend()),i+"."+agreement.getAgreementName()+agreement.getAgreementExtend()));
+                    Agreement agreement = agreementService.getAgreementDetails(shareAgreement.getAgreementId());
+                    zipFileList.add(new ZipFile(new File(FileSaveConfig.AGREEMENT+agreement.getAgreementId()+agreement.getAgreementExtend()),getFileName(agreement,i)));
                     i++;
                 }
                 ZipUtils.downloadZip(zipFileList,response);
@@ -184,6 +184,15 @@ public class UserController {
             result.put("code", 500);
             out.write(result.toJSONString());
         }
+    }
+
+    public String getFileName(Agreement agreement,int index) {
+        String filename =index + ".";
+        filename = filename + (agreement.getAgreementProvider() == null ? "" : agreement.getAgreementProvider()) + "-";
+        filename = filename + (agreement.getAgreementName() == null ? "" : agreement.getAgreementName()) + "-";
+        filename = filename + (agreement.getAgreementSignDateStr() == null ? "" : agreement.getAgreementSignDateStr());
+        filename = filename + agreement.getAgreementExtend();
+        return filename;
     }
     //addAgreement
     @PostMapping("/addAgreement")

@@ -58,6 +58,7 @@
     <include refid="Base_Column_List" />
     from dictionary
     <include refid="Base_Where_List" />
+    order by dictionary_sort
   </select>
 
   <select id="selectAllEdit" resultMap="BaseResultMap">
@@ -66,6 +67,7 @@
     from dictionary
     left join dictionary_type on dictionary_type = type_id
     where type_Edit = 1
+    order by dictionary_sort
   </select>
   <select id="selectBySearchCount" resultType="int">
     select count(*) from dictionary

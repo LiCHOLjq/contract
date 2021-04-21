@@ -29,7 +29,7 @@
 
 <script>
 import store from "../vuex/store.js";
-import QRCode from "qrcodejs2"; // 引入qrcode
+
 export default {
   store,
   data() {

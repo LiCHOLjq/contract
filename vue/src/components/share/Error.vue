@@ -7,10 +7,9 @@
         <!-- <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button> -->
       </div>
       <i class="el-icon-warning"></i>
-      <p style="margin-top:40px;font-size:20px">此链接分享内容可能因为涉及侵权、色情、反动、低俗等信息，无法访问！</p>
+      <p style="margin-top:40px;font-size:20px">此链接分享内容不存在或已过期，无法访问！</p>
     </el-card>
 
- 
   </div>
 </template>
 
@@ -71,7 +70,7 @@ export default {
     border-radius: 5px;
     -moz-border-radius: 5px;
     background-clip: padding-box;
-        position: absolute;
+    position: absolute;
     left: 50%;
     top: 50%;
     margin: -160px -400px auto;

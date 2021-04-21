@@ -71,6 +71,7 @@ public class ShareServiceImpl implements ShareService {
     public Share getShareDetails(String shareId) {
         Share share = shareMapper.selectByPrimaryKeyHasPassword(shareId);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
         share.setShareAdmin(adminMapper.selectByPrimaryKey(share.getShareAdmin()).getAdminName());
         share.setShareTypeObj(dictionaryMapper.selectByPrimaryKey(share.getShareType()));
         if (share.getShareBeginDate() != null && share.getShareEndDate() != null) {
@@ -85,9 +86,6 @@ public class ShareServiceImpl implements ShareService {
         if (share.getShareBeginDate() == null && share.getShareEndDate() == null) {
             share.setShareDateStr( "永久有效");
         }
-
-
-
         List<ShareAgreement> shareAgreementList = shareAgreementMapper.selectByShare(shareId);
         List<ShareAgreement> shareAgreementListUseful = new ArrayList<>();
         for(ShareAgreement shareAgreement : shareAgreementList){
@@ -95,6 +93,10 @@ public class ShareServiceImpl implements ShareService {
             if(!agreement.getAgreementDelete()){
                 shareAgreement.setAgreementName(agreement.getAgreementName());
                 shareAgreement.setAgreementUploadDate(sdf.format(agreement.getAgreementUploadDate()));
+                shareAgreement.setAgreementProvider(agreement.getAgreementProvider());
+                if(agreement.getAgreementSignDate()!=null){
+                    shareAgreement.setAgreementSignDateStr(sdf2.format(agreement.getAgreementSignDate()));
+                }
                 Dictionary dictionary = dictionaryMapper.selectByPrimaryKey(agreement.getAgreementType());
                 if(dictionary!=null){
                     shareAgreement.setAgreementType(dictionary.getDictionaryName());
@@ -168,7 +170,8 @@ public class ShareServiceImpl implements ShareService {
                 item.setShareDateStr(sdf.format(item.getShareBeginDate())+ " 至 " +sdf.format(item.getShareEndDate()));
             }
             if (item.getShareBeginDate() == null && item.getShareEndDate() != null) {
-                item.setShareDateStr( sdf.format(item.getShareEndDate()) + " 截止");
+//                item.setShareDateStr( sdf.format(item.getShareEndDate()) + " 截止");
+                item.setShareDateStr( sdf.format(item.getShareEndDate()));
             }
             if (item.getShareBeginDate() != null && item.getShareEndDate() == null) {
                 item.setShareDateStr( sdf.format(item.getShareBeginDate()) + " 开始");

@@ -21,6 +21,10 @@ public interface AgreementMapper {
 
     int selectBySearchCount(@Param("agreement") Agreement agreement);
 
+    List<Agreement> selectBySearchUser(@Param("agreement") Agreement agreement,String sort);
+
+    int selectBySearchUserCount(@Param("agreement") Agreement agreement);
+
     List<Agreement> selectByUploadAdmin(String adminId);
 
     int updateByPrimaryKeySelective(Agreement record);

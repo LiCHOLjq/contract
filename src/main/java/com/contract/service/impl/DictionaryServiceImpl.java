@@ -88,6 +88,11 @@ public class DictionaryServiceImpl implements DictionaryService {
     }
 
     @Override
+    public List<Dictionary> getAllDictionary() {
+        return dictionaryMapper.selectAllEdit();
+    }
+
+    @Override
     public List<Dictionary> getDictionaryByType(String dictionaryType) {
         return dictionaryMapper.selectByType(dictionaryType);
     }

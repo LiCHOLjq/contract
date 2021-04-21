@@ -1,160 +1,31 @@
 <template>
   <div id="agreementList">
     <el-card style="padding:0px;  padding-bottom:10px;margin:10px">
-      <div slot="header" class="search-header">
-        <p style="margin-top:10px;float:left">搜索设置</p>
-
-        <el-tooltip v-if="!agreementSelectForm.visible" class="item" effect="dark" content="搜索" placement="bottom">
-          <el-button style="float:right;margin-left:10px;margin-right:10px;" type="primary" icon="el-icon-search" circle @click="agreementSelectForm.visible = true;"></el-button>
-        </el-tooltip>
-        <el-tooltip v-if="agreementSelectForm.visible" class="item" effect="dark" content="收起" placement="bottom">
+      <!-- <div slot="header" class="search-header"> -->
+      <!-- <p style="margin-top:10px;float:left">搜索设置</p> -->
+      <el-form :inline="true" :model="shareSelectForm" class="demo-form-inline" style="margin-top:10px;float:left">
+        <el-form-item style="margin-top:0px" label="合同名称: ">
+          <!-- 模糊 -->
+          <el-input style="width:400px" v-model="agreementSelectForm.agreementName" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <el-tooltip v-if="!agreementSelectForm.visible" class="item" effect="dark" content="搜索" placement="bottom">
+        <el-button style="float:right;margin-left:10px;margin-right:10px;margin-top:10px;" type="primary" icon="el-icon-search" circle @click="agreementPage.current=1;initAgreementList();"></el-button>
+      </el-tooltip>
+      <!-- <el-tooltip v-if="agreementSelectForm.visible" class="item" effect="dark" content="收起" placement="bottom">
           <el-button style="float:right;margin-left:10px;margin-right:10px;" type="primary" icon="el-icon-arrow-up" circle @click="agreementSelectForm.visible = false;"></el-button>
-        </el-tooltip>
-        <el-tooltip class="item" effect="dark" content="上传合同" placement="bottom">
-          <el-button style="float:right;margin-left:10px;margin-right:10px;" circle icon="el-icon-plus" type="primary" @click="handleAddAgreement()"></el-button>
-        </el-tooltip>
-        <el-tooltip class="item" effect="dark" content="邀请上传合同" placement="bottom">
-          <el-button style="float:right;margin-left:10px;margin-right:10px;" circle icon="el-icon-upload" type="primary" @click="shareForm.visible2 = true;shareForm.shareType='share_type_upload';setEndDate();"></el-button>
-        </el-tooltip>
-        <el-tooltip class="item" effect="dark" content="分享合同" placement="bottom">
-          <el-badge style="float:right;margin-left:10px;margin-right:10px;" :value="cartNum" type="success">
-            <el-button type="primary" icon="el-icon-share" circle @click="shareForm.visible = true;shareForm.shareType='share_type_download';initCart();setEndDate();"></el-button>
-          </el-badge>
-        </el-tooltip>
-
-      </div>
-      <div v-show="agreementSelectForm.visible" class="search-body" style="padding-left:10px;padding-right:10px">
-        <el-form :inline="true" :model="agreementSelectForm" class="demo-form-inline">
-          <el-row>
-            <el-col :span="6">
-              <el-form-item class="form-item-1" label="合同名称：">
-                <!-- 模糊 -->
-                <el-input v-model="agreementSelectForm.agreementName" autocomplete="off"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item class="form-item-1" label="客户名称：">
-                <!-- 模糊 -->
-                <el-input v-model="agreementSelectForm.agreementProvider" autocomplete="off"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item class="form-item-1" label="合同乙方：">
-                <!-- 模糊 -->
-                <el-select style="width:100%" v-model="agreementSelectForm.agreementClient" placeholder="选择合同乙方">
-                  <el-option v-for="item in agreementClientSelectiveList" :key="item.dictionaryId" :label="item.dictionaryName" :value="item.dictionaryId"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item class="form-item-1" label="合同类型：">
-                <el-select style="width:100%" multiple v-model="agreementSelectForm.agreementTypeList" placeholder="选择合同类型">
-                  <el-option v-for="item in agreementTypeSelectiveList" :key="item.dictionaryId" :label="item.dictionaryName" :value="item.dictionaryId"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="6">
-              <el-form-item class="form-item-1" label="产品类型：">
-                <el-select style="width:100%" @change="initProductSeriesSelectiveList" multiple v-model="agreementSelectForm.productTypeList" placeholder="选择产品类型">
-                  <el-option v-for="item in productTypeSelectiveList" :key="item.dictionaryId" :label="item.dictionaryName" :value="item.dictionaryId"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item class="form-item-1" label="产品系列：">
-                <el-select style="width:100%" multiple v-model="agreementSelectForm.productSeriesList" placeholder="选择产品系列">
-                  <el-option-group v-for="item in productSeriesSelectiveList" :key="item.dictionaryId" :label="item.dictionaryName">
-                    <el-option v-for="children in item.childrenList" :key="children.dictionaryId" :label="children.dictionaryName" :value="children.dictionaryId"></el-option>
-                  </el-option-group>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item class="form-item-1" label="产品型号：">
-                <!-- 模糊 -->
-                <el-input v-model="agreementSelectForm.productModel" autocomplete="off"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item class="form-item-2" label="产品数量：">
-                <el-input-number v-model="agreementSelectForm.productNumberBegin"></el-input-number>
-              </el-form-item>
-              <el-form-item class="form-item-3" label="→">
-                <el-input-number v-model="agreementSelectForm.productNumberEnd"></el-input-number>
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="7">
-              <el-form-item class="form-item-4" label="总金额范围(万)：">
-                <el-input-number v-model="agreementSelectForm.agreementAmountBegin"></el-input-number>
-              </el-form-item>
-              <el-form-item class="form-item-5" label="→">
-                <el-input-number v-model="agreementSelectForm.agreementAmountEnd"></el-input-number>
-              </el-form-item>
-            </el-col>
-            <el-col :span="9">
-              <el-form-item class="form-item-6" label="签约日期范围：">
-                <el-date-picker v-model="agreementSelectForm.agreementSignDateBeginStr" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="选择日期">
-                </el-date-picker>
-              </el-form-item>
-              <el-form-item class="form-item-7" label="→">
-                <el-date-picker v-model="agreementSelectForm.agreementSignDateEndStr" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="选择日期">
-                </el-date-picker>
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item class="form-item-8" label="备注：">
-                <!-- 模糊 -->
-                <el-input v-model="agreementSelectForm.agreementText" autocomplete="off"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item class="form-item-8" label="信创：">
-                <el-select style="width:100%" v-model="agreementSelectForm.agreementInnovation" placeholder="选择是否信创">
-                  <el-option label="全部" value=""></el-option>
-                  <el-option label="是" value="1"></el-option>
-                  <el-option label="否" value="0"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="7">
-              <el-form-item class="form-item-9" label="排序规则：">
-                <el-select v-model="sortForm.field" value-key="field" placeholder="请选择">
-                  <el-option v-for="field in fieldsDic" :key="field.field" :label="field.name" :value="field" />
-                </el-select>
-                <el-select v-model="sortForm.type" value-key="type" placeholder="请选择">
-                  <el-option v-for="type in typeDic" :key="type.type" :label="type.name" :value="type" />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="5">
-              <el-form-item class="form-item-10" label="上传人：">
-                <!-- 模糊 -->
-                <el-select style="width:100%" v-model="agreementSelectForm.agreementUploadAdmin" placeholder="选择上传人">
-                  <el-option label="全部" value=""></el-option>
-                  <el-option v-for="item in adminSelectiveList" :key="item.adminId" :label="item.adminName" :value="item.adminId"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item class="form-item-1" v-if="role == 'admin_role_master'" label="是否删除：">
-                <el-select v-model="agreementSelectForm.agreementDelete" placeholder="选择是否删除" style="width:100%">
-                  <el-option label="全部" value=""></el-option>
-                  <el-option label="是" value="1"></el-option>
-                  <el-option label="否" value="0"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <!-- <el-button type="primary" style="margin-left:20px;margin-top:20px;" @click="handleAddTag()">添 加</el-button> -->
-              <el-button style="margin-left:20px;margin-top:20px;" type="primary" icon="el-icon-search" @click="agreementPage.current=1;initAgreementList();">搜索</el-button>
-              <el-button style="margin-left:20px;margin-top:20px;" type="primary" icon="el-icon-document" @click="exportAgreement();">结果导出Excel</el-button>
-            </el-col>
-          </el-row>
-        </el-form>
-      </div>
+        </el-tooltip> -->
+      <el-tooltip class="item" effect="dark" content="上传合同" placement="bottom">
+        <el-button style="float:right;margin-left:10px;margin-right:10px;margin-top:10px;" circle icon="el-icon-plus" type="primary" @click="handleAddAgreement()"></el-button>
+      </el-tooltip>
+      <el-tooltip class="item" effect="dark" content="邀请上传合同" placement="bottom">
+        <el-button style="float:right;margin-left:10px;margin-right:10px;margin-top:10px;" circle icon="el-icon-upload" type="primary" @click="shareForm.visible2 = true;shareForm.shareType='share_type_upload';setEndDate();"></el-button>
+      </el-tooltip>
+      <el-tooltip class="item" effect="dark" content="分享合同" placement="bottom">
+        <el-badge style="float:right;margin-left:10px;margin-right:10px;margin-top:10px;" :value="cartNum" type="success">
+          <el-button type="primary" icon="el-icon-share" circle @click="shareForm.visible = true;shareForm.shareType='share_type_download';initCart();setEndDate();"></el-button>
+        </el-badge>
+      </el-tooltip>
     </el-card>
     <el-card style="padding:0px;  padding-bottom:10px;margin:10px">
       <el-row>
@@ -168,57 +39,13 @@
                 </span>
               </template>
             </el-table-column>
-            <el-table-column label="类型" width="100">
+            <el-table-column label="上传者姓名" width="200">
               <template slot-scope="scope">
-                <span style="margin-left: 10px">{{ scope.row.agreementTypeObj == null ? '' : scope.row.agreementTypeObj.dictionaryName == null ? '' : scope.row.agreementTypeObj.dictionaryName }}</span>
+                <span style="margin-left: 10px">{{ scope.row.agreementUploadAdmin == null ? '' : ( scope.row.agreementUploadAdmin)}}</span>
               </template>
             </el-table-column>
-            <el-table-column label="信创" width="50">
+            <el-table-column label="上传时间" width="200">
               <template slot-scope="scope">
-                <span style="margin-left: 10px">{{ scope.row.agreementInnovation == null ? '' : scope.row.agreementInnovation ? '是' : '否' }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="合同乙方" width="180">
-              <template slot-scope="scope">
-                <span style="margin-left: 10px">{{ scope.row.agreementClientObj == null ? '' : scope.row.agreementClientObj.dictionaryName }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="客户名称" width="100">
-              <template slot-scope="scope">
-                <span style="margin-left: 10px">{{ scope.row.agreementProvider == null ? '' : scope.row.agreementProvider }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="总金额" width="100">
-              <template slot-scope="scope">
-                <span style="margin-left: 10px">{{ scope.row.agreementAmount == null ? '' : scope.row.agreementAmount == 0 ? '0' : ((scope.row.agreementAmount / 10000) + "万") }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="签约日期" width="130">
-              <template slot-scope="scope">
-                <span style="margin-left: 10px">{{ scope.row.agreementSignDateStr == null ? '' : scope.row.agreementSignDateStr }}</span>
-              </template>
-            </el-table-column>
-
-            <el-table-column label="备注" width="150">
-              <template slot-scope="scope">
-                <span style="margin-left: 10px">{{ scope.row.agreementText == null ? '' : scope.row.agreementText }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="产品类型" width="150">
-              <template slot-scope="scope">
-                <el-popover v-for="item in scope.row.productList" :key="item.productId" trigger="hover">
-                  <p>{{ item.productSeriesObj == null ? '' : item.productSeriesObj.dictionaryName == null ? '' : ("系列：" + item.productSeriesObj.dictionaryName)}}</p>
-                  <p>{{ item.productModel == null ? '' : ("型号：" + item.productModel)}}</p>
-                  <p>{{ item.productNumber == null ? '' : ("数量：" + item.productNumber)}}</p>
-                  <div slot="reference" class="name-wrapper">
-                    <el-tag size="medium">{{ item.productTypeObj == null ? '' : item.productTypeObj.dictionaryName  == null ? '' : item.productTypeObj.dictionaryName}}</el-tag>
-                  </div>
-                </el-popover>
-              </template>
-            </el-table-column>
-            <el-table-column label="上传信息" width="200">
-              <template slot-scope="scope">
-                <span style="margin-left: 10px">{{ scope.row.agreementUploadAdmin == null ? '' : ( scope.row.agreementUploadAdmin)}}</span><br />
                 <span style="margin-left: 10px">{{ scope.row.agreementUploadDateStr == null ? '' :( scope.row.agreementUploadDateStr)}}</span>
               </template>
             </el-table-column>
@@ -229,13 +56,12 @@
             </el-table-column>
             <el-table-column label="操作" width="225">
               <template slot-scope="scope">
-                <el-button style="margin-bottom:10px" v-if="!scope.row.agreementDelete" size="mini" type="primary" @click="handleDetails(scope.$index, scope.row)">编辑</el-button>
+                <!-- <el-button style="margin-bottom:10px" v-if="!scope.row.agreementDelete" size="mini" type="primary" @click="handleDetails(scope.$index, scope.row)">编辑</el-button> -->
+                <el-button style="margin-bottom:10px" v-if="!scope.row.agreementDelete" size="mini" type="danger" @click="handleDownloadDelAgreement(scope.$index, scope.row)">下载并删除</el-button>
                 <el-button style="margin-bottom:10px" v-if="!scope.row.agreementDelete" size="mini" type="danger" @click="handleDelAgreement(scope.$index, scope.row)">删除</el-button>
                 <el-button style="margin-bottom:10px" v-if="scope.row.agreementDelete&&role == 'admin_role_master'" size="mini" type="success" @click="handleRestoreAgreement(scope.$index, scope.row)">还原</el-button>
                 <el-button style="margin-bottom:10px" v-if="scope.row.agreementDelete&&role == 'admin_role_master'" size="mini" type="danger" @click="handleRelDelAgreement(scope.$index, scope.row)">彻底删除</el-button>
-                <el-button style="margin-bottom:10px" v-if="!scope.row.agreementDelete&&!scope.row.shareState" size="mini" type="success" @click="handleAddToCart(scope.$index, scope.row)">添加分享</el-button>
-                <el-button style="margin-bottom:10px" v-if="!scope.row.agreementDelete&&scope.row.shareState" size="mini" type="danger" @click="handleDelFormCart(scope.$index, scope.row)">移除分享</el-button>
-                <!-- <el-button style="margin-bottom:10px" v-if="!scope.row.agreementDelete" size="mini" type="info" @click="handleDownload(scope.$index, scope.row)">下载</el-button> -->
+
               </template>
             </el-table-column>
           </el-table>
@@ -366,7 +192,6 @@ export default {
         agreementSignDateEndStr: "",
         agreementProvider: "",
         agreementText: "",
-        agreementUploadAdmin: "",
         productTypeList: [],
         productSeriesList: [],
         productModel: "",
@@ -377,7 +202,6 @@ export default {
       productTypeSelectiveList: [],
       agreementClientSelectiveList: [],
       productSeriesSelectiveList: [],
-      adminSelectiveList: [],
       agreementTableData: [],
       agreementPage: {
         showCount: 10,
@@ -471,29 +295,27 @@ export default {
   methods: {
     getFileName(row) {
       var filename = "";
-      filename = filename + (row.agreementProvider == null ? '' : row.agreementProvider) + "-";
-      filename = filename + (row.agreementName == null ? '' : row.agreementName) + "-";
-      filename = filename + (row.agreementSignDateStr == null ? '' : row.agreementSignDateStr) + "-";
-      filename = filename + (row.agreementAmount == 0 ? '0' : (row.agreementAmount + "万")) + "-";
-      for (var i = 0; i < row.productList.length; i++) {
-        filename = filename + (row.productList[i].productSeriesObj == null ? '' : row.productList[i].productSeriesObj.dictionaryName == null ? '' : row.productList[i].productSeriesObj.dictionaryName);
-        filename = filename + "(" + (row.productList[i].productNumber == null ? '' : row.productList[i].productNumber) + ")";
-        if (i < row.productList.length - 1) {
-          filename = filename + ","
-        }
-      }
-      filename = filename + "-" + (row.agreementClientObj == null ? '' : row.agreementClientObj.dictionaryName == null ? '' : row.agreementClientObj.dictionaryName);
+      // filename = filename + (row.agreementProvider == null ? '' : row.agreementProvider) + "-";
+      filename = filename + (row.agreementName == null ? '' : row.agreementName);
+      // filename = filename + (row.agreementSignDateStr == null ? '' : row.agreementSignDateStr) + "-";
+      // filename = filename + (row.agreementAmount == 0 ? '0' : (row.agreementAmount + "万")) + "-";
+      // for (var i = 0; i < row.productList.length; i++) {
+      //   filename = filename + (row.productList[i].productSeriesObj == null ? '' : row.productList[i].productSeriesObj.dictionaryName == null ? '' : row.productList[i].productSeriesObj.dictionaryName);
+      //   filename = filename + "(" + (row.productList[i].productNumber == null ? '' : row.productList[i].productNumber) + ")";
+      //   if (i < row.productList.length - 1) {
+      //     filename = filename + ","
+      //   }
+      // }
+      // filename = filename + "-" + (row.agreementClientObj == null ? '' : row.agreementClientObj.dictionaryName == null ? '' : row.agreementClientObj.dictionaryName);
       filename = filename + row.agreementExtend;
       return filename;
     },
-
-
     initAgreementList() {
       this.alterSort();
       const loading = this.$loading(this.$store.state.loadingOption1);
       this.axios
         .post(
-          "/agreement/getAgreementBySearch",
+          "/agreement/getAgreementUserBySearch",
           {
             params: {
               agreement: this.agreementSelectForm,
@@ -651,37 +473,7 @@ export default {
           loading.close();
         });
     },
-    initAdminSelectiveList() {
-      const loading = this.$loading(this.$store.state.loadingOption1);
-      this.axios
-        .post("/admin/getAllAdmin", {
-          params: {
 
-          }
-        }, { headers: { token: this.token } })
-        .then(res => {
-          if (res.data.code === 200) {
-            this.adminSelectiveList = res.data.object;
-
-          } else if (res.data.code == 401) {
-            this.$message({
-              showClose: true,
-              message: res.data.data,
-              type: "error"
-            });
-            this.$router.push({ path: "/login" });
-          } else {
-            this.$alert(res.data.data, "错误", {
-              confirmButtonText: "确定",
-              type: "error",
-              callback: action => {
-
-              }
-            });
-          }
-          loading.close();
-        });
-    },
     handleAddAgreement() {
       this.savePage()
       this.$router.push({ path: "/home/agreement/details" });
@@ -927,6 +719,46 @@ export default {
         loading.close();
       });
     },
+    handleDownloadDelAgreement(index, row) {
+      const loading = this.$loading(this.$store.state.loadingOption3);
+      let url = '/agreement/admin/download?type=agreement&id=' + row.agreementId;
+      this.axios({
+        method: "get",
+        url: url,
+        responseType: "blob",
+        headers: { token: this.token }
+      }).then(data => {
+        console.log(data.headers)
+        if (data.headers["content-type"] == "application/json;charset=UTF-8") {
+          this.$alert("下载文件出错", "错误", {
+            confirmButtonText: "确定",
+            type: "error",
+            callback: action => {
+            }
+          });
+          loading.close();
+          return;
+        }
+
+        if (!data) {
+          loading.close();
+          return;
+        }
+        debugger;
+        let url = window.URL.createObjectURL(data.data);
+        let link = document.createElement("a");
+        link.style.display = "none";
+        link.href = url;
+        link.setAttribute("download", this.getFileName(row));  //客户名称-合同名称-签约日期-'金额'(xxx万)-产品类型-合同乙方
+        document.body.appendChild(link);
+        link.click();
+        this.handleDelAgreement(index, row);
+        loading.close();
+      });
+
+    },
+
+
     handleDownload(index, row) {
       const loading = this.$loading(this.$store.state.loadingOption3);
       let url = '/agreement/admin/download?type=agreement&id=' + row.agreementId;
@@ -1281,8 +1113,6 @@ export default {
 
     this.initAgreementClientList();
 
-    this.initAdminSelectiveList();
-
     this.initCart();
 
     // if (this.projectTaskForm.visible) {
@@ -1348,95 +1178,18 @@ export default {
     background-color: #e1140a;
     color: #fff;
   }
-  .form-item-1 {
-    width: 100%;
-    margin-left: 0px;
-    padding-left: 10px;
-    .el-form-item__content {
-      width: calc(100% - 90px);
-    }
-  }
-  .form-item-2 {
-    margin-left: 0px;
-    padding-left: 10px;
-    width: calc((100% - 82px - 26px) / 2 + 82px - 13px);
-    .el-form-item__content {
-      width: calc(100% - 82px);
-    }
-  }
-  .form-item-3 {
-    margin-left: 0px;
-    padding-left: 10px;
-    width: calc((100% - 82px - 26px) / 2 + 26px - 13px);
-    .el-form-item__content {
-      width: calc(100% - 26px);
-    }
-  }
-  .form-item-4 {
-    margin-left: 0px;
-    padding-left: 10px;
-    width: calc((100% - 120px - 26px) / 2 + 120px - 13px);
-    .el-form-item__content {
-      width: calc(100% - 120px);
-    }
-  }
-  .form-item-5 {
-    margin-left: 0px;
-    padding-left: 10px;
-    width: calc((100% - 120px - 26px) / 2 + 26px - 13px);
-    .el-form-item__content {
-      width: calc(100% - 26px);
-    }
-  }
-  .form-item-6 {
-    margin-left: 0px;
-    padding-left: 10px;
-    width: calc((100% - 110px - 26px) / 2 + 110px - 13px);
-    .el-form-item__content {
-      width: calc(100% - 110px);
-      .el-date-editor {
-        width: 100%;
-      }
-    }
-  }
-  .form-item-7 {
-    margin-left: 0px;
-    padding-left: 10px;
-    width: calc((100% - 110px - 26px) / 2 + 26px - 13px);
-    .el-form-item__content {
-      width: calc(100% - 26px);
-      .el-date-editor {
-        width: 100%;
-      }
-    }
-  }
-  .form-item-8 {
-    width: 100%;
-    margin-left: 0px;
-    padding-left: 10px;
-    .el-form-item__content {
-      width: calc(100% - 64px);
-    }
-  }
-  .form-item-9 {
-    width: 100%;
-    margin-left: 0px;
-    padding-left: 10px;
-    .el-form-item__content {
-      width: calc(100% - 90px);
-      .el-select {
-        width: calc(50% - 5px);
-      }
-    }
-  }
-  .form-item-10 {
-    width: 100%;
-    margin-left: 0px;
-    padding-left: 10px;
-    .el-form-item__content {
-      width: calc(100% - 80px);
-    }
-  }
+  // .form-item-1 {
+  //   width: 100%;
+  //   .el-form-item__content {
+  //     width: calc(100% - 90px);
+  //   }
+  // }
+  // .form-item-2 {
+  //   width: calc((100% - 124px) / 2 + 86px);
+  //   .el-form-item__content {
+  //     width: calc(100% - 96px);
+  //   }
+  // }
   // .form-item-3 {
   //   width: calc((100% - 124px) / 2 + 26px);
   //   .el-form-item__content {

@@ -26,8 +26,9 @@
                   <h1>是否信创</h1>
                   <el-form-item style="width:300px">
                     <el-select style="width:300px" v-model="agreement.agreementInnovation" placeholder="选择是否信创">
-                      <el-option label="是" :value="true"></el-option>
+
                       <el-option label="否" :value="false"></el-option>
+                      <el-option label="是" :value="true"></el-option>
                     </el-select>
                   </el-form-item>
                 </el-col>
@@ -56,7 +57,7 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
-                  <h1>总金额</h1>
+                  <h1>总金额(元)</h1>
                   <el-form-item style="width:300px">
                     <el-input-number style="width:300px" v-model="agreement.agreementAmount"></el-input-number>
                   </el-form-item>
@@ -85,7 +86,7 @@
               <el-row v-for="(item,index) in productList" :key="index" class="auto-table">
                 <el-col :span="5">
                   <el-form-item>
-                    <el-select v-model="item.productType" @change="initProductSeriesSelectiveList(index)" placeholder="选择产品类型">
+                    <el-select v-model="item.productType" @change=" handelproductTypeChange(index)" placeholder="选择产品类型">
                       <el-option v-for="items in productTypeSelectiveList" :key="items.dictionaryId" :label="items.dictionaryName" :value="items.dictionaryId"></el-option>
                     </el-select>
                   </el-form-item>
@@ -152,7 +153,7 @@
               </el-row>
               <el-row class="auto-table">
                 <p v-if="!isAdd">
-                  {{ agreement.agreementUploadAdmin == null ? '' : ("上传人：" + agreement.agreementUploadAdmin)}}&nbsp;&nbsp;&nbsp;&nbsp;
+                  {{ agreement.agreementUploadAdminStr == null ? '' : ("上传人：" + agreement.agreementUploadAdminStr)}}&nbsp;&nbsp;&nbsp;&nbsp;
                   {{ agreement.agreementUploadDateStr == null ? '' :("上传时间："+ agreement.agreementUploadDateStr)}}&nbsp;&nbsp;&nbsp;&nbsp;
                 </p>
               </el-row>
@@ -187,11 +188,12 @@ export default {
       agreement: {
         agreementName: "",
         agreementType: "agreement_type_1",
-        agreementInnovation: true,
+        agreementInnovation: false,
         agreementClient: "agreement_client_1",
         agreementProvider: "",
         agreementSignDateStr: "",
         agreementAmount: 0,
+        agreementText: "",
         submitState: "Add"
       },
       agreementTypeSelectiveList: [],
@@ -235,6 +237,24 @@ export default {
   components: {
   },
   methods: {
+
+    getFileName(row) {
+      var filename = "";
+      filename = filename + (row.agreementProvider == null ? '' : row.agreementProvider) + "-";
+      filename = filename + (row.agreementName == null ? '' : row.agreementName) + "-";
+      filename = filename + (row.agreementSignDateStr == null ? '' : row.agreementSignDateStr) + "-";
+      filename = filename + (row.agreementAmount == 0 ? '0' : (row.agreementAmount + "万")) + "-";
+      for (var i = 0; i < row.productList.length; i++) {
+        filename = filename + (row.productList[i].productSeriesObj == null ? '' : row.productList[i].productSeriesObj.dictionaryName == null ? '' : row.productList[i].productSeriesObj.dictionaryName);
+        filename = filename + "(" + (row.productList[i].productNumber == null ? '' : row.productList[i].productNumber) + ")";
+        if (i < row.productList.length - 1) {
+          filename = filename + ","
+        }
+      }
+      filename = filename + "-" + (row.agreementClientObj == null ? '' : row.agreementClientObj.dictionaryName == null ? '' : row.agreementClientObj.dictionaryName);
+      filename = filename + row.agreementExtend;
+      return filename;
+    },
     back() {
       this.$router.push({ path: "/home/agreement/list" });
     },
@@ -245,6 +265,7 @@ export default {
       this.productList.push({
         productType: "product_type_1",
         productModel: "",
+        productSeries: "",
         productSeriesSelectiveList: [],
         productNumber: 0,
       })
@@ -297,6 +318,12 @@ export default {
           loading.close();
         });
     },
+    handelproductTypeChange(index) {
+      this.initProductSeriesSelectiveList(index);
+      this.productList[index].productSeries = "";
+    },
+
+
     initProductSeriesSelectiveList(index) {
       const loading = this.$loading(this.$store.state.loadingOption1);
       this.axios
@@ -308,8 +335,11 @@ export default {
         }, { headers: { token: this.token } })
         .then(res => {
           if (res.data.code === 200) {
-            this.productList[index].productSeriesSelectiveList = res.data.object;
 
+
+            this.productList[index].productSeriesSelectiveList = res.data.object;
+            this.$forceUpdate();
+            //this.productList[index].productSeries = this.productList[index].productSeriesSelectiveList.length == 0 ? "" : this.productList[index].productSeriesSelectiveList[0];
           } else if (res.data.code == 401) {
             this.$message({
               showClose: true,
@@ -471,6 +501,9 @@ export default {
             //   submitState: "Upd"
             // };
             this.productList = res.data.object.productList;
+            for (var i = 0; i < this.productList.length; i++) {
+              this.initProductSeriesSelectiveList(i);
+            }
 
           } else if (res.data.code == 401) {
             this.$message({
@@ -566,7 +599,7 @@ export default {
         let link = document.createElement("a");
         link.style.display = "none";
         link.href = url;
-        link.setAttribute("download", this.agreement.agreementName + this.agreement.agreementExtend);
+        link.setAttribute("download", this.getFileName(this.agreement));
         document.body.appendChild(link);
         link.click();
         loading.close();
