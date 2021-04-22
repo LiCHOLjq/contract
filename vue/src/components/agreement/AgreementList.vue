@@ -2,7 +2,7 @@
   <div id="agreementList">
     <el-card style="padding:0px;  padding-bottom:10px;margin:10px">
       <div slot="header" class="search-header">
-        <p style="margin-top:10px;float:left">搜索设置</p>
+        <p style="margin-top:10px;margin-bottom:0px;float:left">搜索设置</p>
 
         <el-tooltip v-if="!agreementSelectForm.visible" class="item" effect="dark" content="搜索" placement="bottom">
           <el-button style="float:right;margin-left:10px;margin-right:10px;" type="primary" icon="el-icon-search" circle @click="agreementSelectForm.visible = true;"></el-button>
