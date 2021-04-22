@@ -91,6 +91,9 @@
     <if test="agreement.agreementDelete != null">
       and agreement_delete = #{agreement.agreementDelete,jdbcType=BIT}
     </if>
+    <if test="agreement.agreementUploadAdmin != null and agreement.agreementUploadAdmin != ''">
+      and agreement_upload_admin = #{agreement.agreementUploadAdmin,jdbcType=VARCHAR}
+    </if>
   </sql>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
