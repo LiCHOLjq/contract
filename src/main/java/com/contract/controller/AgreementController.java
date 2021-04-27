@@ -483,11 +483,12 @@ public JSONObject updAgreement(@RequestBody String params, HttpServletRequest ht
         filename = filename + (agreement.getAgreementProvider() == null ? "" : agreement.getAgreementProvider()) + "-";
         filename = filename + (agreement.getAgreementName() == null ? "" : agreement.getAgreementName()) + "-";
         filename = filename + (agreement.getAgreementSignDateStr() == null ? "" : agreement.getAgreementSignDateStr()) + "-";
-        filename = filename + (agreement.getAgreementAmount() == 0 ? "0" : (agreement.getAgreementAmount() + "万")) + "-";
+        filename = filename + (agreement.getAgreementAmount() == 0 ? "无金额" : ( BigDecimalUtil.div(agreement.getAgreementAmount(),10000.0)  + "万")) + "-";
         int i = 0;
         for (Product product : agreement.getProductList()) {
-            filename = filename + (product.getProductSeriesObj() == null ? "" : product.getProductSeriesObj().getDictionaryName() == null ? "" : product.getProductSeriesObj().getDictionaryName());
-            filename = filename + "(" + (product.getProductNumber() == null ? "" : product.getProductNumber()) + ")";
+            filename = filename + (product.getProductSeriesObj() == null ? "" : product.getProductSeriesObj().getDictionaryName() == null ? "" : product.getProductSeriesObj().getDictionaryName()) + " ";
+            filename = filename + (product.getProductModel() == null ? "" : product.getProductModel());
+            filename = filename + "(" + (product.getProductNumber() == null ? "" : product.getProductNumber()) + "台)";
             if (i < agreement.getProductList().size() - 1) {
                 filename = filename + ",";
             }

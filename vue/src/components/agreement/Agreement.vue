@@ -243,10 +243,11 @@ export default {
       filename = filename + (row.agreementProvider == null ? '' : row.agreementProvider) + "-";
       filename = filename + (row.agreementName == null ? '' : row.agreementName) + "-";
       filename = filename + (row.agreementSignDateStr == null ? '' : row.agreementSignDateStr) + "-";
-      filename = filename + (row.agreementAmount == 0 ? '0' : (row.agreementAmount + "万")) + "-";
+      filename = filename + (row.agreementAmount == 0 ? '无金额' : ((row.agreementAmount / 10000) + "万")) + "-";
       for (var i = 0; i < row.productList.length; i++) {
-        filename = filename + (row.productList[i].productSeriesObj == null ? '' : row.productList[i].productSeriesObj.dictionaryName == null ? '' : row.productList[i].productSeriesObj.dictionaryName);
-        filename = filename + "(" + (row.productList[i].productNumber == null ? '' : row.productList[i].productNumber) + ")";
+        filename = filename + (row.productList[i].productSeriesObj == null ? '' : row.productList[i].productSeriesObj.dictionaryName == null ? '' : row.productList[i].productSeriesObj.dictionaryName) + " ";;
+        filename = filename + (row.productList[i].productModel == null ? '' : row.productList[i].productModel)
+        filename = filename + "(" + (row.productList[i].productNumber == null ? '' : row.productList[i].productNumber) + "台)";
         if (i < row.productList.length - 1) {
           filename = filename + ","
         }

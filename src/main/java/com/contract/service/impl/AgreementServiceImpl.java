@@ -68,6 +68,10 @@ public class AgreementServiceImpl implements AgreementService {
             agreement.setAgreementAmountEnd(BigDecimalUtil.mul(agreement.getAgreementAmountEnd(),10000.0));
         }
         PageHelper.startPage(currentPage,pageSize);
+        if(agreement.getProductList()!=null&&agreement.getProductList().size()==0){
+            agreement.setProductList(null);
+        }
+
         List<Agreement> agreementList = agreementMapper.selectBySearch(agreement,sort);
         for (Agreement item : agreementList){
             item.setAgreementTypeObj(dictionaryMapper.selectByPrimaryKey(item.getAgreementType()));
@@ -133,6 +137,9 @@ public class AgreementServiceImpl implements AgreementService {
         }
         if(agreement.getAgreementAmountEnd()!=null){
             agreement.setAgreementAmountEnd(BigDecimalUtil.mul(agreement.getAgreementAmountEnd(),10000.0));
+        }
+        if(agreement.getProductList()!=null&&agreement.getProductList().size()==0){
+            agreement.setProductList(null);
         }
         List<Agreement> agreementList = agreementMapper.selectBySearch(agreement,sort);
         for (Agreement item : agreementList){

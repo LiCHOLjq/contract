@@ -28,7 +28,11 @@
     agreement_text
   </sql>
   <sql id="Admin_Where_List">
-      left join product on product_agreement = agreement_id
+    <if test="agreement.productList != null">
+    <foreach collection="agreement.productList" item="item" index="index">
+      left join product as p${index} on p${index}.product_agreement = agreement_id
+    </foreach>
+    </if>
       where agreement_upload_type = 'agreement_upload_type_admin'
   </sql>
   <sql id="User_Where_List">
@@ -69,25 +73,37 @@
     <if test="agreement.agreementText != null and agreement.agreementText != '' ">
       and agreement_text like concat('%',#{agreement.agreementText ,jdbcType=VARCHAR},'%')
     </if>
-    <if test="agreement.productTypeList != null">
-      <foreach collection="agreement.productTypeList" item="item" separator=" or " open="and ( " close=")">
-        product_type = #{item,jdbcType=VARCHAR}
+    <if test="agreement.productList != null">
+
+      <foreach collection="agreement.productList" index="index" item="item" separator=") and ( 1=1" open="and ( ( 1=1" close=" ) )">
+        <if test="item.productType != null and item.productType != '' ">
+          and p${index}.product_type = #{item.productType,jdbcType=VARCHAR}
+        </if>
+        <if test="item.productSeries != null and item.productSeries != '' ">
+          and p${index}.product_series = #{item.productSeries,jdbcType=VARCHAR}
+        </if>
+        <if test="item.productModel != null and item.productModel != '' ">
+          and p${index}.product_model like concat('%',#{item.productModel ,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="item.productNumberBegin != null">
+          and p${index}.product_number &gt;= #{item.productNumberBegin,jdbcType=DOUBLE}
+        </if>
+        <if test="item.productNumberEnd != null">
+          and p${index}.product_number &lt;= #{item.productNumberEnd,jdbcType=DOUBLE}
+        </if>
       </foreach>
     </if>
-    <if test="agreement.productSeriesList != null">
-      <foreach collection="agreement.productSeriesList" item="item" separator=" or " open="and ( " close=")">
-        product_series = #{item,jdbcType=VARCHAR}
-      </foreach>
-    </if>
-    <if test="agreement.productModel != null and agreement.productModel != '' ">
-      and product_model like concat('%',#{agreement.productModel ,jdbcType=VARCHAR},'%')
-    </if>
-    <if test="agreement.productNumberBegin != null">
-      and agreement_amount &gt;= #{agreement.productNumberBegin,jdbcType=DOUBLE}
-    </if>
-    <if test="agreement.productNumberEnd != null">
-      and product_number &lt;= #{agreement.productNumberEnd,jdbcType=DOUBLE}
-    </if>
+<!--    <if test="agreement.productTypeList != null">-->
+<!--      <foreach collection="agreement.productTypeList" item="item" separator=" or " open="and ( " close=")">-->
+<!--        product_type = #{item,jdbcType=VARCHAR}-->
+<!--      </foreach>-->
+<!--    </if>-->
+<!--    <if test="agreement.productSeriesList != null">-->
+<!--      <foreach collection="agreement.productSeriesList" item="item" separator=" or " open="and ( " close=")">-->
+<!--        product_series = #{item,jdbcType=VARCHAR}-->
+<!--      </foreach>-->
+<!--    </if>-->
+
     <if test="agreement.agreementDelete != null">
       and agreement_delete = #{agreement.agreementDelete,jdbcType=BIT}
     </if>

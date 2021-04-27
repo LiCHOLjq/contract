@@ -7,8 +7,13 @@
         <el-tooltip v-if="!agreementSelectForm.visible" class="item" effect="dark" content="搜索" placement="bottom">
           <el-button style="float:right;margin-left:10px;margin-right:10px;" type="primary" icon="el-icon-search" circle @click="agreementSelectForm.visible = true;"></el-button>
         </el-tooltip>
-        <el-tooltip v-if="agreementSelectForm.visible" class="item" effect="dark" content="收起" placement="bottom">
+
+
+         <el-tooltip v-if="agreementSelectForm.visible" class="item" effect="dark" content="收起" placement="bottom">
           <el-button style="float:right;margin-left:10px;margin-right:10px;" type="primary" icon="el-icon-arrow-up" circle @click="agreementSelectForm.visible = false;"></el-button>
+        </el-tooltip>
+                <el-tooltip v-if="agreementSelectForm.visible" class="item" effect="dark" content="添加搜索产品" placement="bottom">
+           <el-button style="float:right;margin-left:10px;margin-right:10px;" circle icon="el-icon-document-add" type="primary" @click="handleAddProduct()"></el-button>
         </el-tooltip>
         <el-tooltip class="item" effect="dark" content="上传合同" placement="bottom">
           <el-button style="float:right;margin-left:10px;margin-right:10px;" circle icon="el-icon-plus" type="primary" @click="handleAddAgreement()"></el-button>
@@ -54,14 +59,48 @@
               </el-form-item>
             </el-col>
 
+
+            <div v-for="(product,index) in agreementSelectForm.productList" :key="index">
+            <el-col :span="5">
+              <el-form-item class="form-item-1" label="产品类型：">
+                <el-select style="width:100%" @change="handelproductTypeChange(index)" v-model="product.productType" placeholder="选择产品类型">
+                  <el-option v-for="item in productTypeSelectiveList" :key="item.dictionaryId" :label="item.dictionaryName" :value="item.dictionaryId"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
             <el-col :span="6">
+              <el-form-item class="form-item-1" label="产品系列：">
+                <el-select style="width:100%" v-model="product.productSeries" placeholder="选择产品系列">
+                  <el-option v-for="item in product.productSeriesSelectiveList" :key="item.dictionaryId" :label="item.dictionaryName" :value="item.dictionaryId"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item class="form-item-1" label="产品型号：">
+                <el-input v-model="product.productModel" autocomplete="off"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item class="form-item-2" label="产品数量：">
+                <el-input-number v-model="product.productNumberBegin"></el-input-number>
+              </el-form-item>
+              <el-form-item class="form-item-3" label="→">
+                <el-input-number v-model="product.productNumberEnd"></el-input-number>
+              </el-form-item>
+            </el-col>
+            <el-col :span="1">
+              
+              <el-button style="margin-left:10px;margin-top:20px;" circle icon="el-icon-delete" type="primary" @click="handleDeleteProduct(index)"></el-button>
+            </el-col>
+            </div>
+            <!-- <el-col :span="5">
               <el-form-item class="form-item-1" label="产品类型：">
                 <el-select style="width:100%" @change="initProductSeriesSelectiveList" multiple v-model="agreementSelectForm.productTypeList" placeholder="选择产品类型">
                   <el-option v-for="item in productTypeSelectiveList" :key="item.dictionaryId" :label="item.dictionaryName" :value="item.dictionaryId"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="5">
               <el-form-item class="form-item-1" label="产品系列：">
                 <el-select style="width:100%" multiple v-model="agreementSelectForm.productSeriesList" placeholder="选择产品系列">
                   <el-option-group v-for="item in productSeriesSelectiveList" :key="item.dictionaryId" :label="item.dictionaryName">
@@ -72,7 +111,6 @@
             </el-col>
             <el-col :span="6">
               <el-form-item class="form-item-1" label="产品型号：">
-                <!-- 模糊 -->
                 <el-input v-model="agreementSelectForm.productModel" autocomplete="off"></el-input>
               </el-form-item>
             </el-col>
@@ -83,7 +121,7 @@
               <el-form-item class="form-item-3" label="→">
                 <el-input-number v-model="agreementSelectForm.productNumberEnd"></el-input-number>
               </el-form-item>
-            </el-col>
+            </el-col> -->
 
             <el-col :span="7">
               <el-form-item class="form-item-4" label="总金额范围(万)：">
@@ -367,11 +405,19 @@ export default {
         agreementProvider: "",
         agreementText: "",
         agreementUploadAdmin: "",
-        productTypeList: [],
-        productSeriesList: [],
-        productModel: "",
-        productNumberBegin: undefined,
-        productNumberEnd: undefined,
+        productList:[{
+          productType: "",
+          productSeries: "",
+          productModel: "",
+          productSeriesSelectiveList:[],
+          productNumberBegin: undefined,
+          productNumberEnd: undefined,
+        }],
+        // productTypeList: [],
+        // productSeriesList: [],
+        // productModel: "",
+        // productNumberBegin: undefined,
+        // productNumberEnd: undefined,
       },
       agreementTypeSelectiveList: [],
       productTypeSelectiveList: [],
@@ -474,10 +520,11 @@ export default {
       filename = filename + (row.agreementProvider == null ? '' : row.agreementProvider) + "-";
       filename = filename + (row.agreementName == null ? '' : row.agreementName) + "-";
       filename = filename + (row.agreementSignDateStr == null ? '' : row.agreementSignDateStr) + "-";
-      filename = filename + (row.agreementAmount == 0 ? '0' : (row.agreementAmount + "万")) + "-";
+      filename = filename + (row.agreementAmount == 0 ? '无金额' : ((row.agreementAmount / 10000) + "万")) + "-";
       for (var i = 0; i < row.productList.length; i++) {
-        filename = filename + (row.productList[i].productSeriesObj == null ? '' : row.productList[i].productSeriesObj.dictionaryName == null ? '' : row.productList[i].productSeriesObj.dictionaryName);
-        filename = filename + "(" + (row.productList[i].productNumber == null ? '' : row.productList[i].productNumber) + ")";
+        filename = filename + (row.productList[i].productSeriesObj == null ? '' : row.productList[i].productSeriesObj.dictionaryName == null ? '' : row.productList[i].productSeriesObj.dictionaryName) + " ";;
+        filename = filename + (row.productList[i].productModel == null ? '' : row.productList[i].productModel)
+        filename = filename + "(" + (row.productList[i].productNumber == null ? '' : row.productList[i].productNumber) + "台)";
         if (i < row.productList.length - 1) {
           filename = filename + ","
         }
@@ -490,6 +537,19 @@ export default {
 
     initAgreementList() {
       this.alterSort();
+      var delList = [];
+      for(var i=0;i<this.agreementSelectForm.productList.length;i++){
+        if(this.agreementSelectForm.productList[i].productType == "" &&
+        this.agreementSelectForm.productList[i].productSeries == "" && 
+        this.agreementSelectForm.productList[i].productModel == "" && 
+        this.agreementSelectForm.productList[i].productNumberBegin == undefined && 
+        this.agreementSelectForm.productList[i].productNumberEnd == undefined ){
+          delList.push(i);
+        }
+      }
+      for(var i = delList.length - 1;i>=0;i--){
+        this.handleDeleteProduct(delList[i]);
+      }
       const loading = this.$loading(this.$store.state.loadingOption1);
       this.axios
         .post(
@@ -508,6 +568,7 @@ export default {
           if (res.data.code === 200) {
             this.agreementPage.totalCount = res.data.object.totalNum;
             this.agreementTableData = res.data.object.items;
+            this.savePage();
           } else if (res.data.code == 401) {
             this.$message({
               showClose: true,
@@ -556,18 +617,26 @@ export default {
           loading.close();
         });
     },
-    initProductSeriesSelectiveList() {
+
+   handelproductTypeChange(index) {
+      this.initProductSeriesSelectiveList(index);
+      this.agreementSelectForm.productList[index].productSeries = "";
+    },
+
+
+    initProductSeriesSelectiveList(index) {
       const loading = this.$loading(this.$store.state.loadingOption1);
       this.axios
-        .post("/dictionary/getDictionaryItemsTree", {
+        .post("/dictionary/getDictionaryItemsByFather", {
           params: {
             dictionaryType: "PRODUCT_SERIES",
-            fatherList: this.agreementSelectForm.productTypeList
+            dictionaryFather: this.agreementSelectForm.productList[index].productType
           }
         }, { headers: { token: this.token } })
         .then(res => {
           if (res.data.code === 200) {
-            this.productSeriesSelectiveList = res.data.object;
+            this.agreementSelectForm.productList[index].productSeriesSelectiveList = res.data.object;
+            this.$forceUpdate();
 
           } else if (res.data.code == 401) {
             this.$message({
@@ -1245,7 +1314,23 @@ export default {
         link.click();
         loading.close();
       });
-    }
+    },
+    handleAddProduct() {
+      this.agreementSelectForm.productList.push({
+        productType: "",
+        productModel: "",
+        productSeries: "",
+        productSeriesSelectiveList: [],
+                  productNumberBegin: undefined,
+          productNumberEnd: undefined,
+      })
+
+      this.initProductSeriesSelectiveList(this.productList.length - 1)
+    },
+
+    handleDeleteProduct(index) {
+      this.agreementSelectForm.productList.splice(index, 1)
+    },
   },
   created: function () {
     //登陆验证代码

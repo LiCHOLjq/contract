@@ -19,6 +19,26 @@ public class Product {
 
     private Dictionary productSeriesObj;
 
+    private Double productNumberBegin;
+
+    private Double productNumberEnd;
+
+    public Double getProductNumberBegin() {
+        return productNumberBegin;
+    }
+
+    public void setProductNumberBegin(Double productNumberBegin) {
+        this.productNumberBegin = productNumberBegin;
+    }
+
+    public Double getProductNumberEnd() {
+        return productNumberEnd;
+    }
+
+    public void setProductNumberEnd(Double productNumberEnd) {
+        this.productNumberEnd = productNumberEnd;
+    }
+
     public Dictionary getProductSeriesObj() {
         return productSeriesObj;
     }
