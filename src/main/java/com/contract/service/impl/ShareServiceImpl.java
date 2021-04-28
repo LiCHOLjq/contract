@@ -17,6 +17,7 @@ import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -211,6 +212,40 @@ public class ShareServiceImpl implements ShareService {
             shareAgreementMapper.deleteByShare(share.getShareId());
             shareMapper.deleteByPrimaryKey(share.getShareId());
 
+            dataSourceTransactionManager.commit(transactionStatus);     //手动提交
+        }catch (Exception e){
+            dataSourceTransactionManager.rollback(transactionStatus);       //事务回滚
+            throw e;
+        }
+    }
+
+    @Override
+    public void delOverdue() {
+        TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
+        try {
+            List<Share> shareList = shareMapper.selectAllOverdue(new Date());
+            for(Share share : shareList){
+                Share updShare = new Share();
+                updShare.setShareId(share.getShareId());
+                updShare.setShareDelete(true);
+                shareMapper.updateByPrimaryKeySelective(updShare);
+            }
+            dataSourceTransactionManager.commit(transactionStatus);     //手动提交
+        }catch (Exception e){
+            dataSourceTransactionManager.rollback(transactionStatus);       //事务回滚
+            throw e;
+        }
+    }
+
+    @Override
+    public void delAllDeleted() {
+        TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
+        try {
+            List<Share> shareList = shareMapper.selectAllDeleted();
+            for(Share share : shareList){
+                shareAgreementMapper.deleteByShare(share.getShareId());
+                shareMapper.deleteByPrimaryKey(share.getShareId());
+            }
             dataSourceTransactionManager.commit(transactionStatus);     //手动提交
         }catch (Exception e){
             dataSourceTransactionManager.rollback(transactionStatus);       //事务回滚

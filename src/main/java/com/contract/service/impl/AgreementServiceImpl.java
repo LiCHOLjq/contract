@@ -213,6 +213,26 @@ public class AgreementServiceImpl implements AgreementService {
     }
 
     @Override
+    public void delAllDeleted() {
+        TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
+        try {
+            List<Agreement> agreementList = agreementMapper.selectAllDeleted();
+            for(Agreement agreement : agreementList){
+                Agreement agreementData = agreementMapper.selectByPrimaryKey(agreement.getAgreementId());
+                cartMapper.deleteByAgreementId(agreement.getAgreementId());
+                productMapper.deleteByAgreement(agreement.getAgreementId());
+                shareAgreementMapper.deleteByAgreement(agreement.getAgreementId());
+                agreementMapper.deleteByPrimaryKey(agreement.getAgreementId());
+                new File(FileSaveConfig.AGREEMENT + agreementData.getAgreementId() + agreementData.getAgreementExtend()).delete();
+            }
+            dataSourceTransactionManager.commit(transactionStatus);     //手动提交
+        }catch (Exception e){
+            dataSourceTransactionManager.rollback(transactionStatus);       //事务回滚
+            throw e;
+        }
+    }
+
+    @Override
     public void addAgreement(Agreement agreement, List<Product> productList, MultipartFile file, String adminId) throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);

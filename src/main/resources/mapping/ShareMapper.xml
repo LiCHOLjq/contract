@@ -39,11 +39,28 @@
     from share
     where share_id = #{shareId,jdbcType=VARCHAR}
   </select>
+  <select id="selectAllOverdue" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from share
+    where <![CDATA[ DATE_FORMAT(share_end_date, '%Y-%m-%d %H:%T:%s') <  DATE_FORMAT(#{now}, '%Y-%m-%d %H:%T:%s')   ]]>
+  </select>
+  <select id="selectAllDeleted" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from share
+    where share_delete = 1
+  </select>
+
+
+
+
   <select id="selectBySearch"  resultMap="BaseResultMap">
     select
     <include refid="Password_Column_List" />
     from share
     <include refid="Search_Where_List" />
+    order by share_end_date desc
   </select>
   <select id="selectBySearchCount"  resultType="int">
     select count(*)

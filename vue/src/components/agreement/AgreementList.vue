@@ -8,12 +8,14 @@
           <el-button style="float:right;margin-left:10px;margin-right:10px;" type="primary" icon="el-icon-search" circle @click="agreementSelectForm.visible = true;"></el-button>
         </el-tooltip>
 
-
-         <el-tooltip v-if="agreementSelectForm.visible" class="item" effect="dark" content="收起" placement="bottom">
+        <el-tooltip v-if="agreementSelectForm.visible" class="item" effect="dark" content="收起" placement="bottom">
           <el-button style="float:right;margin-left:10px;margin-right:10px;" type="primary" icon="el-icon-arrow-up" circle @click="agreementSelectForm.visible = false;"></el-button>
         </el-tooltip>
-                <el-tooltip v-if="agreementSelectForm.visible" class="item" effect="dark" content="添加搜索产品" placement="bottom">
-           <el-button style="float:right;margin-left:10px;margin-right:10px;" circle icon="el-icon-document-add" type="primary" @click="handleAddProduct()"></el-button>
+        <el-tooltip v-if="agreementSelectForm.visible" class="item" effect="dark" content="添加搜索产品" placement="bottom">
+          <el-button style="float:right;margin-left:10px;margin-right:10px;" circle icon="el-icon-document-add" type="primary" @click="handleAddProduct()"></el-button>
+        </el-tooltip>
+        <el-tooltip v-if="role == 'admin_role_master'" class="item" effect="dark" content="清空回收站" placement="bottom">
+          <el-button style="float:right;margin-left:10px;margin-right:10px;" circle icon="el-icon-delete" type="primary" @click="handelDelAllDeleted()"></el-button>
         </el-tooltip>
         <el-tooltip class="item" effect="dark" content="上传合同" placement="bottom">
           <el-button style="float:right;margin-left:10px;margin-right:10px;" circle icon="el-icon-plus" type="primary" @click="handleAddAgreement()"></el-button>
@@ -59,39 +61,38 @@
               </el-form-item>
             </el-col>
 
-
             <div v-for="(product,index) in agreementSelectForm.productList" :key="index">
-            <el-col :span="5">
-              <el-form-item class="form-item-1" label="产品类型：">
-                <el-select style="width:100%" @change="handelproductTypeChange(index)" v-model="product.productType" placeholder="选择产品类型">
-                  <el-option v-for="item in productTypeSelectiveList" :key="item.dictionaryId" :label="item.dictionaryName" :value="item.dictionaryId"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item class="form-item-1" label="产品系列：">
-                <el-select style="width:100%" v-model="product.productSeries" placeholder="选择产品系列">
-                  <el-option v-for="item in product.productSeriesSelectiveList" :key="item.dictionaryId" :label="item.dictionaryName" :value="item.dictionaryId"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item class="form-item-1" label="产品型号：">
-                <el-input v-model="product.productModel" autocomplete="off"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item class="form-item-2" label="产品数量：">
-                <el-input-number v-model="product.productNumberBegin"></el-input-number>
-              </el-form-item>
-              <el-form-item class="form-item-3" label="→">
-                <el-input-number v-model="product.productNumberEnd"></el-input-number>
-              </el-form-item>
-            </el-col>
-            <el-col :span="1">
-              
-              <el-button style="margin-left:10px;margin-top:20px;" circle icon="el-icon-delete" type="primary" @click="handleDeleteProduct(index)"></el-button>
-            </el-col>
+              <el-col :span="5">
+                <el-form-item class="form-item-1" label="产品类型：">
+                  <el-select style="width:100%" @change="handelproductTypeChange(index)" v-model="product.productType" placeholder="选择产品类型">
+                    <el-option v-for="item in productTypeSelectiveList" :key="item.dictionaryId" :label="item.dictionaryName" :value="item.dictionaryId"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item class="form-item-1" label="产品系列：">
+                  <el-select style="width:100%" v-model="product.productSeries" placeholder="选择产品系列">
+                    <el-option v-for="item in product.productSeriesSelectiveList" :key="item.dictionaryId" :label="item.dictionaryName" :value="item.dictionaryId"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item class="form-item-1" label="产品型号：">
+                  <el-input v-model="product.productModel" autocomplete="off"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item class="form-item-2" label="产品数量：">
+                  <el-input-number v-model="product.productNumberBegin"></el-input-number>
+                </el-form-item>
+                <el-form-item class="form-item-3" label="→">
+                  <el-input-number v-model="product.productNumberEnd"></el-input-number>
+                </el-form-item>
+              </el-col>
+              <el-col :span="1">
+
+                <el-button style="margin-left:10px;margin-top:20px;" circle icon="el-icon-delete" type="primary" @click="handleDeleteProduct(index)"></el-button>
+              </el-col>
             </div>
             <!-- <el-col :span="5">
               <el-form-item class="form-item-1" label="产品类型：">
@@ -405,11 +406,11 @@ export default {
         agreementProvider: "",
         agreementText: "",
         agreementUploadAdmin: "",
-        productList:[{
+        productList: [{
           productType: "",
           productSeries: "",
           productModel: "",
-          productSeriesSelectiveList:[],
+          productSeriesSelectiveList: [],
           productNumberBegin: undefined,
           productNumberEnd: undefined,
         }],
@@ -538,16 +539,16 @@ export default {
     initAgreementList() {
       this.alterSort();
       var delList = [];
-      for(var i=0;i<this.agreementSelectForm.productList.length;i++){
-        if(this.agreementSelectForm.productList[i].productType == "" &&
-        this.agreementSelectForm.productList[i].productSeries == "" && 
-        this.agreementSelectForm.productList[i].productModel == "" && 
-        this.agreementSelectForm.productList[i].productNumberBegin == undefined && 
-        this.agreementSelectForm.productList[i].productNumberEnd == undefined ){
+      for (var i = 0; i < this.agreementSelectForm.productList.length; i++) {
+        if (this.agreementSelectForm.productList[i].productType == "" &&
+          this.agreementSelectForm.productList[i].productSeries == "" &&
+          this.agreementSelectForm.productList[i].productModel == "" &&
+          this.agreementSelectForm.productList[i].productNumberBegin == undefined &&
+          this.agreementSelectForm.productList[i].productNumberEnd == undefined) {
           delList.push(i);
         }
       }
-      for(var i = delList.length - 1;i>=0;i--){
+      for (var i = delList.length - 1; i >= 0; i--) {
         this.handleDeleteProduct(delList[i]);
       }
       const loading = this.$loading(this.$store.state.loadingOption1);
@@ -569,6 +570,9 @@ export default {
             this.agreementPage.totalCount = res.data.object.totalNum;
             this.agreementTableData = res.data.object.items;
             this.savePage();
+            if (this.agreementSelectForm.productList.length == 0) {
+              this.handleAddProduct();
+            }
           } else if (res.data.code == 401) {
             this.$message({
               showClose: true,
@@ -618,7 +622,7 @@ export default {
         });
     },
 
-   handelproductTypeChange(index) {
+    handelproductTypeChange(index) {
       this.initProductSeriesSelectiveList(index);
       this.agreementSelectForm.productList[index].productSeries = "";
     },
@@ -1321,16 +1325,55 @@ export default {
         productModel: "",
         productSeries: "",
         productSeriesSelectiveList: [],
-                  productNumberBegin: undefined,
-          productNumberEnd: undefined,
+        productNumberBegin: undefined,
+        productNumberEnd: undefined,
       })
 
-      this.initProductSeriesSelectiveList(this.productList.length - 1)
+      // this.initProductSeriesSelectiveList(this.productList.length - 1)
     },
 
     handleDeleteProduct(index) {
       this.agreementSelectForm.productList.splice(index, 1)
     },
+    handelDelAllDeleted() {
+      this.$confirm('此操作将彻底删除全部已删除的合同，您确定清空回收站吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const loading = this.$loading(this.$store.state.loadingOption2);
+        this.axios.post("/agreement/delAllDeleted", {
+          params: {
+          }
+        }, { headers: { token: this.token } }).then(res => {
+          if (res.data.code === 200) {
+            this.initAgreementList();
+            this.$message({
+              showClose: true,
+              message: res.data.data,
+              type: "success"
+            });
+
+          } else if (res.data.code == 401) {
+            this.$message({
+              showClose: true,
+              message: res.data.data,
+              type: "error"
+            });
+            this.$router.push({ path: "/login" });
+          } else {
+            this.$alert(res.data.data, "错误", {
+              confirmButtonText: "确定",
+              type: "error",
+              callback: action => {
+              }
+            });
+          }
+          loading.close();
+        });
+      }).catch(() => {
+      });
+    }
   },
   created: function () {
     //登陆验证代码

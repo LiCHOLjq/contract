@@ -23,6 +23,8 @@ public interface AgreementService {
 
     void relDelAgreement(Agreement agreement);
 
+    void delAllDeleted();
+
     void addAgreement(Agreement agreement, List<Product> productList, MultipartFile file,String adminId) throws Exception;
 
     void addAgreement(Agreement agreement, String shareId, MultipartFile file) throws ParseException, IOException;
@@ -30,6 +32,8 @@ public interface AgreementService {
     Agreement getAgreementDetails(String agreementId);
 
     Agreement getAgreementById(String agreementId);
+
+
 
     void updAgreement(Agreement agreement, List<Product> productList, String adminId) throws ParseException;
 }

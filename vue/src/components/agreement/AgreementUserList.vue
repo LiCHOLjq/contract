@@ -1094,16 +1094,16 @@ export default {
       this.baseURL = this.baseURL + ":" + window.location.port;
     }
     this.baseURL = this.baseURL + "/agreement"
-    var str = localStorage.getItem("agreementListPageMessage")
-    if (str != "" && str != null && str != "null") {
-      var agreementListPageMessage = JSON.parse(str)
-      this.agreementSelectForm = agreementListPageMessage.agreementSelectForm
-      this.agreementPage = agreementListPageMessage.agreementPage
-      this.sortForm = agreementListPageMessage.sortForm
-      this.sortTags = agreementListPageMessage.sortTags
-      this.sortValue = agreementListPageMessage.sortValue
-      localStorage.setItem("agreementListPageMessage", null)
-    }
+    // var str = localStorage.getItem("agreementListPageMessage")
+    // if (str != "" && str != null && str != "null") {
+    //   var agreementListPageMessage = JSON.parse(str)
+    //   this.agreementSelectForm = agreementListPageMessage.agreementSelectForm
+    //   this.agreementPage = agreementListPageMessage.agreementPage
+    //   this.sortForm = agreementListPageMessage.sortForm
+    //   this.sortTags = agreementListPageMessage.sortTags
+    //   this.sortValue = agreementListPageMessage.sortValue
+    //   localStorage.setItem("agreementListPageMessage", null)
+    // }
     // 加载学院列表数据
     this.initAgreementTypeList();
     // 加载admin table data

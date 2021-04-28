@@ -518,6 +518,24 @@ public JSONObject updAgreement(@RequestBody String params, HttpServletRequest ht
         }
         return result;
     }
+    @RequestMapping(value = "/delAllDeleted", method = RequestMethod.POST)
+    @UserLoginToken
+    @UserRoleToken(passRoleList = {"admin_role_master"})
+    public JSONObject delAllDeleted(@RequestBody String params) {
+        JSONObject result = new JSONObject();
+        try {
+            JSONObject paramsJson = JSONObject.parseObject(JSONObject.parseObject(params).getString("params"));
+            agreementService.delAllDeleted();
+            result.put("data", "【清空回收站】成功");
+            result.put("code", 200);
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("data", e.getMessage());
+            result.put("code", 500);
+
+        }
+        return result;
+    }
 }
 

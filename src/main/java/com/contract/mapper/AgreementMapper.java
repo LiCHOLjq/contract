@@ -27,6 +27,8 @@ public interface AgreementMapper {
 
     List<Agreement> selectByUploadAdmin(String adminId);
 
+    List<Agreement> selectAllDeleted();
+
     int updateByPrimaryKeySelective(Agreement record);
 
     int updateByPrimaryKeyWithBLOBs(Agreement record);

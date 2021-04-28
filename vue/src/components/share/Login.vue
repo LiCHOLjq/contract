@@ -142,9 +142,14 @@ export default {
         )
         .then(res => {
           if (res.data.code === 200) {
-            this.share.shareAdmin= res.data.shareAdmin;
-            this.share.shareType= res.data.shareType;
-            this.share.shareDateStr= res.data.shareDateStr;
+            this.share.shareAdmin = res.data.shareAdmin;
+            this.share.shareType = res.data.shareType;
+            this.share.shareDateStr = res.data.shareDateStr;
+            if (!res.data.shareHasPassword) {
+              this.submitForm();
+            }
+
+
           } else {
             this.$message({
               showClose: true,

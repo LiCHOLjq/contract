@@ -32,6 +32,12 @@
           <el-button type="primary" icon="el-icon-share" circle @click="shareForm.visible = true;shareForm.shareType='share_type_download';initCart();setEndDate();"></el-button>
         </el-badge>
       </el-tooltip>
+      <el-tooltip class="item" effect="dark" content="删除过期分享" placement="bottom">
+        <el-button style="float:right;margin-left:10px;margin-right:10px;margin-top:10px;" type="primary" icon="el-icon-delete-solid" circle @click="handelDelOverdue();"></el-button>
+      </el-tooltip>
+      <el-tooltip v-if="role == 'admin_role_master'" class="item" effect="dark" content="清空回收站" placement="bottom">
+        <el-button style="float:right;margin-left:10px;margin-right:10px;margin-top:10px;" type="primary" icon="el-icon-delete" circle @click="handelDelAllDeleted();"></el-button>
+      </el-tooltip>
       <el-tooltip class="item" effect="dark" content="搜索" placement="bottom">
         <el-button style="float:right;margin-left:10px;margin-right:10px;margin-top:10px;" type="primary" icon="el-icon-search" circle @click="sharePage.current=1;initShareList();"></el-button>
       </el-tooltip>
@@ -907,6 +913,87 @@ export default {
         sec = date.getSeconds();
       var newTime = year + '-' + (month < 10 ? '0' + month : month) + '-' + (day < 10 ? '0' + day : day) + ' ' + (hour < 10 ? '0' + hour : hour) + ':' + (min < 10 ? '0' + min : min) + ':' + (sec < 10 ? '0' + sec : sec);
       return newTime;
+    },
+
+    handelDelOverdue() {
+      this.$confirm('您确定彻底删除所有已过期的分享吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const loading = this.$loading(this.$store.state.loadingOption2);
+        this.axios.post("/share/delOverdue", {
+          params: {
+          }
+        }, { headers: { token: this.token } }).then(res => {
+          if (res.data.code === 200) {
+            this.initShareList();
+            this.$message({
+              showClose: true,
+              message: res.data.data,
+              type: "success"
+            });
+
+          } else if (res.data.code == 401) {
+            this.$message({
+              showClose: true,
+              message: res.data.data,
+              type: "error"
+            });
+            this.$router.push({ path: "/login" });
+          } else {
+            this.$alert(res.data.data, "错误", {
+              confirmButtonText: "确定",
+              type: "error",
+              callback: action => {
+              }
+            });
+          }
+          loading.close();
+        });
+      }).catch(() => {
+      });
+    },
+
+    handelDelAllDeleted() {
+
+      this.$confirm('此操作将彻底删除全部已删除的分享，您确定清空回收站吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const loading = this.$loading(this.$store.state.loadingOption2);
+        this.axios.post("/share/delAllDeleted", {
+          params: {
+          }
+        }, { headers: { token: this.token } }).then(res => {
+          if (res.data.code === 200) {
+            this.initShareList();
+            this.$message({
+              showClose: true,
+              message: res.data.data,
+              type: "success"
+            });
+
+          } else if (res.data.code == 401) {
+            this.$message({
+              showClose: true,
+              message: res.data.data,
+              type: "error"
+            });
+            this.$router.push({ path: "/login" });
+          } else {
+            this.$alert(res.data.data, "错误", {
+              confirmButtonText: "确定",
+              type: "error",
+              callback: action => {
+              }
+            });
+          }
+          loading.close();
+        });
+      }).catch(() => {
+      });
     }
 
     // handleInitTask(index, row) {

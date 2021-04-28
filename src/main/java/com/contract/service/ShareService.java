@@ -24,9 +24,14 @@ public interface ShareService {
 
     void relDelShare(Share share);
 
+    void delOverdue();
+
+    void delAllDeleted();
+
     ShareAgreement getShareAgreement(String shareId,String agreementId);
 
     List<ShareAgreement> getShareAgreementByShareId(String shareId);
+
 
 
 }

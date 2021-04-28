@@ -63,6 +63,7 @@ public class UserController {
             result.put("shareAdmin", accessShare.getShareAdminObj().getAdminName());
             result.put("shareType", accessShare.getShareTypeObj().getDictionaryName());
             result.put("shareDateStr", accessShare.getShareDateStr());
+            result.put("shareHasPassword", accessShare.getShareHasPassword());
             result.put("code", 200);
             result.put("data", "验证成功");
             return result;
@@ -103,7 +104,12 @@ public class UserController {
                     throw new BaseException("密码不正确",401);
                 }
             }
-            String token = TokenUtil.getShareToken(accessShare,600);
+            String token;
+            if(accessShare.getShareHasPassword()){
+                token = TokenUtil.getShareToken(accessShare,600);
+            }else {
+                token = TokenUtil.getNoPasswordShareToken(accessShare,600);
+            }
             logService.addShareAccessLog(accessShare.getShareId(),httpServletRequest);
             result.put("shaken", token);
             result.put("code", 200);

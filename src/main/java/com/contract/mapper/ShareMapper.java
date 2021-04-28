@@ -5,6 +5,7 @@ import com.contract.domain.Share;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 @Mapper
@@ -26,4 +27,8 @@ public interface ShareMapper {
     List<Share> selectBySearch(@Param("share") Share share);
 
     int selectBySearchCount(@Param("share") Share share);
+
+    List<Share> selectAllOverdue(Date now);
+
+    List<Share> selectAllDeleted();
 }

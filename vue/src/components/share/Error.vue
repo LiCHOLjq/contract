@@ -1,5 +1,5 @@
 <template>
-  <div id="sharelogin">
+  <div id="shareError">
     <v-header></v-header>
     <el-card class="login-wrap">
       <div slot="header" class="clearfix">
@@ -53,7 +53,7 @@ export default {
 </script>
 
 <style  lang="scss">
-#sharelogin {
+#shareError {
   // height: 966px;
   //background: url("../assets/img/login-bg2.png") no-repeat center bottom;
   background-size: 100%;

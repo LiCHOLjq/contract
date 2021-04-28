@@ -43,6 +43,15 @@ public class TokenUtil {
                 .sign(Algorithm.HMAC256(share.getSharePassword()));
         return AESUtil.encrypt(password,token);
     }
+    public static String getNoPasswordShareToken(Share share, int time) throws Exception { //time秒
+        Date start = new Date();
+        long currentTime = System.currentTimeMillis() + time * 1000;//一小时有效时间
+        Date end = new Date(currentTime);
+        String token = "";
+        token = JWT.create().withAudience(share.getShareId()).withIssuedAt(start).withExpiresAt(end).withSubject("Share")
+                .sign(Algorithm.HMAC256("LiCHO"));
+        return AESUtil.encrypt(password,token);
+    }
 
 
     public static String getSubject(String AESToken) throws Exception {

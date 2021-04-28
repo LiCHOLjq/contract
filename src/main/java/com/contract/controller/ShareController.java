@@ -164,5 +164,47 @@ public class ShareController {
         }
         return result;
     }
+//    delOverdue
+    @RequestMapping(value = "/delOverdue", method = RequestMethod.POST)
+    @UserLoginToken
+    @UserRoleToken(passRoleList = {"admin_role_master","admin_role_normal"})
+    public JSONObject delOverdue(@RequestBody String params) {
+        JSONObject result = new JSONObject();
+        try {
+            JSONObject paramsJson = JSONObject.parseObject(JSONObject.parseObject(params).getString("params"));
+            shareService.delOverdue();
+            result.put("data", "【删除过期分享】成功");
+            result.put("code", 200);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("data", e.getMessage());
+            result.put("code", 500);
+
+        }
+        return result;
+    }
+
+//    delAllDeleted
+    @RequestMapping(value = "/delAllDeleted", method = RequestMethod.POST)
+    @UserLoginToken
+    @UserRoleToken(passRoleList = {"admin_role_master"})
+    public JSONObject delAllDeleted(@RequestBody String params) {
+        JSONObject result = new JSONObject();
+        try {
+            JSONObject paramsJson = JSONObject.parseObject(JSONObject.parseObject(params).getString("params"));
+            shareService.delAllDeleted();
+            result.put("data", "【清空回收站】成功");
+            result.put("code", 200);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("data", e.getMessage());
+            result.put("code", 500);
+
+        }
+        return result;
+    }
+
 
 }

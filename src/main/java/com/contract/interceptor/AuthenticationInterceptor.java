@@ -12,6 +12,7 @@ import com.contract.exception.BaseException;
 import com.contract.service.AdminService;
 import com.contract.service.ShareService;
 import com.contract.util.TokenUtil;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -116,10 +117,12 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     if(share.getShareDelete()){
                         throw new BaseException("分享已删除",401);
                     }
-                    if(!TokenUtil.verifyPassword(token,share.getSharePassword())){
-                        throw new BaseException("token已过期",401);
-                    }
 
+                    if(share.getShareHasPassword()){
+                        if(!TokenUtil.verifyPassword(token,share.getSharePassword())){
+                            throw new BaseException("token已过期",401);
+                        }
+                    }
                 }
             }
             return true;
