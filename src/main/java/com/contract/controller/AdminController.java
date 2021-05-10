@@ -138,7 +138,7 @@ public JSONObject getAllAdmin(@RequestBody String params) {
             Admin updAdmin = new Admin();
             updAdmin.setAdminId(admin.getAdminId());
             updAdmin.setAdminPassword(MD5Util.getDefaultPassword());
-            adminService.updAdmin(admin);
+            adminService.updAdmin(updAdmin);
             result.put("data", "【用户】密码重置成功");
             result.put("code", 200);
         } catch (Exception e) {

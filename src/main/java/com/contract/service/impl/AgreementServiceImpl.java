@@ -104,6 +104,8 @@ public class AgreementServiceImpl implements AgreementService {
         return pageData;
     }
 
+
+
     @Override
     public PageBean<Agreement> getAgreementUserBySearch(String adminId, Agreement agreement, int currentPage, int pageSize, String sort) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

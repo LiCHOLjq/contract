@@ -11,6 +11,24 @@
         <el-tooltip v-if="agreementSelectForm.visible" class="item" effect="dark" content="收起" placement="bottom">
           <el-button style="float:right;margin-left:10px;margin-right:10px;" type="primary" icon="el-icon-arrow-up" circle @click="agreementSelectForm.visible = false;"></el-button>
         </el-tooltip>
+        <el-popover
+            placement="bottom"
+            width="150"
+            trigger="hover"
+            >
+            <div style="text-align:center;margin-top:10px;">批量添加分享</div>
+            <div style="text-align:center;margin-top:10px;"><el-button type="primary" size="mini" @click="handleAddToCartByPage" >当前页面结果</el-button></div>
+            <div style="text-align:center;margin-top:10px;"><el-button type="primary" size="mini" @click="handleAddToCartBySearch" >搜索条件结果</el-button></div>
+            <el-button slot="reference" style="float:right;margin-left:10px;margin-right:10px;" circle icon="el-icon-first-aid-kit" type="primary" ></el-button>
+          </el-popover>
+
+
+        <!-- <el-tooltip v-if="agreementSelectForm.visible" class="item" effect="dark" content="批量添加分享" placement="bottom">
+         
+        </el-tooltip> -->
+
+
+
         <el-tooltip v-if="agreementSelectForm.visible" class="item" effect="dark" content="添加搜索产品" placement="bottom">
           <el-button style="float:right;margin-left:10px;margin-right:10px;" circle icon="el-icon-document-add" type="primary" @click="handleAddProduct()"></el-button>
         </el-tooltip>
@@ -49,6 +67,7 @@
               <el-form-item class="form-item-1" label="合同乙方：">
                 <!-- 模糊 -->
                 <el-select style="width:100%" v-model="agreementSelectForm.agreementClient" placeholder="选择合同乙方">
+                  <el-option label="全部" value=""></el-option>
                   <el-option v-for="item in agreementClientSelectiveList" :key="item.dictionaryId" :label="item.dictionaryName" :value="item.dictionaryId"></el-option>
                 </el-select>
               </el-form-item>
@@ -535,22 +554,9 @@ export default {
       return filename;
     },
 
-
     initAgreementList() {
       this.alterSort();
-      var delList = [];
-      for (var i = 0; i < this.agreementSelectForm.productList.length; i++) {
-        if (this.agreementSelectForm.productList[i].productType == "" &&
-          this.agreementSelectForm.productList[i].productSeries == "" &&
-          this.agreementSelectForm.productList[i].productModel == "" &&
-          this.agreementSelectForm.productList[i].productNumberBegin == undefined &&
-          this.agreementSelectForm.productList[i].productNumberEnd == undefined) {
-          delList.push(i);
-        }
-      }
-      for (var i = delList.length - 1; i >= 0; i--) {
-        this.handleDeleteProduct(delList[i]);
-      }
+
       const loading = this.$loading(this.$store.state.loadingOption1);
       this.axios
         .post(
@@ -966,6 +972,108 @@ export default {
         loading.close();
       });
     },
+    handleAddToCartByPage() {
+      this.alterSort();
+      var delList = [];
+      for (var i = 0; i < this.agreementSelectForm.productList.length; i++) {
+        if (this.agreementSelectForm.productList[i].productType == "" &&
+          this.agreementSelectForm.productList[i].productSeries == "" &&
+          this.agreementSelectForm.productList[i].productModel == "" &&
+          this.agreementSelectForm.productList[i].productNumberBegin == undefined &&
+          this.agreementSelectForm.productList[i].productNumberEnd == undefined) {
+          delList.push(i);
+        }
+      }
+      for (var i = delList.length - 1; i >= 0; i--) {
+        this.handleDeleteProduct(delList[i]);
+      }
+           
+      const loading = this.$loading(this.$store.state.loadingOption2);
+      this.axios.post("/agreement/addToCartByPage", {
+         params: {
+              agreement: this.agreementSelectForm,
+              sort: this.sortValue,
+              currentPage: this.agreementPage.current,
+              showCount: this.agreementPage.showCount
+            }
+      }, { headers: { token: this.token } }).then(res => {
+        if (res.data.code === 200) {
+          this.initAgreementList();
+          this.initCart();
+          this.$message({
+            showClose: true,
+            message: res.data.data,
+            type: "success"
+          });
+
+        } else if (res.data.code == 401) {
+          this.$message({
+            showClose: true,
+            message: res.data.data,
+            type: "error"
+          });
+          this.$router.push({ path: "/login" });
+        } else {
+          this.$alert(res.data.data, "错误", {
+            confirmButtonText: "确定",
+            type: "error",
+            callback: action => {
+            }
+          });
+        }
+        loading.close();
+      });
+    },
+    handleAddToCartBySearch() {
+      this.alterSort();
+      var delList = [];
+      for (var i = 0; i < this.agreementSelectForm.productList.length; i++) {
+        if (this.agreementSelectForm.productList[i].productType == "" &&
+          this.agreementSelectForm.productList[i].productSeries == "" &&
+          this.agreementSelectForm.productList[i].productModel == "" &&
+          this.agreementSelectForm.productList[i].productNumberBegin == undefined &&
+          this.agreementSelectForm.productList[i].productNumberEnd == undefined) {
+          delList.push(i);
+        }
+      }
+      for (var i = delList.length - 1; i >= 0; i--) {
+        this.handleDeleteProduct(delList[i]);
+      }
+           
+      const loading = this.$loading(this.$store.state.loadingOption2);
+      this.axios.post("/agreement/addToCartBySearch", {
+         params: {
+              agreement: this.agreementSelectForm,
+              sort: this.sortValue,
+            }
+      }, { headers: { token: this.token } }).then(res => {
+        if (res.data.code === 200) {
+          this.initAgreementList();
+          this.initCart();
+          this.$message({
+            showClose: true,
+            message: res.data.data,
+            type: "success"
+          });
+
+        } else if (res.data.code == 401) {
+          this.$message({
+            showClose: true,
+            message: res.data.data,
+            type: "error"
+          });
+          this.$router.push({ path: "/login" });
+        } else {
+          this.$alert(res.data.data, "错误", {
+            confirmButtonText: "确定",
+            type: "error",
+            callback: action => {
+            }
+          });
+        }
+        loading.close();
+      });
+    },
     handleDelFormCart(index, row) {
       const loading = this.$loading(this.$store.state.loadingOption2);
       this.axios.post("/agreement/delFromCart", {
@@ -1278,6 +1386,20 @@ export default {
       return newTime;
     },
     exportAgreement() {
+      this.alterSort();
+      var delList = [];
+      for (var i = 0; i < this.agreementSelectForm.productList.length; i++) {
+        if (this.agreementSelectForm.productList[i].productType == "" &&
+          this.agreementSelectForm.productList[i].productSeries == "" &&
+          this.agreementSelectForm.productList[i].productModel == "" &&
+          this.agreementSelectForm.productList[i].productNumberBegin == undefined &&
+          this.agreementSelectForm.productList[i].productNumberEnd == undefined) {
+          delList.push(i);
+        }
+      }
+      for (var i = delList.length - 1; i >= 0; i--) {
+        this.handleDeleteProduct(delList[i]);
+      }
       const loading = this.$loading(this.$store.state.loadingOption1);
       let url = '/agreement/exportAgreement';
       this.axios({
@@ -1316,6 +1438,9 @@ export default {
         link.setAttribute("download", "合同信息导出.xlsx");
         document.body.appendChild(link);
         link.click();
+         if (this.agreementSelectForm.productList.length == 0) {
+              this.handleAddProduct();
+            }
         loading.close();
       });
     },
@@ -1564,6 +1689,10 @@ export default {
     .el-form-item__content {
       width: calc(100% - 80px);
     }
+  }
+    .el-drawer__body{
+    height: calc(100% - 770px);
+    overflow: auto;
   }
   // .form-item-3 {
   //   width: calc((100% - 124px) / 2 + 26px);

@@ -1252,5 +1252,6 @@ export default {
     color: #000;
     font-weight: 700;
   }
+
 }
 </style>

@@ -1178,6 +1178,10 @@ export default {
     background-color: #e1140a;
     color: #fff;
   }
+      .el-drawer__body{
+    height: calc(100% - 770px);
+    overflow: auto;
+  }
   // .form-item-1 {
   //   width: 100%;
   //   .el-form-item__content {

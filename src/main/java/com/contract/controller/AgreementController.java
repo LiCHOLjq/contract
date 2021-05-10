@@ -537,5 +537,70 @@ public JSONObject updAgreement(@RequestBody String params, HttpServletRequest ht
         }
         return result;
     }
+//    addToCartByPage
+@RequestMapping(value = "/addToCartByPage", method = RequestMethod.POST)
+@UserLoginToken
+@UserRoleToken(passRoleList = {"admin_role_master","admin_role_normal"})
+public JSONObject addToCartByPage(@RequestBody String params, HttpServletRequest httpServletRequest) {
+    JSONObject result = new JSONObject();
+    try {
+        JSONObject paramsJson = JSONObject.parseObject(JSONObject.parseObject(params).getString("params"));
+        Integer currentPage = 1;
+        String currentPageStr = paramsJson.getString("currentPage");
+        if (currentPageStr != null && !"".equals(currentPageStr)) {
+            currentPage = Integer.parseInt(currentPageStr);
+        }
+        Integer showCount = 10;
+        String showCountStr = paramsJson.getString("showCount");
+        if (showCountStr != null && !"".equals(showCountStr)) {
+            showCount = Integer.parseInt(showCountStr);
+        }
+        String sort = paramsJson.getString("sort");
+        Agreement agreement = JSONObject.parseObject(paramsJson.getString("agreement"), Agreement.class);
+        String token = httpServletRequest.getHeader("token");
+        String adminId = TokenUtil.getId(token);
+        Admin admin = adminService.getAdminById(adminId);
+        if(admin.getAdminRole().equals("admin_role_normal")){
+            agreement.setAgreementDelete(false);
+        }
+        cartService.addToCartByPage(adminId,agreement,currentPage, showCount,sort);
+        result.put("data", "【当前页面合同】添加分享列表成功");
+        result.put("code", 200);
+    } catch (Exception e) {
+        e.printStackTrace();
+        result.put("data", e.getMessage());
+        result.put("code", 500);
+
+    }
+    return result;
+}
+//    addToCartBySearch
+@RequestMapping(value = "/addToCartBySearch", method = RequestMethod.POST)
+@UserLoginToken
+@UserRoleToken(passRoleList = {"admin_role_master","admin_role_normal"})
+public JSONObject addToCartBySearch(@RequestBody String params, HttpServletRequest httpServletRequest) {
+    JSONObject result = new JSONObject();
+    try {
+        JSONObject paramsJson = JSONObject.parseObject(JSONObject.parseObject(params).getString("params"));
+
+        String sort = paramsJson.getString("sort");
+        Agreement agreement = JSONObject.parseObject(paramsJson.getString("agreement"), Agreement.class);
+        String token = httpServletRequest.getHeader("token");
+        String adminId = TokenUtil.getId(token);
+        Admin admin = adminService.getAdminById(adminId);
+        if(admin.getAdminRole().equals("admin_role_normal")){
+            agreement.setAgreementDelete(false);
+        }
+        cartService.addToCartBySearch(adminId,agreement,sort);
+        result.put("data", "【搜索条件合同】添加分享列表成功");
+        result.put("code", 200);
+    } catch (Exception e) {
+        e.printStackTrace();
+        result.put("data", e.getMessage());
+        result.put("code", 500);
+
+    }
+    return result;
+}
 }
 

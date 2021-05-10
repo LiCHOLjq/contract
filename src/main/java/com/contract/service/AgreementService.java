@@ -17,6 +17,9 @@ public interface AgreementService {
 
     List<Agreement> getAgreementBySearch(Agreement agreement,String sort);
 
+
+
+
     void delAgreement(Agreement agreement);
 
     void restoreAgreement(Agreement agreement);

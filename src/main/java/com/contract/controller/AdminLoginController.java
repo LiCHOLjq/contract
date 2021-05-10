@@ -85,4 +85,11 @@ public class AdminLoginController {
         }
         return result;
     }
+    @RequestMapping(value = "/tokenCheck", method = RequestMethod.POST)
+    @UserLoginToken
+    public JSONObject tokenCheck(@RequestBody String params, HttpServletRequest httpServletRequest) {
+        JSONObject result = new JSONObject();
+
+        return result;
+    }
 }

@@ -85,12 +85,12 @@ export default {
   created: function () {
 
 
-    // this.token = localStorage.getItem("token");
-    // if (this.token == "" || this.token == null) {
-    //   this.$router.push({ path: "/login" });
-    //   return;
-    // }
-    // this.tokenCheck();
+    this.token = localStorage.getItem("token");
+    if (this.token == "" || this.token == null) {
+      this.$router.push({ path: "/login" });
+      return;
+    }
+    this.tokenCheck();
     // this.powerList = JSON.parse(localStorage.getItem("powerList"));
     // this.admin = JSON.parse(localStorage.getItem("admin"));
     // if (this.admin == "" || this.admin == null) {
