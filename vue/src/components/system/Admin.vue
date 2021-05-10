@@ -15,9 +15,9 @@
       </el-form-item>
       <el-form-item label="状态：">
         <el-select v-model="adminSelectForm.adminUseful" placeholder="选择用户状态" style="width: 120px;">
-          <el-option label="全部" value=""></el-option>
-          <el-option label="启用" value="0"></el-option>
-          <el-option label="冻结" value="0"></el-option>
+          <el-option label="全部" :value="undefined"></el-option>
+          <el-option label="启用" :value="true"></el-option>
+          <el-option label="冻结" :value="false"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -89,8 +89,8 @@
           </el-form-item>
           <el-form-item label="状态：" :label-width="adminAddUpdForm.formLabelWidth">
             <el-select v-model="adminAddUpdForm.adminUseful" placeholder="选择用户状态">
-              <el-option :key="1" :label="'启用'" :value="'1'"></el-option>
-              <el-option :key="0" :label="'冻结'" :value="'0'"></el-option>
+              <el-option :key="1" :label="'启用'" :value="true"></el-option>
+              <el-option :key="0" :label="'冻结'" :value="false"></el-option>
             </el-select>
           </el-form-item>
         </el-form>
@@ -156,7 +156,7 @@ export default {
         adminAccount: "",
         adminName: "",
         adminRole: "",
-        adminUseful: "",
+        adminUseful: undefined,
       },
       // role可选列表
       roleSelectiveList: [],
@@ -179,7 +179,7 @@ export default {
         adminAccount: "",
         adminName: "",
         adminRole: "",
-        adminUseful: "",
+        adminUseful: true,
         submitState: ""
       },
 

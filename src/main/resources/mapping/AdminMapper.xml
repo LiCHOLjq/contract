@@ -29,8 +29,8 @@
     <if test="admin.adminRole != null and admin.adminRole != '' ">
       and admin_role = #{admin.adminRole,jdbcType=VARCHAR}
     </if>
-    <if test="admin.adminUseful != null and admin.adminUseful != '' ">
-      and admin_useful = #{admin.adminUseful,jdbcType=VARCHAR}
+    <if test="admin.adminUseful != null">
+      and admin_useful = #{admin.adminUseful,jdbcType=BIT}
     </if>
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">

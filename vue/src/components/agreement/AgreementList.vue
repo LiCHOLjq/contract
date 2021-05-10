@@ -11,16 +11,7 @@
         <el-tooltip v-if="agreementSelectForm.visible" class="item" effect="dark" content="收起" placement="bottom">
           <el-button style="float:right;margin-left:10px;margin-right:10px;" type="primary" icon="el-icon-arrow-up" circle @click="agreementSelectForm.visible = false;"></el-button>
         </el-tooltip>
-        <el-popover
-            placement="bottom"
-            width="150"
-            trigger="hover"
-            >
-            <div style="text-align:center;margin-top:10px;">批量添加分享</div>
-            <div style="text-align:center;margin-top:10px;"><el-button type="primary" size="mini" @click="handleAddToCartByPage" >当前页面结果</el-button></div>
-            <div style="text-align:center;margin-top:10px;"><el-button type="primary" size="mini" @click="handleAddToCartBySearch" >搜索条件结果</el-button></div>
-            <el-button slot="reference" style="float:right;margin-left:10px;margin-right:10px;" circle icon="el-icon-first-aid-kit" type="primary" ></el-button>
-          </el-popover>
+        
 
 
         <!-- <el-tooltip v-if="agreementSelectForm.visible" class="item" effect="dark" content="批量添加分享" placement="bottom">
@@ -32,6 +23,16 @@
         <el-tooltip v-if="agreementSelectForm.visible" class="item" effect="dark" content="添加搜索产品" placement="bottom">
           <el-button style="float:right;margin-left:10px;margin-right:10px;" circle icon="el-icon-document-add" type="primary" @click="handleAddProduct()"></el-button>
         </el-tooltip>
+        <el-popover
+            placement="bottom"
+            width="150"
+            trigger="hover"
+            >
+            <div style="text-align:center;margin-top:10px;">批量添加分享</div>
+            <div style="text-align:center;margin-top:10px;"><el-button type="primary" size="mini" @click="handleAddToCartByPage" >当前页面结果</el-button></div>
+            <div style="text-align:center;margin-top:10px;"><el-button type="primary" size="mini" @click="handleAddToCartBySearch" >搜索条件结果</el-button></div>
+            <el-button slot="reference" style="float:right;margin-left:10px;margin-right:10px;" circle icon="el-icon-first-aid-kit" type="primary" ></el-button>
+          </el-popover>
         <el-tooltip v-if="role == 'admin_role_master'" class="item" effect="dark" content="清空回收站" placement="bottom">
           <el-button style="float:right;margin-left:10px;margin-right:10px;" circle icon="el-icon-delete" type="primary" @click="handelDelAllDeleted()"></el-button>
         </el-tooltip>
@@ -556,7 +557,19 @@ export default {
 
     initAgreementList() {
       this.alterSort();
-
+      var delList = [];
+      for (var i = 0; i < this.agreementSelectForm.productList.length; i++) {
+        if (this.agreementSelectForm.productList[i].productType == "" &&
+          this.agreementSelectForm.productList[i].productSeries == "" &&
+          this.agreementSelectForm.productList[i].productModel == "" &&
+          this.agreementSelectForm.productList[i].productNumberBegin == undefined &&
+          this.agreementSelectForm.productList[i].productNumberEnd == undefined) {
+          delList.push(i);
+        }
+      }
+      for (var i = delList.length - 1; i >= 0; i--) {
+        this.handleDeleteProduct(delList[i]);
+      }
       const loading = this.$loading(this.$store.state.loadingOption1);
       this.axios
         .post(
