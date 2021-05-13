@@ -29,6 +29,8 @@ public interface AgreementMapper {
 
     List<Agreement> selectAllDeleted();
 
+    List<Agreement> selectAllNoDeleted();
+
     int updateByPrimaryKeySelective(Agreement record);
 
     int updateByPrimaryKeyWithBLOBs(Agreement record);

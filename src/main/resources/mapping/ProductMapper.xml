@@ -26,6 +26,12 @@
     where product_agreement = #{agreementId,jdbcType=VARCHAR}
     order by product_sort
   </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from product
+    order by product_agreement
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from product
     where product_id = #{productId,jdbcType=VARCHAR}

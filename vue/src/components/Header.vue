@@ -134,7 +134,7 @@ export default {
     this.token = localStorage.getItem("token");
     //console.log(localStorage.getItem("admin"))
     this.adminName = JSON.parse(localStorage.getItem("admin")).adminName;
-    if (JSON.parse(localStorage.getItem("admin")).adminPassword == "e10adc3949ba59abbe56e057f20f883e") {
+    if (JSON.parse(localStorage.getItem("admin")).adminPassword == "53fbd5ce1202fbdc107a256be285ae2e") {
       this.form.adminPassword = "";
       this.title = "您的密码为初始密码，请尽快修改密码"
       this.dialogFormVisible = true;

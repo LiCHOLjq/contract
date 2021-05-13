@@ -66,7 +66,7 @@ export default {
         String.fromCharCode(46) +
         String.fromCharCode(48) +
         String.fromCharCode(46) +
-        String.fromCharCode(50)
+        String.fromCharCode(52)
       //screenWidth: document.documentElement.clientWidth,//屏幕宽度
     }
   },

@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class MD5Util {
     public static String getDefaultPassword(){
-        return "e10adc3949ba59abbe56e057f20f883e";
+        return "53fbd5ce1202fbdc107a256be285ae2e";
     }
 
     public static String getMD5Str(String str) {

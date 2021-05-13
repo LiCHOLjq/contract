@@ -130,6 +130,15 @@
     where agreement_delete = 1
   </select>
 
+  <select id="selectAllNoDeleted" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from agreement
+    where agreement_delete = 0 and agreement_upload_type = 'agreement_upload_type_admin'
+    order by agreement_sign_date desc
+  </select>
   <select id="selectByUploadAdmin" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
     select
     <include refid="Base_Column_List" />

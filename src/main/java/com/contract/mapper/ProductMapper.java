@@ -20,6 +20,8 @@ public interface ProductMapper {
 
     List<Product> selectByAgreement(String agreementId);
 
+    List<Product> selectAll();
+
     int updateByPrimaryKeySelective(Product record);
 
     int updateByPrimaryKey(Product record);
